@@ -1,4 +1,4 @@
-package com.example.cityapiclient.ui.theme
+package com.example.cityapiclient.presentation.theme
 
 import android.app.Activity
 import android.os.Build
@@ -62,7 +62,7 @@ fun CityAPIClientTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = AppTypography,
         content = content
     )
 }

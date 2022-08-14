@@ -1,4 +1,4 @@
-package com.example.cityapiclient.ui.theme
+package com.example.cityapiclient.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
