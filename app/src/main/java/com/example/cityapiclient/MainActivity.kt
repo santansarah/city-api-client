@@ -79,8 +79,8 @@ fun HomeScreen() {
 
     val iconGradient = Brush.verticalGradient(
         colors = listOf(
-            Color(0xFF000000),
-            Color(0xFF126570)
+            Color(0xFF070707),
+            Color(0xFF6E6E6F)
         )
     )
 
@@ -88,81 +88,78 @@ fun HomeScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(brush = iconGradient)
-            //.background(color = Color(0xff006666))
-            //.background(color = Color(0xff808080))
+        //.background(color = Color(0xff006666))
+        //.background(color = Color(0xff808080))
     ) {
         Image(
             painter = painterResource(id = R.drawable.cityscape2d),
             contentDescription = "",
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         )
 
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize(),
-            //verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+            ) {
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .padding(bottom = 10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-
-
-
                     Image(
                         painter = painterResource(id = R.drawable.cityneon),
                         contentDescription = null,
                         modifier = Modifier
                             .size(82.dp)
-                            .padding(end = 16.dp)
+                            .padding(end = 8.dp)
                     )
                     //.weight(1f))
                     Text(
-                        text = "Need U.S. location data?",
-                        style = MaterialTheme.typography.displaySmall,
-                        color = Color.LightGray,
-                        modifier = Modifier.weight(2f)
+                        text = "City API",
+                        style = MaterialTheme.typography.displayMedium,
+                        color = Color(0xFFE2E7DB),
+                        //modifier = Modifier.weight(2f)
                     )
                 }
 
                 Text(
-                    text = "We've got you covered. Here's an example of our city data, including latitude and longitude.",
+                    text = "Here's an example of our JSON response, including latitude and longitude.",
                     style = MaterialTheme.typography.titleLarge,
-                    color = Color.LightGray,
+                    color = Color(0xFFE2E7DB),
                     modifier = Modifier.padding(bottom = 20.dp)
                 )
 
                 val cardOutline = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF00ffff),
-                        Color(0xFFFFEB3B)
+                        Color(0xFFff8300),
+                        Color(0xFFfff500)
                     )
                 )
 
-
                 Card(
-                    shape = RoundedCornerShape(6.dp),
+                    shape = RoundedCornerShape(10.dp),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(border = BorderStroke(1.dp, brush = cardOutline),
-                            shape = RoundedCornerShape(6.dp)),
+                        .border(
+                            border = BorderStroke(1.dp, brush = cardOutline),
+                            shape = RoundedCornerShape(10.dp)
+                        ),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF0D0D0D).copy(.85f))
                 ) {
-                    Column(modifier = Modifier.padding(6.dp)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
 
                         Text(
                             text = "Las Vegas, NV",
                             style = MaterialTheme.typography.headlineMedium,
-                            color = Color(0xff00ffff) //0xFF3EDDF1
+                            color = Color(0xFFfff500) //0xFF3EDDF1
                         )
                         Text(
                             text = "Clark County 89108",
                             style = MaterialTheme.typography.titleLarge,
-                            color = Color(0xff00ffff)
+                            color = Color(0xFFfff500)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -172,13 +169,13 @@ fun HomeScreen() {
                                 text = "Population:",
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.width(120.dp),
-                                color = Color(0xFFD7E8EB)
+                                color = Color(0xFFE2E7DB)
                             )
                             Text(
                                 text = "75201",
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.End,
-                                color = Color(0xFFD7E8EB)
+                                color = Color(0xFFE2E7DB)
                             )
                         }
 
@@ -187,12 +184,12 @@ fun HomeScreen() {
                                 text = "Latitude:",
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.width(120.dp),
-                                color = Color(0xFFD7E8EB)
+                                color = Color(0xFFE2E7DB)
                             )
                             Text(
                                 text = "36.20508",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color(0xFFD7E8EB)
+                                color = Color(0xFFE2E7DB)
                             )
                         }
 
@@ -201,66 +198,50 @@ fun HomeScreen() {
                                 text = "Longitude:",
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.width(120.dp),
-                                color = Color(0xFFD7E8EB)
+                                color = Color(0xFFE2E7DB)
                             )
 
                             Text(
                                 text = "-115.2237",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color(0xFFD7E8EB)
+                                color = Color(0xFFE2E7DB)
                             )
                         }
 
                     }
                     Spacer(modifier = Modifier.height(20.dp))
 
+                    val buttonOutline = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF0ffff0),
+                            Color(0xFFfeff01)
+                        )
+                    )
+
                     OutlinedButton(
+                        border = BorderStroke(1.dp, buttonOutline),
                         modifier = Modifier.align(Alignment.End)
-                            .padding(10.dp),
+                            .padding(16.dp),
                         shape = RoundedCornerShape(50.dp),
                         onClick = { /*TODO*/ }) {
                         Icon(
                             imageVector = Icons.Default.ArrowForward,
-                            contentDescription = "Next - Endpoints"
-                        )
+                            contentDescription = "Next - Endpoints",
+                            modifier = Modifier
+                                .graphicsLayer(alpha = 0.99f)
+                                .drawWithCache {
+                                    onDrawWithContent {
+                                        drawContent()
+                                        drawRect(buttonOutline, blendMode = BlendMode.SrcAtop)
+                                    }
+                                },
+
+                            )
                     }
                 }
 
-            }
 
-            /*Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(14.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search by City",
-                        modifier = Modifier.padding(end = 4.dp)
-                    )
-                    Text(text = "Search by City Names")
-                }
             }
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(14.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search by City",
-                        modifier = Modifier.padding(end = 4.dp)
-                    )
-                    Text(text = "Search by Zip Codes")
-                }
-            }*/
-
         }
     }
     //}
