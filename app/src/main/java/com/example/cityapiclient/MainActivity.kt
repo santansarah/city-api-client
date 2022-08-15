@@ -30,6 +30,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cityapiclient.presentation.components.backgroundGradient
+import com.example.cityapiclient.presentation.components.blueYellowGradient
+import com.example.cityapiclient.presentation.components.orangeYellowGradient
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 
 class MainActivity : ComponentActivity() {
@@ -77,19 +80,10 @@ fun HomeScreen() {
            }
        ) { padding ->*/
 
-    val iconGradient = Brush.verticalGradient(
-        colors = listOf(
-            Color(0xFF070707),
-            Color(0xFF6E6E6F)
-        )
-    )
-
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = iconGradient)
-        //.background(color = Color(0xff006666))
-        //.background(color = Color(0xff808080))
+            .background(brush = backgroundGradient)
     ) {
         Image(
             painter = painterResource(id = R.drawable.cityscape2d),
@@ -119,8 +113,8 @@ fun HomeScreen() {
                     //.weight(1f))
                     Text(
                         text = "City API",
-                        style = MaterialTheme.typography.displayMedium,
-                        color = Color(0xFFE2E7DB),
+                        style = MaterialTheme.typography.displayLarge,
+                        color = Color(0xFFff8400),
                         //modifier = Modifier.weight(2f)
                     )
                 }
@@ -128,15 +122,8 @@ fun HomeScreen() {
                 Text(
                     text = "Here's an example of our JSON response, including latitude and longitude.",
                     style = MaterialTheme.typography.titleLarge,
-                    color = Color(0xFFE2E7DB),
+                    color = Color(0xFFDAE0E0),
                     modifier = Modifier.padding(bottom = 20.dp)
-                )
-
-                val cardOutline = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFff8300),
-                        Color(0xFFfff500)
-                    )
                 )
 
                 Card(
@@ -144,22 +131,21 @@ fun HomeScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
-                            border = BorderStroke(1.dp, brush = cardOutline),
+                            border = BorderStroke(1.dp, brush = orangeYellowGradient),
                             shape = RoundedCornerShape(10.dp)
                         ),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF0D0D0D).copy(.85f))
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
 
                         Text(
                             text = "Las Vegas, NV",
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = Color(0xFFfff500) //0xFF3EDDF1
+                            style = MaterialTheme.typography.headlineLarge,
+                            color = Color(0xFFffff00) //0xFF3EDDF1
                         )
                         Text(
                             text = "Clark County 89108",
                             style = MaterialTheme.typography.titleLarge,
-                            color = Color(0xFFfff500)
+                            color = Color(0xFFffff00)
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -169,13 +155,13 @@ fun HomeScreen() {
                                 text = "Population:",
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.width(120.dp),
-                                color = Color(0xFFE2E7DB)
+                                color = Color(0xFFDAE0E0)
                             )
                             Text(
                                 text = "75201",
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.End,
-                                color = Color(0xFFE2E7DB)
+                                color = Color(0xFFDAE0E0)
                             )
                         }
 
@@ -184,12 +170,12 @@ fun HomeScreen() {
                                 text = "Latitude:",
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.width(120.dp),
-                                color = Color(0xFFE2E7DB)
+                                color = Color(0xFFDAE0E0)
                             )
                             Text(
                                 text = "36.20508",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color(0xFFE2E7DB)
+                                color = Color(0xFFDAE0E0)
                             )
                         }
 
@@ -198,28 +184,21 @@ fun HomeScreen() {
                                 text = "Longitude:",
                                 style = MaterialTheme.typography.titleMedium,
                                 modifier = Modifier.width(120.dp),
-                                color = Color(0xFFE2E7DB)
+                                color = Color(0xFFDAE0E0)
                             )
 
                             Text(
                                 text = "-115.2237",
                                 style = MaterialTheme.typography.titleMedium,
-                                color = Color(0xFFE2E7DB)
+                                color = Color(0xFFDAE0E0)
                             )
                         }
 
                     }
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    val buttonOutline = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF0ffff0),
-                            Color(0xFFfeff01)
-                        )
-                    )
-
                     OutlinedButton(
-                        border = BorderStroke(1.dp, buttonOutline),
+                        border = BorderStroke(1.dp, blueYellowGradient),
                         modifier = Modifier.align(Alignment.End)
                             .padding(16.dp),
                         shape = RoundedCornerShape(50.dp),
@@ -232,7 +211,7 @@ fun HomeScreen() {
                                 .drawWithCache {
                                     onDrawWithContent {
                                         drawContent()
-                                        drawRect(buttonOutline, blendMode = BlendMode.SrcAtop)
+                                        drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
                                     }
                                 },
 
@@ -247,7 +226,7 @@ fun HomeScreen() {
     //}
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DefaultPreview() {
     CityAPIClientTheme {

@@ -15,35 +15,15 @@ val titleFamily = FontFamily(
 )
 
 val fontFamily = FontFamily(
-    Font(resId = R.font.assistant_regular, weight = FontWeight.Normal),
-    Font(resId = R.font.assistant_light, weight = FontWeight.Light),
-    Font(
-        resId = R.font.assistant_medium,
-        weight = FontWeight.Medium
-    ),
-    Font(
-        resId = R.font.assistant_semibold,
-        weight = FontWeight.SemiBold
-    ),
-    Font(
-        resId = R.font.assistant_bold,
-        weight = FontWeight.Bold
-    ),
-    Font(
-        resId = R.font.assistant_extrabold,
-        weight = FontWeight.ExtraBold
-    ),
-    Font(
-        resId = R.font.assistant_extralight,
-        weight = FontWeight.ExtraLight
-    )
+    Font(resId =  R.font.oxygen_regular, weight = FontWeight.Normal),
+    Font(resId = R.font.oxygen_bold, weight = FontWeight.Bold),
+    Font(resId = R.font.oxygen_light, weight = FontWeight.Light)
 )
-
 
 val AppTypography = Typography(
     displayLarge = TextStyle(
-        fontFamily = fontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontFamily = titleFamily,
+        fontWeight = FontWeight.W400,
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
@@ -56,7 +36,7 @@ val AppTypography = Typography(
         letterSpacing = 0.sp,
     ),
     displaySmall = TextStyle(
-        fontFamily = fontFamily,
+        fontFamily = titleFamily,
         fontWeight = FontWeight.W400,
         fontSize = 36.sp,
         lineHeight = 44.sp,
@@ -64,14 +44,14 @@ val AppTypography = Typography(
     ),
     headlineLarge = TextStyle(
         fontFamily = fontFamily,
-        fontWeight = FontWeight.W400,
+        fontWeight = FontWeight.Light,
         fontSize = 32.sp,
         lineHeight = 40.sp,
         letterSpacing = 0.sp,
     ),
     headlineMedium = TextStyle(
         fontFamily = fontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Light,
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
