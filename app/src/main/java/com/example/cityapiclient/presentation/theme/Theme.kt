@@ -78,7 +78,7 @@ private val LightColorScheme = lightColorScheme(
 fun CityAPIClientTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -87,7 +87,7 @@ fun CityAPIClientTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
         darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> DarkColorScheme
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -98,7 +98,7 @@ fun CityAPIClientTheme(
     }
 
     MaterialTheme(
-        colorScheme = DarkColorScheme,
+        colorScheme = colorScheme,
         typography = AppTypography,
         content = content
     )
