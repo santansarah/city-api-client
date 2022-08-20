@@ -25,38 +25,42 @@ fun OnboardingCard(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .height(340.dp)
             .border(
                 border = BorderStroke(1.dp, brush = orangeYellowGradient),
                 shape = RoundedCornerShape(10.dp)
             ),
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween) {
 
             cardBody()
 
         }
-        Spacer(modifier = Modifier.height(20.dp))
+        //Spacer(modifier = Modifier.height(20.dp))
 
-        Button(
-            border = BorderStroke(1.dp, blueYellowGradient),
-            modifier = Modifier
-                .align(Alignment.End)
-                .padding(16.dp),
-            shape = RoundedCornerShape(50.dp),
-            onClick = { /*TODO*/ }) {
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Next - Endpoints",
+        Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd) {
+            Button(
+                border = BorderStroke(1.dp, blueYellowGradient),
                 modifier = Modifier
-                    .graphicsLayer(alpha = 0.99f)
-                    .drawWithCache {
-                        onDrawWithContent {
-                            drawContent()
-                            drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
-                        }
-                    },
+                    .padding(28.dp),
+                shape = RoundedCornerShape(50.dp),
+                onClick = { /*TODO*/ }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Next - Endpoints",
+                    modifier = Modifier
+                        .graphicsLayer(alpha = 0.99f)
+                        .drawWithCache {
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
+                            }
+                        },
 
-                )
+                    )
+            }
         }
     }
 

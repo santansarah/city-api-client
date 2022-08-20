@@ -26,6 +26,7 @@ fun OnboardingHeading(
 ) {
     Row(
         modifier = Modifier
+            .height(110.dp)
             .padding(bottom = 10.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -35,7 +36,7 @@ fun OnboardingHeading(
 
         Text(
             text = headingText,
-            style = MaterialTheme.typography.displayMedium,
+            style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.onSurface
             //color = Color(0xFFff8400),
             //modifier = Modifier.weight(2f)
@@ -51,6 +52,7 @@ fun OnboardingSubHeading(
         text = headingText,
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 20.dp)
+            .height(100.dp)
     )
 
 }
@@ -62,7 +64,8 @@ fun cardHeading(
     Text(
         text = textContent,
         style = MaterialTheme.typography.headlineLarge,
-        color = MaterialTheme.colorScheme.onPrimaryContainer
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        modifier = Modifier.padding(bottom = 16.dp)
         //color = Color(0xFFffff00) //0xFF3EDDF1
     )
 }
@@ -74,7 +77,7 @@ fun cardSubHeading(
     Text(
         text = textContent,
         style = MaterialTheme.typography.titleLarge,
-        color = MaterialTheme.colorScheme.onPrimaryContainer
+        //color = MaterialTheme.colorScheme.onPrimaryContainer
     )
 }
 

@@ -23,12 +23,12 @@ fun ScreenTwoHeading() {
     OnboardingHeading(
         icon = {
             SearchIcon(
-                size = 68.dp,
+                size = 74.dp,
                 gradient = yellowOrangeGradient,
                 contentDesc = "Search Endpoints"
             )
         },
-        headingText = "Endpoints"
+        headingText = "Queries"
     )
 
     OnboardingSubHeading(headingText = "Search our endpoints by prefixes. Perfect for auto-completes.")
@@ -36,9 +36,9 @@ fun ScreenTwoHeading() {
 
 @Composable
 fun ScreenTwoCard() {
-    cardHeading(textContent = "Query Parameters")
+    cardHeading(textContent = "Parameters")
 
-    Spacer(modifier = Modifier.height(12.dp))
+    //Spacer(modifier = Modifier.height(12.dp))
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -76,6 +76,7 @@ fun ScreenTwoCard() {
         cardText(textContent = "Search by county name prefixes")
     }
 
+/*
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(4.dp)
@@ -99,6 +100,7 @@ fun ScreenTwoCard() {
         )
         cardText(textContent = "Sort ASC and DESC")
     }
+*/
 
 
 }
