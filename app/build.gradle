@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -70,5 +72,14 @@ dependencies {
     // window layout
     implementation "androidx.window:window:1.0.0"
     implementation "androidx.compose.material3:material3-window-size-class:1.0.0-alpha16"
+
+    // hilt
+    implementation 'com.google.dagger:hilt-android:2.43.2'
+    kapt 'com.google.dagger:hilt-compiler:2.43.2'
+    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+
+    // datastore
+    //implementation "androidx.datastore:datastore-preferences-core:1.0.0"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
 }

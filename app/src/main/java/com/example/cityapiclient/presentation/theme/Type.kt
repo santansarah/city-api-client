@@ -22,7 +22,7 @@ val AppTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = titleFamily,
         fontWeight = FontWeight.W400,
-        fontSize = 57.sp,
+        fontSize = 52.sp,
         lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
     ),

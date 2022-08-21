@@ -15,7 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.presentation.components.*
+import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
+
+@Composable
+fun ScreenTwo(
+    appLayoutMode: AppLayoutMode
+) {
+    ScreenTwoHeading()
+    OnboardingCard {
+        ScreenTwoCard(appLayoutMode = appLayoutMode)
+    }
+}
 
 @Composable
 fun ScreenTwoHeading() {
@@ -28,53 +39,34 @@ fun ScreenTwoHeading() {
                 contentDesc = "Search Endpoints"
             )
         },
-        headingText = "Queries"
+        headingText = "Search"
     )
 
-    OnboardingSubHeading(headingText = "Search our endpoints by prefixes. Perfect for auto-completes.")
+    OnboardingSubHeading(headingText = "Our endpoints are perfect for auto-completes.")
 }
 
 @Composable
-fun ScreenTwoCard() {
+fun ScreenTwoCard(
+    appLayoutMode: AppLayoutMode
+) {
     cardHeading(textContent = "Parameters")
+
+    when(appLayoutMode) {
+        AppLayoutMode.COMPACT_LANDSCAPE -> {
+            Row {
+                ScreenTwoCardSubHeading(modifier = Modifier
+                    .padding(start = 24.dp, end = 46.dp))
+                ScreenTwoCardDetails(modifier = Modifier.padding(start = 46.dp))
+            }
+        }
+        else -> {
+            ScreenTwoCardSubHeading()
+            ScreenTwoCardDetails()
+        }
+    }
 
     //Spacer(modifier = Modifier.height(12.dp))
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(4.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.CheckCircle,
-            contentDescription = "City Search",
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        cardText(textContent = "Search by city name prefixes")
-    }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(4.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.CheckCircle,
-            contentDescription = "Zip Search",
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        cardText(textContent = "Search by zip code prefixes")
-    }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(4.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.CheckCircle,
-            contentDescription = "County Search",
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        cardText(textContent = "Search by county name prefixes")
-    }
 
 /*
     Row(
@@ -103,4 +95,57 @@ fun ScreenTwoCard() {
 */
 
 
+}
+
+@Composable
+private fun ScreenTwoCardDetails(
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.CheckCircle,
+                contentDescription = "City Search",
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            cardText(textContent = "Search by city name prefixes")
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.CheckCircle,
+                contentDescription = "Zip Search",
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            cardText(textContent = "Search by zip code prefixes")
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.CheckCircle,
+                contentDescription = "County Search",
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            cardText(textContent = "Search by county name prefixes")
+        }
+    }
+}
+
+@Composable
+private fun ScreenTwoCardSubHeading(
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        cardSubHeading(textContent = "Filter by Population")
+        cardSubHeading(textContent = "Sort JSON results")
+    }
 }

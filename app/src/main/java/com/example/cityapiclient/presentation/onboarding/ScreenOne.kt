@@ -9,6 +9,16 @@ import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
 @Composable
+fun ScreenOne(
+    appLayoutMode: AppLayoutMode
+) {
+    ScreenOneHeading()
+    OnboardingCard {
+        ScreenOneCard(appLayoutMode = appLayoutMode)
+    }
+}
+
+@Composable
 fun ScreenOneHeading() {
     OnboardingHeading(
         icon = {
@@ -16,7 +26,7 @@ fun ScreenOneHeading() {
                },
         headingText = "City API"
     )
-    OnboardingSubHeading(headingText = "Here's an example of our JSON response, including latitude and longitude.")
+    OnboardingSubHeading(headingText = "Our JSON response includes latitude and longitude.")
 }
 
 @Composable
@@ -25,22 +35,22 @@ fun ScreenOneCard(
 ) {
     Log.d("debug", "applayout from card: $appLayoutMode")
 
-    ScreenOneCardHeading()
-    ScreenOneCardDetails()
+    // card heading
+    cardHeading(textContent = "Sample Data")
 
-    /*when(appLayoutMode) {
+    when(appLayoutMode) {
         AppLayoutMode.COMPACT_LANDSCAPE -> {
             Row {
-                ScreenOneCardHeading(modifier = Modifier.weight(.5f)
-                    .padding(6.dp))
-                ScreenOneCardDetails(modifier = Modifier.padding(6.dp))
+                ScreenOneCardSubHeading(modifier = Modifier
+                    .padding(start = 24.dp, end = 46.dp))
+                ScreenOneCardDetails(modifier = Modifier.padding(start = 46.dp))
             }
         }
         else -> {
-            ScreenOneCardHeading()
+            ScreenOneCardSubHeading()
             ScreenOneCardDetails()
         }
-    }*/
+    }
 }
 
 
@@ -69,11 +79,10 @@ private fun ScreenOneCardDetails(
 }
 
 @Composable
-private fun ScreenOneCardHeading(
+private fun ScreenOneCardSubHeading(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        cardHeading(textContent = "Sample Data")
         cardSubHeading(textContent = "Las Vegas, NV")
         cardSubHeading(textContent = "Clark County 89108")
 

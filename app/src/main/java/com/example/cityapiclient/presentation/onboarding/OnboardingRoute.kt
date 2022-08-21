@@ -13,56 +13,44 @@ import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
 @Composable
 fun OnboardingRoute(
-    appLayoutMode: AppLayoutMode
+    appLayoutMode: AppLayoutMode,
+    lastScreenViewed: Int
 ) {
 
     /**
      * whatever renders here is injected into [AppRoot], wth the background.
      */
-    if (appLayoutMode == AppLayoutMode.COMPACT_PORTRAIT) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-        ) {
-
-            ScreenOneHeading()
-
-            OnboardingCard {
-                ScreenOneCard(appLayoutMode = appLayoutMode)
-            }
-
-        }
-    }
-    else {
+    if (appLayoutMode == AppLayoutMode.DOUBLE_SCREEN) {
         Row() {
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .weight(.5f)
-                    //.verticalScroll(rememberScrollState()),
             ) {
 
-                ScreenOneHeading()
-
-                OnboardingCard {
-                    ScreenOneCard(appLayoutMode = appLayoutMode)
+                when(lastScreenViewed) {
+                    0,1 -> ScreenOne(appLayoutMode = appLayoutMode)
                 }
-
             }
             Column(
                 modifier = Modifier
                     .padding(16.dp)
                     .weight(.5f)
-                    //.verticalScroll(rememberScrollState()),
             ) {
-
-                ScreenTwoHeading()
-
-                OnboardingCard {
-                    ScreenTwoCard()
+                when(lastScreenViewed) {
+                    0,1 -> ScreenTwo(appLayoutMode = appLayoutMode)
                 }
-
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            when(lastScreenViewed) {
+                0 -> ScreenOne(appLayoutMode = appLayoutMode)
+                1 -> ScreenTwo(appLayoutMode = appLayoutMode)
             }
         }
     }

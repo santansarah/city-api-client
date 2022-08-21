@@ -26,7 +26,7 @@ fun OnboardingHeading(
 ) {
     Row(
         modifier = Modifier
-            .height(110.dp)
+            .height(100.dp)
             .padding(bottom = 10.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -52,20 +52,21 @@ fun OnboardingSubHeading(
         text = headingText,
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 20.dp)
-            .height(100.dp)
+            .height(70.dp)
     )
 
 }
 
 @Composable
 fun cardHeading(
-    textContent: String
+    textContent: String,
 ) {
     Text(
         text = textContent,
         style = MaterialTheme.typography.headlineLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
         modifier = Modifier.padding(bottom = 16.dp)
+            .fillMaxWidth()
         //color = Color(0xFFffff00) //0xFF3EDDF1
     )
 }
