@@ -20,12 +20,19 @@ import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
 @Composable
 fun ScreenTwo(
-    appLayoutMode: AppLayoutMode
+    appLayoutMode: AppLayoutMode,
+    onButtonClicked: (Int) -> Unit,
+    showButton: Boolean
 ) {
     ScreenTwoHeading()
-    OnboardingCard {
-        ScreenTwoCard(appLayoutMode = appLayoutMode)
-    }
+    OnboardingCard(
+        cardBody = {
+            ScreenTwoCard(appLayoutMode = appLayoutMode)
+        },
+        showButton = showButton,
+        onButtonClicked = onButtonClicked,
+        currentScreen = 2
+    )
 }
 
 @Composable
@@ -51,16 +58,19 @@ fun ScreenTwoCard(
 ) {
     cardHeading(textContent = "Parameters")
 
-    when(appLayoutMode) {
+    when (appLayoutMode) {
         AppLayoutMode.COMPACT_LANDSCAPE -> {
             Row {
-                ScreenTwoCardSubHeading(modifier = Modifier
-                    .padding(start = 24.dp, end = 46.dp))
+                ScreenTwoCardSubHeading(
+                    modifier = Modifier
+                        .padding(start = 24.dp, end = 46.dp)
+                )
                 ScreenTwoCardDetails(modifier = Modifier.padding(start = 46.dp))
             }
         }
         else -> {
             ScreenTwoCardSubHeading()
+            Spacer(modifier = Modifier.height(10.dp))
             ScreenTwoCardDetails()
         }
     }

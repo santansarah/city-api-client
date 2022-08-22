@@ -17,10 +17,10 @@ data class UserPreferences(
     val lastOnboardingScreen: Int = 0
 )
 
-class UserPreferencesRepo @Inject constructor(
+class UserPreferencesManager @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    private val TAG: String = "UserPreferencesRepo"
+    private val TAG: String = "UserPreferencesManager"
 
     private object PreferencesKeys {
         val LAST_ONBOARDING_SCREEN = stringPreferencesKey("last_onboarding")
@@ -57,8 +57,8 @@ class UserPreferencesRepo @Inject constructor(
         mapUserPreferences(dataStore.data.first().toPreferences())
 
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
-        val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: 0
-        return UserPreferences(lastScreen as Int)
+        val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: "0"
+        return UserPreferences(lastScreen.toInt())
     }
 
 }

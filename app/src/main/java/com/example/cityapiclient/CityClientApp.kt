@@ -1,4 +1,4 @@
-package com.example.cityapiclient.di
+package com.example.cityapiclient
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

@@ -10,12 +10,17 @@ import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
 @Composable
 fun ScreenOne(
-    appLayoutMode: AppLayoutMode
+    appLayoutMode: AppLayoutMode,
+    onButtonClicked: (Int) -> Unit,
+    showButton: Boolean
 ) {
     ScreenOneHeading()
-    OnboardingCard {
-        ScreenOneCard(appLayoutMode = appLayoutMode)
-    }
+    OnboardingCard (
+        cardBody = {ScreenOneCard(appLayoutMode = appLayoutMode) },
+        showButton = showButton,
+        onButtonClicked = onButtonClicked,
+        currentScreen = 1
+    )
 }
 
 @Composable
@@ -48,6 +53,7 @@ fun ScreenOneCard(
         }
         else -> {
             ScreenOneCardSubHeading()
+            Spacer(modifier = Modifier.height(10.dp))
             ScreenOneCardDetails()
         }
     }

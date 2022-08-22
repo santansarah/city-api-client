@@ -10,22 +10,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cityapiclient.AppDestinations
 import com.example.cityapiclient.AppNavGraph
 import com.example.cityapiclient.R
-import com.example.cityapiclient.data.UserPreferencesRepo
+import com.example.cityapiclient.data.UserPreferences
+import com.example.cityapiclient.data.UserPreferencesManager
 import com.example.cityapiclient.presentation.components.backgroundGradient
 import com.example.cityapiclient.presentation.onboarding.OnboardingViewModel
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
+import kotlin.properties.Delegates
 
 @Composable
 fun AppRoot(
     windowSize: WindowSizeClass,
-    viewModel: OnboardingViewModel = hiltViewModel(),
+    userPreferencesManager: UserPreferencesManager
 ) {
     CityAPIClientTheme() {
         Surface(
@@ -35,13 +38,12 @@ fun AppRoot(
 
             // this is a flow; we'll get updates for rotations
             val appLayoutMode = getWindowLayoutType(windowSize = windowSize)
+            val userPreferences = userPreferencesManager.userPreferencesFlow.collectAsState(initial = UserPreferences())
 
-            // let's get the current screen to show
-            val onboardingUiState = viewModel.uiState.collectAsState()
-            val lastScreenViewed = onboardingUiState.value.lastScreenViewed
+            val lastScreenViewed = userPreferences.value.lastOnboardingScreen
 
             // figure out where we need to start
-            val startRoute = if (lastScreenViewed >= 3)
+            val startRoute = if (lastScreenViewed >= 2)
                 AppDestinations.HOME_ROUTE
             else
                 AppDestinations.ONBOARDING_ROUTE

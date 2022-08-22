@@ -14,12 +14,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun OnboardingCard(
-    cardBody: @Composable() () -> Unit
+    cardBody: @Composable() () -> Unit,
+    showButton: Boolean,
+    onButtonClicked: (Int) -> Unit,
+    currentScreen: Int
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
@@ -31,37 +35,46 @@ fun OnboardingCard(
                 shape = RoundedCornerShape(10.dp)
             ),
     ) {
-        Column(modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.SpaceBetween) {
-
-            cardBody()
-
-        }
-        //Spacer(modifier = Modifier.height(20.dp))
-
         Box(modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomEnd) {
-            Button(
-                border = BorderStroke(1.dp, blueYellowGradient),
-                modifier = Modifier
-                    .padding(28.dp),
-                shape = RoundedCornerShape(50.dp),
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Next - Endpoints",
-                    modifier = Modifier
-                        .graphicsLayer(alpha = 0.99f)
-                        .drawWithCache {
-                            onDrawWithContent {
-                                drawContent()
-                                drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
-                            }
-                        },
+            contentAlignment = Alignment.BottomEnd) {
 
-                    )
+            Column(
+                modifier = Modifier.padding(16.dp)
+                    .fillMaxSize()
+            ) {
+
+                cardBody()
+
+            }
+
+            if (showButton) {
+                Button(
+                    border = BorderStroke(1.dp, blueYellowGradient),
+                    modifier = Modifier
+                        .padding(28.dp),
+                    shape = RoundedCornerShape(50.dp),
+                    onClick = {
+                        onButtonClicked(currentScreen)
+                    }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowForward,
+                        contentDescription = "Next - Endpoints",
+                        modifier = Modifier
+                            .graphicsLayer(alpha = 0.99f)
+                            .drawWithCache {
+                                onDrawWithContent {
+                                    drawContent()
+                                    drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
+                                }
+                            },
+
+                        )
+                }
             }
         }
+
+
+
     }
 
 

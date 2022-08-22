@@ -14,7 +14,7 @@ object AppDestinationsArgs {
 }
 
 object AppDestinations {
-    const val ONBOARDING_ROUTE = "$ONBOARDING_SCREEN?$LAST_SCREEN_ARG={$LAST_SCREEN_ARG}"
+    const val ONBOARDING_ROUTE = ONBOARDING_SCREEN
     const val HOME_ROUTE = HOME_SCREEN
 }
 

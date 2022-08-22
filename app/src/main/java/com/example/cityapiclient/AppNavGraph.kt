@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.cityapiclient.presentation.home.HomeRoute
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.onboarding.OnboardingRoute
 import kotlinx.coroutines.CoroutineScope
@@ -18,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 fun AppNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     startDestination: String,
     appLayoutMode: AppLayoutMode
 ) {
@@ -28,15 +28,14 @@ fun AppNavGraph(
         modifier = modifier
     ) {
         composable(
-            AppDestinations.ONBOARDING_ROUTE,
-            arguments = listOf(
-                navArgument(LAST_SCREEN_ARG) { type = NavType.IntType; defaultValue = 0 }
-            )
+            AppDestinations.ONBOARDING_ROUTE
         ) { entry ->
             OnboardingRoute(
-                appLayoutMode = appLayoutMode,
-                lastScreenViewed = entry.arguments?.getInt(LAST_SCREEN_ARG)!!
+                appLayoutMode = appLayoutMode
             )
+        }
+        composable(AppDestinations.HOME_ROUTE) {
+            HomeRoute()
         }
     }
 }
