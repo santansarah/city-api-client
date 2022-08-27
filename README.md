@@ -6,12 +6,16 @@ fetches city data and allows users to manage API keys.
 
 ## Part 1
 
+Free SVGs: https://freesvg.org
+Inkscape: https://inkscape.org/
+SVG Minifier: https://www.svgminify.com/
+
 In part 1, I'll go over my onboarding screens, which include:
 
 * Custom SVG icons
 * Glass morphism
 * Material 3 Dark Theme
-* Jetpack Compose Animations
+* Adaptive layouts
 
 ## Design
 
