@@ -14,7 +14,8 @@ import java.io.IOException
 import javax.inject.Inject
 
 data class UserPreferences(
-    val lastOnboardingScreen: Int = 0
+    val lastOnboardingScreen: Int = 0,
+    val isOnboardingComplete: Boolean = false
 )
 
 class UserPreferencesManager @Inject constructor(
@@ -52,13 +53,21 @@ class UserPreferencesManager @Inject constructor(
             preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] = viewedScreen.toString()
         }
     }
+/*
+
+    suspend fun isOnboardingComplete(): Boolean {
+        val preferences = fetchInitialPreferences()
+        return preferences.lastOnboardingScreen >= 2
+    }
+*/
 
     suspend fun fetchInitialPreferences() =
         mapUserPreferences(dataStore.data.first().toPreferences())
 
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
-        val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: "0"
-        return UserPreferences(lastScreen.toInt())
+        val lastScreen = (preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: "0").toInt()
+        val isOnBoardingComplete: Boolean = (lastScreen >= 2)
+        return UserPreferences(lastScreen, isOnBoardingComplete)
     }
 
 }

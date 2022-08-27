@@ -1,14 +1,16 @@
 package com.example.cityapiclient
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.lifecycle.lifecycleScope
 import com.example.cityapiclient.data.UserPreferencesManager
-import com.example.cityapiclient.presentation.layouts.AppRoot
+import com.example.cityapiclient.presentation.AppRoot
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.prefs.Preferences
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -21,7 +23,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            Log.d("debug", "from mainactivity")
             val windowSize = calculateWindowSizeClass(this)
+
+
+            runBlocking {
+                userPreferencesManager.setLastOnboardingScreen(0)
+            }
+
+
             AppRoot(windowSize = windowSize, userPreferencesManager)
         }
     }

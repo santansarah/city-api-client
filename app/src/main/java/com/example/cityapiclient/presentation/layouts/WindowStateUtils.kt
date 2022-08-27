@@ -21,7 +21,6 @@ import android.util.Log
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.runtime.Composable
 import androidx.window.layout.FoldingFeature
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -56,25 +55,24 @@ fun isSeparating(foldFeature: FoldingFeature?): Boolean {
 }
 
 enum class AppLayoutMode {
-    COMPACT_LANDSCAPE, COMPACT_PORTRAIT,
+    LANDSCAPE, PORTRAIT,
     DOUBLE_SCREEN
 }
 
 fun getWindowLayoutType(
     windowSize: WindowSizeClass
 ): AppLayoutMode = with(windowSize) {
-    Log.d("debug", "windowWidth: ${windowSize.widthSizeClass}")
-    Log.d("debug", "windowHeight: ${windowSize.heightSizeClass}")
+    Log.d("debug", "windowWidth: $widthSizeClass")
+    Log.d("debug", "windowHeight: $heightSizeClass")
 
-    when (windowSize.widthSizeClass) {
-        WindowWidthSizeClass.Compact -> AppLayoutMode.COMPACT_PORTRAIT
-        WindowWidthSizeClass.Medium -> {
-            when (this.heightSizeClass) {
-                WindowHeightSizeClass.Compact -> AppLayoutMode.COMPACT_LANDSCAPE
-                else -> AppLayoutMode.DOUBLE_SCREEN
-            }
+    when (widthSizeClass) {
+        WindowWidthSizeClass.Compact -> AppLayoutMode.PORTRAIT
+        else -> {
+            if (heightSizeClass == WindowHeightSizeClass.Compact)
+                AppLayoutMode.LANDSCAPE
+            else
+                AppLayoutMode.DOUBLE_SCREEN
         }
-        else -> AppLayoutMode.DOUBLE_SCREEN
     }
 }
 

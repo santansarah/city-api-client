@@ -44,7 +44,7 @@ fun ScreenOneCard(
     cardHeading(textContent = "Sample Data")
 
     when(appLayoutMode) {
-        AppLayoutMode.COMPACT_LANDSCAPE -> {
+        AppLayoutMode.LANDSCAPE -> {
             Row {
                 ScreenOneCardSubHeading(modifier = Modifier
                     .padding(start = 24.dp, end = 46.dp))

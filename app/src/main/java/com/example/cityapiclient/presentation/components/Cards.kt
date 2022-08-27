@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -33,7 +34,7 @@ fun OnboardingCard(
             .border(
                 border = BorderStroke(1.dp, brush = orangeYellowGradient),
                 shape = RoundedCornerShape(10.dp)
-            ),
+            )
     ) {
         Box(modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.BottomEnd) {

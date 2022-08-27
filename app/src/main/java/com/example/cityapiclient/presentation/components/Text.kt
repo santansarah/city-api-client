@@ -102,7 +102,9 @@ fun HeadingPreview() {
 
             OnboardingHeading(
                 icon = {
-                    SearchIcon(size = 78.dp, gradient = yellowOrangeGradient,
+                    SearchIcon(
+                        rightPadding = 8.dp,
+                        size = 78.dp, gradient = yellowOrangeGradient,
                         contentDesc = "Search Endpoints")
                        },
                 headingText = "Endpoints",

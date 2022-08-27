@@ -1,19 +1,13 @@
 package com.example.cityapiclient.presentation.onboarding
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.KeyboardArrowUp
-import androidx.compose.material.icons.outlined.List
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.R
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
@@ -41,6 +35,7 @@ fun ScreenTwoHeading() {
     OnboardingHeading(
         icon = {
             SearchIcon(
+                rightPadding = 8.dp,
                 size = 74.dp,
                 gradient = yellowOrangeGradient,
                 contentDesc = "Search Endpoints"
@@ -49,17 +44,17 @@ fun ScreenTwoHeading() {
         headingText = "Search"
     )
 
-    OnboardingSubHeading(headingText = "Our endpoints are perfect for auto-completes.")
+    OnboardingSubHeading(headingText = "Our endpoints are perfect for address fields.")
 }
 
 @Composable
 fun ScreenTwoCard(
     appLayoutMode: AppLayoutMode
 ) {
-    cardHeading(textContent = "Parameters")
+    cardHeading(textContent = "Query Parameters")
 
     when (appLayoutMode) {
-        AppLayoutMode.COMPACT_LANDSCAPE -> {
+        AppLayoutMode.LANDSCAPE -> {
             Row {
                 ScreenTwoCardSubHeading(
                     modifier = Modifier
@@ -121,7 +116,7 @@ private fun ScreenTwoCardDetails(
                 contentDescription = "City Search",
                 modifier = Modifier.padding(end = 8.dp)
             )
-            cardText(textContent = "Search by city name prefixes")
+            cardText(textContent = "Get city names by prefix")
         }
 
         Row(
@@ -133,7 +128,7 @@ private fun ScreenTwoCardDetails(
                 contentDescription = "Zip Search",
                 modifier = Modifier.padding(end = 8.dp)
             )
-            cardText(textContent = "Search by zip code prefixes")
+            cardText(textContent = "Get zip codes by prefix")
         }
 
         Row(
@@ -145,7 +140,7 @@ private fun ScreenTwoCardDetails(
                 contentDescription = "County Search",
                 modifier = Modifier.padding(end = 8.dp)
             )
-            cardText(textContent = "Search by county name prefixes")
+            cardText(textContent = "Get county names by prefix")
         }
     }
 }

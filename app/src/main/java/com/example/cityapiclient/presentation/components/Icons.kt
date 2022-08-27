@@ -36,11 +36,19 @@ fun AppIcon(
 
 @Composable
 fun SearchIcon(
+    rightPadding: Dp,
     size: Dp,
     gradient: Brush,
     contentDesc: String
 ) {
-    Icon(
+    Image(
+        painter = painterResource(id = R.drawable.search_icon),
+        contentDescription = "City API",
+        modifier = Modifier
+            .size(size)
+            .padding(end = rightPadding)
+    )
+    /*Icon(
         imageVector = Icons.Outlined.Search,
         contentDescription = contentDesc,
         modifier = Modifier
@@ -52,7 +60,7 @@ fun SearchIcon(
                     drawRect(gradient, blendMode = BlendMode.SrcAtop)
                 }
             },
-    )
+    )*/
 }
 
 @Composable
