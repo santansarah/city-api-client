@@ -19,11 +19,11 @@ Inspiration: City lights, Neon
 
 ### App SVG Icon
 
-[!image](launcher_icon.png)
+![Icon](launcher_icon.png)
 
 ### Onboarding - Welcome
 
-[!image](onboarding.png)
+![Onboarding](onboarding.png)
 
 ## Part 2
 
