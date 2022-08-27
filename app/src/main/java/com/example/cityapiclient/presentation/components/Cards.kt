@@ -1,5 +1,8 @@
 package com.example.cityapiclient.presentation.components
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -17,6 +20,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -35,12 +39,16 @@ fun OnboardingCard(
                 border = BorderStroke(1.dp, brush = orangeYellowGradient),
                 shape = RoundedCornerShape(10.dp)
             )
+
     ) {
-        Box(modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.BottomEnd) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomEnd
+        ) {
 
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
                     .fillMaxSize()
             ) {
 
@@ -74,9 +82,6 @@ fun OnboardingCard(
             }
         }
 
-
-
     }
-
 
 }

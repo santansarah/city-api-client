@@ -53,13 +53,6 @@ class UserPreferencesManager @Inject constructor(
             preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] = viewedScreen.toString()
         }
     }
-/*
-
-    suspend fun isOnboardingComplete(): Boolean {
-        val preferences = fetchInitialPreferences()
-        return preferences.lastOnboardingScreen >= 2
-    }
-*/
 
     suspend fun fetchInitialPreferences() =
         mapUserPreferences(dataStore.data.first().toPreferences())
