@@ -24,7 +24,7 @@ fun HomeRoute()
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        OnboardingSubHeading(headingText = "Home Screen")
+        Text(text = "Home Screen")
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(onClick = {

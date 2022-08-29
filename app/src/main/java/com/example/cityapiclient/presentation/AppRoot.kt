@@ -16,6 +16,7 @@ import com.example.cityapiclient.R
 import com.example.cityapiclient.data.UserPreferences
 import com.example.cityapiclient.data.UserPreferencesManager
 import com.example.cityapiclient.presentation.components.backgroundGradient
+import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.getWindowLayoutType
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 
@@ -30,17 +31,19 @@ fun AppRoot(
             color = MaterialTheme.colorScheme.background
         ) {
 
-            // Get updates for rotations
-            val appLayoutMode = getWindowLayoutType(windowSize = windowSize)
-
-            // Collect UserPreferences and watch for changes.
+            /**
+             * Get updates for rotations and collect UserPreferences
+             */
+            val appLayoutMode: AppLayoutMode = getWindowLayoutType(windowSize = windowSize)
             val appPreferencesState = userPreferencesManager.userPreferencesFlow.collectAsState(
                 initial = UserPreferences()
             )
 
-            // The Onboarding buttons update the last screen viewed. Once it hit's 2,
-            // isComplete = true. This means that I don't need to pass a navigate to HOME
-            // event to the Onboarding screens.
+            /**
+             * Each Onboarding button updates the last screen viewed. Once it hit's 2,
+             * isComplete = true. This means that I don't need to pass a navigate to HOME
+             * event to the Onboarding screens.
+             */
             var startDestination = if (appPreferencesState.value.isOnboardingComplete)
                 AppDestinations.HOME_ROUTE
             else
@@ -48,16 +51,17 @@ fun AppRoot(
 
             Log.d("debug", "approot startdest: $startDestination")
 
-            // background for all layouts
-            // https://developer.android.com/guide/topics/large-screens/support-different-screen-sizes
-            // my image is 960px X 540px - it scales pretty well.
+            /**
+             * This is my background for all layouts, from COMPACT -> DESKTOP.
+             * My image is 960px X 540px - it scales pretty well.
+             */
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(brush = backgroundGradient) // gradient behind buildings
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.cityscape_png), // buildings
+                    painter = painterResource(id = R.drawable.buildings), // buildings
                     contentDescription = "",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.FillBounds,

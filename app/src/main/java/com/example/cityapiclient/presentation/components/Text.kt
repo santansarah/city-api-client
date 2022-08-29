@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
@@ -22,7 +23,7 @@ import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 @Composable
 fun OnboardingHeading(
     icon: @Composable () -> Unit,
-    headingText: String
+    headingText: Int
 ) {
     Row(
         modifier = Modifier
@@ -35,7 +36,7 @@ fun OnboardingHeading(
         icon()
 
         Text(
-            text = headingText,
+            text = stringResource(id = headingText),
             style = MaterialTheme.typography.displayLarge,
             color = MaterialTheme.colorScheme.onSurface
             //color = Color(0xFFff8400),
@@ -46,12 +47,13 @@ fun OnboardingHeading(
 
 @Composable
 fun OnboardingSubHeading(
-    headingText: String
+    headingText: Int
 ) {
     Text(
-        text = headingText,
+        text = stringResource(id = headingText),
         style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier.padding(bottom = 20.dp)
+        modifier = Modifier
+            .padding(bottom = 20.dp)
             .height(70.dp)
     )
 
@@ -59,13 +61,14 @@ fun OnboardingSubHeading(
 
 @Composable
 fun cardHeading(
-    textContent: String,
+    textContent: Int,
 ) {
     Text(
-        text = textContent,
+        text = stringResource(id = textContent),
         style = MaterialTheme.typography.headlineLarge,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
-        modifier = Modifier.padding(bottom = 16.dp)
+        modifier = Modifier
+            .padding(bottom = 16.dp)
             .fillMaxWidth()
         //color = Color(0xFFffff00) //0xFF3EDDF1
     )
@@ -73,10 +76,10 @@ fun cardHeading(
 
 @Composable
 fun cardSubHeading(
-    textContent: String
+    textContent: Int
 ) {
     Text(
-        text = textContent,
+        text = stringResource(id = textContent),
         style = MaterialTheme.typography.titleLarge,
         //color = MaterialTheme.colorScheme.onPrimaryContainer
     )
@@ -84,33 +87,12 @@ fun cardSubHeading(
 
 @Composable
 fun cardText(
-    textContent: String,
+    textContent: Int,
     modifier: Modifier = Modifier
 ) {
     Text(
-        text = textContent,
+        text = stringResource(id = textContent),
         style = MaterialTheme.typography.titleMedium,
         modifier = modifier,
     )
-}
-
-@Preview
-@Composable
-fun HeadingPreview() {
-    Column() {
-        CityAPIClientTheme() {
-
-            OnboardingHeading(
-                icon = {
-                    SearchIcon(
-                        rightPadding = 8.dp,
-                        size = 78.dp, gradient = yellowOrangeGradient,
-                        contentDesc = "Search Endpoints")
-                       },
-                headingText = "Endpoints",
-            )
-        }
-
-}
-
 }

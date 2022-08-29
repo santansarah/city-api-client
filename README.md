@@ -1,4 +1,4 @@
-# Jetpack Compose Adaptive Layout, Animations, Onboarding
+# Jetpack Compose Adaptive Layouts, Animations, Onboarding
 
 This Jetpack Compose app features an adaptive layout for phones, tablets,
 foldables, and desktop. It serves as a front-end for a Ktor API that
@@ -14,8 +14,9 @@ Links:
 In part 1, I'll go over my onboarding screens, which include:
 
 * Custom SVG icons
-* Glass morphism
+* Glassmorphism
 * Material 3 Dark Theme
+* Google Font Resources
 * Adaptive layouts
 * Jetpack Compose Animations
 

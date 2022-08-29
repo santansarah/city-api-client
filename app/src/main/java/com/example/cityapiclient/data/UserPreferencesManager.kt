@@ -28,7 +28,14 @@ class UserPreferencesManager @Inject constructor(
     }
 
     /**
-     * Get the user preferences flow.
+     * Use this to get the last screen viewed and check the current onboarding status.
+     */
+    suspend fun fetchInitialPreferences() =
+        mapUserPreferences(dataStore.data.first().toPreferences())
+
+    /**
+     * Get the user preferences flow. When it's collected, keys are mapped to the
+     * [UserPreferences] data class.
      */
     val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
         .catch { exception ->
@@ -44,7 +51,7 @@ class UserPreferencesManager @Inject constructor(
         }
 
     /**
-     * Set the last onboarding screen that was viewed (on button click).
+     * Sets the last onboarding screen that was viewed (on button click).
      */
     suspend fun setLastOnboardingScreen(viewedScreen: Int) {
         // updateData handles data transactionally, ensuring that if the key is updated at the same
@@ -54,9 +61,9 @@ class UserPreferencesManager @Inject constructor(
         }
     }
 
-    suspend fun fetchInitialPreferences() =
-        mapUserPreferences(dataStore.data.first().toPreferences())
-
+    /**
+     * Get the preferences key, then map it to the data class.
+     */
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
         val lastScreen = (preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: "0").toInt()
         val isOnBoardingComplete: Boolean = (lastScreen >= 2)

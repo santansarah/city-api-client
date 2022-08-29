@@ -1,3 +1,26 @@
 <resources>
     <string name="app_name">CityAPI</string>
+
+    // screen one
+    <string name="onboarding_city_header">City API</string>
+    <string name="onboarding_city_subHeading">Our JSON response includes latitude and longitude.</string>
+    <string name="onboarding_city_cardHeading">Sample Data</string>
+    <string name="onboarding_city_cardSubHeadingOne">Las Vegas, NV</string>
+    <string name="onboarding_city_cardSubHeadingTwo">Clark County 89108</string>
+    <string name="onboarding_city_population">Population:</string>
+    <string name="onboarding_city_populationNum">75201</string>
+    <string name="onboarding_city_lat">Latitude:</string>
+    <string name="onboarding_city_latNum">36.20508</string>
+    <string name="onboarding_city_long">Longitude:</string>
+    <string name="onboarding_city_longNum">-115.2237</string>
+
+    // screen two
+    <string name="onboarding_search_header">Search</string>
+    <string name="onboarding_search_subHeading">Our endpoints are perfect for address fields.</string>
+    <string name="onboarding_search_cardHeading">Query Parameters</string>
+    <string name="onboarding_search_cardSubHeadingOne">Filter by Population</string>
+    <string name="onboarding_search_cardSubHeadingTwo">Sort JSON results</string>
+    <string name="onboarding_search_cityPrefix">Get city names by prefix</string>
+    <string name="onboarding_search_zipPrefix">Get zip codes by prefix</string>
+    <string name="onboarding_search_countyPrefix">Get county names by prefix</string>
 </resources>

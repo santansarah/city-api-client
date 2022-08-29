@@ -21,46 +21,18 @@ import com.example.cityapiclient.R
 
 
 @Composable
-fun AppIcon(
+fun OnboardingIcon(
+    icon: Int,
     rightPadding: Dp,
     size: Dp
 ) {
     Image(
-        painter = painterResource(id = R.drawable.cityneon),
+        painter = painterResource(id = icon),
         contentDescription = "City API",
         modifier = Modifier
             .size(size)
             .padding(end = rightPadding)
     )
-}
-
-@Composable
-fun SearchIcon(
-    rightPadding: Dp,
-    size: Dp,
-    gradient: Brush,
-    contentDesc: String
-) {
-    Image(
-        painter = painterResource(id = R.drawable.search_icon),
-        contentDescription = "City API",
-        modifier = Modifier
-            .size(size)
-            .padding(end = rightPadding)
-    )
-    /*Icon(
-        imageVector = Icons.Outlined.Search,
-        contentDescription = contentDesc,
-        modifier = Modifier
-            .size(size)
-            .graphicsLayer(alpha = 0.99f)
-            .drawWithCache {
-                onDrawWithContent {
-                    drawContent()
-                    drawRect(gradient, blendMode = BlendMode.SrcAtop)
-                }
-            },
-    )*/
 }
 
 @Composable

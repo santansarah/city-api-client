@@ -16,6 +16,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    /**
+     * Use Hilt to get my Datastore.
+     */
     @Inject lateinit var userPreferencesManager: UserPreferencesManager
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -23,15 +26,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            Log.d("debug", "from mainactivity")
             val windowSize = calculateWindowSizeClass(this)
-
 
             runBlocking {
                 userPreferencesManager.setLastOnboardingScreen(0)
             }
 
-
+            /**
+             * Call my container here, which provides the background for all layouts
+             * and serves the content, depending on the current screen size.
+             */
             AppRoot(windowSize = windowSize, userPreferencesManager)
         }
     }
