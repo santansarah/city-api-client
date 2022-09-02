@@ -1,6 +1,7 @@
 package com.example.cityapiclient.presentation.onboarding
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cityapiclient.data.OnboardingScreen
@@ -13,18 +14,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class OnboardingUiState(
-    val lastScreenViewed: Int = -1,
     val screens: List<OnboardingScreen> = emptyList(),
-    val isOnboardingComplete: Boolean = false
+    val isOnboardingComplete: Boolean = false,
+    val currentScreen: Int = -1
 )
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val userPreferencesManager: UserPreferencesManager,
-    private val onBoardingScreenRepo: OnboardingScreenRepo
+    onBoardingScreenRepo: OnboardingScreenRepo
 ) : ViewModel() {
 
-    private val _userPreferences = userPreferencesManager.userPreferencesFlow
+   // val test by MutableState(0)
+
     private val _uiState = MutableStateFlow(OnboardingUiState(
         screens = onBoardingScreenRepo.getScreens()
     ))
@@ -37,15 +39,17 @@ class OnboardingViewModel @Inject constructor(
 
 
     /**
-     * Start collecting. lastOnboardingScreen defaults to 0.
+     * Start collecting. lastOnboardingScreen defaults to 0, and currentScreen
+     * is -1 to indicate a loading state.
      */
     init {
         viewModelScope.launch {
-            _userPreferences.collect()
+            userPreferencesManager.userPreferencesFlow.collect()
             { userPreferences ->
+                Log.d("debug", userPreferences.toString())
                 _uiState.update {
                     it.copy(
-                        lastScreenViewed = userPreferences.lastOnboardingScreen,
+                        currentScreen = userPreferences.lastOnboardingScreen,
                         isOnboardingComplete = userPreferences.isOnboardingComplete
                     )
                 }
@@ -55,6 +59,7 @@ class OnboardingViewModel @Inject constructor(
 
     fun updateLastViewedScreen(justViewed: Int) {
         viewModelScope.launch {
+            Log.d("debug", "updating userprefs")
             userPreferencesManager.setLastOnboardingScreen(justViewed)
         }
     }

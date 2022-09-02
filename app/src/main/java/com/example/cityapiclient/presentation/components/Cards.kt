@@ -20,21 +20,31 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.Languages
+import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
 @Composable
 fun OnboardingCard(
     cardBody: @Composable() () -> Unit,
     showButton: Boolean,
     onButtonClicked: (Int) -> Unit,
-    currentScreen: Int
+    currentScreen: Int,
+    appLayoutMode: AppLayoutMode
 ) {
+
+    val cardHeight = getOnboardingCardHeight(
+        appLayoutMode,
+        Locale.current.language
+    )
+
     Card(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(340.dp)
+            .height(cardHeight)
             .border(
                 border = BorderStroke(1.dp, brush = orangeYellowGradient),
                 shape = RoundedCornerShape(10.dp)
@@ -73,3 +83,15 @@ fun OnboardingCard(
     }
 
 }
+
+fun getOnboardingCardHeight(appLayoutMode: AppLayoutMode, language: String) =
+    if (appLayoutMode == AppLayoutMode.LANDSCAPE)
+        240.dp
+    else {
+        when(language) {
+            Languages.ENGLISH.code -> 360.dp
+            Languages.SPANISH.code -> 360.dp
+            Languages.GERMAN.code -> 390.dp
+            else -> 360.dp
+        }
+    }

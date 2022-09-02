@@ -1,24 +1,21 @@
 package com.example.cityapiclient.presentation.components
 
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons.Default
-import androidx.compose.material3.Icon
+import android.util.Log
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.Languages
+import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
 @Composable
 fun OnboardingHeading(
@@ -47,17 +44,37 @@ fun OnboardingHeading(
 
 @Composable
 fun OnboardingSubHeading(
-    headingText: Int
+    headingText: Int,
+    appLayoutMode: AppLayoutMode
 ) {
+
+    val languageCode = Locale.current.language
+    Log.d("debug", "current lang: $languageCode")
+
+    val headingHeight = getOnboardingSubHeadingHeight(appLayoutMode,
+        Locale.current.language)
+
     Text(
         text = stringResource(id = headingText),
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier
             .padding(bottom = 20.dp)
-            .height(70.dp)
+            .height(headingHeight)
     )
 
 }
+
+fun getOnboardingSubHeadingHeight(appLayoutMode: AppLayoutMode, language: String) =
+    if (appLayoutMode == AppLayoutMode.LANDSCAPE)
+        40.dp
+    else {
+        when(language) {
+            Languages.ENGLISH.code -> 70.dp
+            Languages.SPANISH.code -> 80.dp
+            Languages.GERMAN.code -> 70.dp
+            else -> 70.dp
+        }
+    }
 
 @Composable
 fun cardHeading(

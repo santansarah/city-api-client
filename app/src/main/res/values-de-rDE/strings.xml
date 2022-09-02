@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CityAPI</string>
+    <string name="onboarding_city_subHeading">Unsere JSON-Antwort enthält Breiten- und Längengrad.</string>
+    <string name="onboarding_city_cardHeading">Beispieldaten</string>
+    <string name="onboarding_city_population">Bevölkerung:</string>
+    <string name="onboarding_city_lat">Breite:</string>
+    <string name="onboarding_city_long">Längengrad:</string>
+    <string name="onboarding_search_header">Suche</string>
+    <string name="onboarding_search_subHeading">Unsere Endpoints eignen sich perfekt für Adressfelder.</string>
+    <string name="onboarding_search_cardHeading">Abfrageparameter</string>
+    <string name="onboarding_search_cardSubHeadingOne">Nach Bevölkerung filtern</string>
+    <string name="onboarding_search_cardSubHeadingTwo">JSON-Ergebnisse sortieren</string>
+    <string name="onboarding_search_cityPrefix">Erhalten Sie Städtenamen nach Präfix</string>
+    <string name="onboarding_city_header">City API</string>
+    <string name="onboarding_search_zipPrefix">Holen Sie sich Postleitzahlen nach Präfix</string>
+    <string name="onboarding_search_countyPrefix">Abrufen von Landkreisnamen nach Präfix</string>
+</resources>

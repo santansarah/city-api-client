@@ -24,16 +24,14 @@ fun OnboardingRoute(
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val lastScreenViewed = uiState.lastScreenViewed
-    val isOnboardingComplete = uiState.isOnboardingComplete
 
-    Log.d("debug", "OnboardingRoute lastScreenViewed: $lastScreenViewed")
+    Log.d("debug", "current screen from route: ${uiState.currentScreen}")
 
     /**
      * Whatever renders here is injected into AppRoot, wth the background.
      * -1 is my isLoading/initial state.
      */
-    if (uiState.lastScreenViewed > -1 && !isOnboardingComplete) {
+    if (uiState.currentScreen > -1 && !uiState.isOnboardingComplete) {
         /**
          * If it's a bigger layout, show both screens side-by-side.
          */
@@ -61,7 +59,7 @@ fun OnboardingRoute(
              * one screen at a time.
              */
             AnimatedContent(
-                targetState = lastScreenViewed,
+                targetState = uiState.currentScreen,
                 transitionSpec = {
                     val animationSpec: TweenSpec<IntOffset> = tween(300)
                     val direction = AnimatedContentScope.SlideDirection.Left

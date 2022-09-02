@@ -3,9 +3,11 @@ package com.example.cityapiclient.presentation.onboarding
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.data.CardDetailsOption
@@ -24,7 +26,8 @@ fun OnboardingScreen(
         ScreenHeading(
             headingIcon,
             headingText,
-            subHeadingText
+            subHeadingText,
+            appLayoutMode
         )
     }
     OnboardingCard(
@@ -36,7 +39,8 @@ fun OnboardingScreen(
         },
         showButton = showButton,
         onButtonClicked = onButtonClicked,
-        currentScreen = onboardingScreen.currentScreen
+        currentScreen = onboardingScreen.currentScreen,
+        appLayoutMode = appLayoutMode
     )
 }
 
@@ -44,7 +48,8 @@ fun OnboardingScreen(
 fun ScreenHeading(
     icon: Int,
     heading: Int,
-    subHeading: Int
+    subHeading: Int,
+    appLayoutMode: AppLayoutMode
 ) {
     OnboardingHeading(
         icon = {
@@ -52,7 +57,7 @@ fun ScreenHeading(
         },
         headingText = heading
     )
-    OnboardingSubHeading(headingText = subHeading)
+    OnboardingSubHeading(headingText = subHeading, appLayoutMode)
 }
 
 @Composable
@@ -142,7 +147,8 @@ private fun ScreenCardIconList(
                 Image(
                     painterResource(id = it.first),
                     contentDescription = "Features",
-                    modifier = Modifier.padding(end = 8.dp)
+                    modifier = Modifier.padding(end = 8.dp),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary)
                 )
                 cardText(textContent = it.second)
             }

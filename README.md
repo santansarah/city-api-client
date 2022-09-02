@@ -18,7 +18,7 @@ In part 1, I'll go over my onboarding screens, which include:
 * Material 3 Dark Theme
 * Google Font Resources
 * Adaptive layouts
-* Jetpack Compose Animations
+* Supports English/Spanish/German
 
 ## Design
 

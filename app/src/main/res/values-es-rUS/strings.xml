@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CityAPI</string>
+    <string name="onboarding_search_countyPrefix">Nombres de condados por prefijo</string>
+    <string name="onboarding_city_header">City API</string>
+    <string name="onboarding_city_subHeading">Nuestra respuesta JSON incluye latitud y longitud.</string>
+    <string name="onboarding_city_cardHeading">Data de muestra</string>
+    <string name="onboarding_city_population">Población:</string>
+    <string name="onboarding_city_lat">Latitud:</string>
+    <string name="onboarding_city_long">Longitud:</string>
+    <string name="onboarding_search_header">buscar</string>
+    <string name="onboarding_search_subHeading">Nuestros puntos finales son perfectos para los campos de direcciones.</string>
+    <string name="onboarding_search_cardHeading">Parámetros</string>
+    <string name="onboarding_search_cardSubHeadingOne">Filtrar por Población</string>
+    <string name="onboarding_search_cardSubHeadingTwo">Ordenar resultados JSON</string>
+    <string name="onboarding_search_cityPrefix">Nombres de ciudades por prefijo</string>
+    <string name="onboarding_search_zipPrefix">Códigos postales por prefijo</string>
+    <string name="onboarding_city_cardSubHeadingOne">Las Vegas, NV</string>
+    <string name="onboarding_city_cardSubHeadingTwo">Clark County 89108</string>
+    <string name="onboarding_city_populationNum">75201</string>
+    <string name="onboarding_city_latNum">36.20508</string>
+    <string name="onboarding_city_longNum">-115.2237</string>
+</resources>
