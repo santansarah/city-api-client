@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.Languages
+import com.example.cityapiclient.util.Languages
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
 @Composable

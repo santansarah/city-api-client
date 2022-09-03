@@ -1,4 +1,4 @@
-package com.example.cityapiclient
+package com.example.cityapiclient.util
 
 enum class Languages(val code: String) {
     ENGLISH("en"),

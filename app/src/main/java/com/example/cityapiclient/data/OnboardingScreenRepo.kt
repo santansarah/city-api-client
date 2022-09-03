@@ -6,6 +6,9 @@ object OnboardingScreenRepo {
     fun getScreens() = onBoardingScreens
 }
 
+/**
+ * Construct the Onboarding screen data.
+ */
 private val onBoardingScreens = listOf(
 
     OnboardingScreen(
