@@ -1,4 +1,4 @@
-# Jetpack Compose: Adaptive Layout, Datastore Preferences with Hilt
+# Jetpack Compose: Adaptive Layout Templates, Datastore Preferences with Hilt, Dynamic Onboarding Screens
 
 This Jetpack Compose app features an adaptive layout for phones, tablets,
 foldables, and desktops. It serves as a front-end for a Ktor API that
@@ -7,6 +7,7 @@ gets city data and allows users to manage their API keys.
 ## Part 1
 
 Links:
+* YouTube Video: https://youtu.be/5qKq4w2zTYM
 * GitHub: https://github.com/santansarah/city-api-client
 * Free SVGs: https://freesvg.org
 * Inkscape: https://inkscape.org/

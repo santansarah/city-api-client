@@ -28,9 +28,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             val windowSize = calculateWindowSizeClass(this)
 
-            runBlocking {
+            // uncomment this to test onboarding screens.
+            /* runBlocking {
                 userPreferencesManager.setLastOnboardingScreen(0)
-            }
+            }*/
 
             /**
              * Call my container here, which provides the background for all layouts
