@@ -9,7 +9,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
@@ -29,6 +31,14 @@ object ApiModules {
             install(ContentNegotiation) {
                 json()
             }
+/*            HttpResponseValidator {
+                validateResponse { response ->
+                    val error: Error = response.body()
+                    if (error.code != 0) {
+                        throw CustomResponseException(response, "Code: ${error.code}, message: ${error.message}")
+                    }
+                }
+            }*/
         }
     }
 

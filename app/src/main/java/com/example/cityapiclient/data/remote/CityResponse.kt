@@ -1,6 +1,8 @@
 package com.example.cityapiclient.data.remote
 
-@kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CityResponse(
     val userWithApp: UserWithApp = UserWithApp(),
     val cities: List<CityDto> = emptyList(),
