@@ -1,11 +1,9 @@
 package com.example.cityapiclient.data.remote
 
-import io.ktor.client.*
-
 class CityApiMockService(
 ): ICityApiService {
-    override suspend fun getCitiesByName(prefix: String): CityResponse {
-        return CityResponse(cities = cities)
+    override suspend fun getCitiesByName(prefix: String): CityApiResponse {
+        return CityApiResponse(cities = cities)
     }
 }
 

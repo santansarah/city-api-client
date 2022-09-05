@@ -23,6 +23,8 @@ import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.remote.CityApiMockService
 import com.example.cityapiclient.presentation.components.*
+import com.example.cityapiclient.presentation.layouts.CompactLayout
+import com.example.cityapiclient.presentation.layouts.CompactLayoutScrollable
 import kotlinx.coroutines.runBlocking
 
 
@@ -35,12 +37,27 @@ fun HomeRoute(
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
+    CompactLayout {
+        CityNameSearch(
+            uiState.cityPrefix,
+            viewModel::onCityNameSearch,
+            uiState.cities
+        )
+    }
+}
+
+@Composable
+private fun CityNameSearch(
+    prefix: String?,
+    onPrefixChanged: (String) -> Unit,
+    cities: List<CityDto>
+) {
     EnterCityName(
-        uiState.cityPrefix,
-        viewModel::searchCities
+        prefix,
+        onPrefixChanged
     )
     ShowCityNames(
-        cityNames = emptyList()
+       cities = cities
     )
 }
 
@@ -84,14 +101,14 @@ fun EnterCityName(
 @Composable
 fun ShowCityNames(
     modifier: Modifier = Modifier,
-    cityNames: List<CityDto>
+    cities: List<CityDto>
 ) {
     //val (selectedOption,) = remember { mutableStateOf("") }
     var isClicked by remember {
         mutableStateOf(false)
     }
 
-    if (cityNames.isEmpty()) {
+    if (cities.isEmpty()) {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -125,7 +142,7 @@ fun ShowCityNames(
 
     } else {
         LazyColumn(modifier = modifier) {
-            itemsIndexed(items = cityNames) { index, city ->
+            itemsIndexed(items = cities) { index, city ->
                 Column(
                     Modifier
                         .padding(top = 6.dp, bottom = 6.dp)
@@ -207,7 +224,7 @@ fun PreviewHome() {
                     prefix="pho",
                     onPrefixChanged = { }
                 )
-                ShowCityNames(cityNames = cities)
+                ShowCityNames(cities = cities)
             }
         }
     }

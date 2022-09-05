@@ -11,7 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.presentation.layouts.CompactLayout
+import com.example.cityapiclient.presentation.layouts.CompactLayoutScrollable
 import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalLifecycleComposeApi::class)
@@ -76,7 +76,7 @@ fun OnboardingRoute(
                             )
                 }
             ) { targetState ->
-                CompactLayout(
+                CompactLayoutScrollable(
                     mainContent = {
                         OnboardingScreen(
                             appLayoutMode = appLayoutMode,

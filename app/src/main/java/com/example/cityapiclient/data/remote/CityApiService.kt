@@ -1,13 +1,11 @@
 package com.example.cityapiclient.data.remote
 
-import android.util.Log
+import com.example.cityapiclient.util.ErrorCode
 import com.example.cityapiclient.util.toErrorResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class CityApiService @Inject constructor(
@@ -19,10 +17,10 @@ class CityApiService @Inject constructor(
         private const val BASE_URL = "http://10.0.2.2:8080"
         const val CITIES = "$BASE_URL/cities"
 
-        private const val API_KEY = ""
+        private const val API_KEY = "Pr67HTHS4VIP1eN"
     }
 
-    override suspend fun getCitiesByName(prefix: String): CityResponse {
+    override suspend fun getCitiesByName(prefix: String): CityApiResponse {
         return try {
             client.get(CityApiDefaults.CITIES) {
                 headers {
@@ -37,8 +35,11 @@ class CityApiService @Inject constructor(
           e.message.toErrorResponse()
         }
         catch(e: Exception) {
-            e.message?.let { Log.d("debug", it) }
-            CityResponse()
+            val error: CityApiResponseError = when(e) {
+                is ServerResponseException -> CityApiResponseError(ErrorCode.SERVER_ERROR, ErrorCode.SERVER_ERROR.message)
+                else -> CityApiResponseError(ErrorCode.UNKNOWN, e.message ?: "Unknown error.")
+            }
+            CityApiResponse(errors = listOf(error))
         }
     }
 

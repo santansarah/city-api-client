@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.data.remote.CityDto
+import com.example.cityapiclient.data.remote.isSuccessful
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -32,9 +33,9 @@ class HomeViewModel @Inject constructor(
             _uiState.value
         )
 
-    private var searchCities: Job? = null
+    private var cityNameSearchJob: Job? = null
 
-    fun searchCities(prefix: String?) {
+    fun onCityNameSearch(prefix: String?) {
 
         Log.d("debug", "searchCities prefix: $prefix")
 
@@ -45,17 +46,17 @@ class HomeViewModel @Inject constructor(
         _uiState.value.cityPrefix?.let { prefix ->
             if (prefix.length > 2)
 
-                searchCities?.cancel()
-            searchCities = viewModelScope.launch {
+                cityNameSearchJob?.cancel()
+                cityNameSearchJob = viewModelScope.launch {
 
                 val cityResponse = cityApiService.getCitiesByName(prefix)
-                if (cityResponse.errors.isEmpty())
+                if (cityResponse.isSuccessful()) {
+                    _uiState.update {
+                        it.copy(cities = cityResponse.cities)
+                    }
+                } else {
                     Log.d("debug", "api error: ${cityResponse.errors.toString()}")
-
-                _uiState.update {
-                    it.copy(cities = cityResponse.cities)
                 }
-
             }
         }
     }
