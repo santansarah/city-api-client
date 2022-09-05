@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data
+package com.example.cityapiclient.data.local
 
 import android.util.Log
 import androidx.datastore.core.DataStore

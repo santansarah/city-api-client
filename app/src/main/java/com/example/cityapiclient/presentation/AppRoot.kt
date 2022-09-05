@@ -13,8 +13,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.example.cityapiclient.AppNavGraph
 import com.example.cityapiclient.R
-import com.example.cityapiclient.data.UserPreferences
-import com.example.cityapiclient.data.UserPreferencesManager
+import com.example.cityapiclient.data.local.UserPreferences
+import com.example.cityapiclient.data.local.UserPreferencesManager
 import com.example.cityapiclient.presentation.components.backgroundGradient
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.getWindowLayoutType

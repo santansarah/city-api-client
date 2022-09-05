@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data
+package com.example.cityapiclient.data.local
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data
+package com.example.cityapiclient.data.local
 
 import com.example.cityapiclient.R
 

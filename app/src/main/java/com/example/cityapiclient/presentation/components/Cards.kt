@@ -63,7 +63,7 @@ fun OnboardingCard(
                     onClick = {
                         onButtonClicked(currentScreen)
                     }) {
-                    OnboardingArrowIcon("Next")
+                    ArrowIcon(contentDesc = "Next")
                 }
             }
         }

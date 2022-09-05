@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.data.CardDetailsOption
-import com.example.cityapiclient.data.OnboardingScreen
+import com.example.cityapiclient.data.local.CardDetailsOption
+import com.example.cityapiclient.data.local.OnboardingScreen
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
