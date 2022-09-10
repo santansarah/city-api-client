@@ -1,9 +1,11 @@
 package com.example.cityapiclient.data.remote
 
+import com.example.cityapiclient.data.ServiceResult
+
 class CityApiMockService(
 ): ICityApiService {
-    override suspend fun getCitiesByName(prefix: String): CityApiResponse {
-        return CityApiResponse(cities = cities)
+    override suspend fun getCitiesByName(prefix: String): ServiceResult<List<CityDto>> {
+        return ServiceResult.Success(cities)
     }
 }
 

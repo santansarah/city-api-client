@@ -1,5 +1,9 @@
 package com.example.cityapiclient.data.remote
 
+import android.util.Log
+import com.example.cityapiclient.data.ServiceResult
+import com.example.cityapiclient.data.ServiceResult.*
+import com.example.cityapiclient.util.AuthenticationException
 import com.example.cityapiclient.util.ErrorCode
 import com.example.cityapiclient.util.toErrorResponse
 import io.ktor.client.*
@@ -10,7 +14,7 @@ import javax.inject.Inject
 
 class CityApiService @Inject constructor(
     private val client: HttpClient
-): ICityApiService {
+) : ICityApiService {
 
     companion object CityApiDefaults {
 
@@ -20,9 +24,9 @@ class CityApiService @Inject constructor(
         private const val API_KEY = "Pr67HTHS4VIP1eN"
     }
 
-    override suspend fun getCitiesByName(prefix: String): CityApiResponse {
+    override suspend fun getCitiesByName(prefix: String): ServiceResult<List<CityDto>> {
         return try {
-            client.get(CityApiDefaults.CITIES) {
+            val cityApiResponse: List<CityDto> = client.get(CityApiDefaults.CITIES) {
                 headers {
                     append("x-api-key", CityApiDefaults.API_KEY)
                 }
@@ -30,18 +34,22 @@ class CityApiService @Inject constructor(
                     parameters.append("name", prefix)
                 }
             }.body()
-        }
-        catch (e: ClientRequestException) {
-          e.message.toErrorResponse()
-        }
-        catch(e: Exception) {
-            val error: CityApiResponseError = when(e) {
-                is ServerResponseException -> CityApiResponseError(ErrorCode.SERVER_ERROR, ErrorCode.SERVER_ERROR.message)
-                else -> CityApiResponseError(ErrorCode.UNKNOWN, e.message ?: "Unknown error.")
-            }
-            CityApiResponse(errors = listOf(error))
+            Success(cityApiResponse)
+        } catch (apiError: Exception) {
+
+            Log.d("debug", apiError.message ?: "unknown")
+
+            Error("", "")
+            /*apiError.message?.let {
+                when (apiError) {
+                    is AuthenticationException ->
+                        it.toErrorResponse()
+                    else -> {
+                        CityApiResponse(errors = listOf(unknownError))
+                    }
+                }
+            } ?: CityApiResponse(errors = listOf(unknownError))*/
         }
     }
-
 }
 

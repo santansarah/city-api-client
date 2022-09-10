@@ -60,12 +60,13 @@ fun LocationIcon(
         imageVector = Icons.Outlined.LocationOn,
         contentDescription = contentDesc,
         modifier = modifier
+/*        modifier = modifier
             .graphicsLayer(alpha = 0.99f)
             .drawWithCache {
                 onDrawWithContent {
                     drawContent()
                     drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
                 }
-            },
+            },*/
         )
 }

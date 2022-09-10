@@ -3,9 +3,10 @@ package com.example.cityapiclient.presentation.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.data.remote.CityDto
-import com.example.cityapiclient.data.remote.isSuccessful
+import com.example.cityapiclient.data.succeeded
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -50,13 +51,16 @@ class HomeViewModel @Inject constructor(
                 cityNameSearchJob = viewModelScope.launch {
 
                 val cityResponse = cityApiService.getCitiesByName(prefix)
-                if (cityResponse.isSuccessful()) {
-                    _uiState.update {
-                        it.copy(cities = cityResponse.cities)
+                    when(cityResponse) {
+                        is ServiceResult.Success -> {
+                            _uiState.update {
+                                it.copy(cities = cityResponse.data)
+                            }
+                        }
+                        is ServiceResult.Error -> {
+                            //Log.d("debug", "api error: ${cityResponse.errors.toString()}")
+                        }
                     }
-                } else {
-                    Log.d("debug", "api error: ${cityResponse.errors.toString()}")
-                }
             }
         }
     }

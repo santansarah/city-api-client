@@ -8,6 +8,8 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import com.example.cityapiclient.data.local.UserPreferencesManager
 import com.example.cityapiclient.presentation.AppRoot
 import dagger.hilt.android.AndroidEntryPoint
+import io.ktor.client.*
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -26,9 +28,9 @@ class MainActivity : ComponentActivity() {
             val windowSize = calculateWindowSizeClass(this)
 
             // uncomment this to test onboarding screens.
-            /* runBlocking {
+            runBlocking {
                 userPreferencesManager.setLastOnboardingScreen(0)
-            }*/
+            }
 
             /**
              * Call my container here, which provides the background for all layouts
@@ -36,6 +38,12 @@ class MainActivity : ComponentActivity() {
              */
             AppRoot(windowSize = windowSize, userPreferencesManager)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        //HttpClient.
     }
 
 }

@@ -2,7 +2,7 @@ package com.example.cityapiclient.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
-val primaryTextColor = Color(0xFFDAE0E0)
+val primaryTextColor = Color(0xFFbac5c5)
 val displayText = Color(0xFFffff00)
 val orangeText = Color(0xFFff8400) //0xFFff8300
 
@@ -10,7 +10,7 @@ val orangeText = Color(0xFFff8400) //0xFFff8300
 val md_theme_dark_primary = Color(0xFF0C0E0E)
 val md_theme_dark_onPrimary = primaryTextColor
 
-val md_theme_dark_primaryContainer = Color(0xFF344e00)
+val md_theme_dark_primaryContainer = Color(0xFF232a2a)
 val md_theme_dark_onPrimaryContainer = displayText
 
 val md_theme_dark_secondary = Color(0xFFc2caab)
@@ -36,7 +36,8 @@ val md_theme_dark_onBackground = Color(0xFFe4e3db)
 val md_theme_dark_surface = Color(0xFF0C0E0E)
 val md_theme_dark_onSurface = orangeText
 
-//this is my transparent card
+// this is my transparent card, textfield label text
+// textfield container color
 val md_theme_dark_surfaceVariant = Color(0xB30C0E0E)
 val md_theme_dark_onSurfaceVariant = primaryTextColor
 
@@ -58,7 +59,7 @@ val md_theme_light_secondary = Color(0xFF596148)
 val md_theme_light_onSecondary = Color(0xFFffffff)
 val md_theme_light_secondaryContainer = Color(0xFFdee6c6)
 val md_theme_light_onSecondaryContainer = Color(0xFF171e09)
-val md_theme_light_tertiary = Color(0xFF386660)
+val md_theme_light_tertiary = Color(0xFFE3F5DC)
 val md_theme_light_onTertiary = Color(0xFFffffff)
 val md_theme_light_tertiaryContainer = Color(0xFFbcece4)
 val md_theme_light_onTertiaryContainer = Color(0xFF00201c)

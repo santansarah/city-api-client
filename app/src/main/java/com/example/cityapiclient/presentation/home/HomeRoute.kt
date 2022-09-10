@@ -21,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 import com.example.cityapiclient.R
+import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiMockService
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.CompactLayout
@@ -80,18 +81,21 @@ fun EnterCityName(
             placeholder = {
                 Text(
                     text = "Enter City Name...",
-                    style = MaterialTheme.typography.titleLarge
+                    style = MaterialTheme.typography.titleLarge,
+                    //color = MaterialTheme.colorScheme.onPrimary.copy(.5f)
                 )
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .border(
+                .fillMaxWidth(),
+/*                .border(
                     BorderStroke(
                         width = 1.dp,
-                        color = MaterialTheme.colorScheme.outline
+                        orangeYellowGradient
                     )
-                ),
-            textStyle = MaterialTheme.typography.titleLarge
+                ),*/
+            textStyle = MaterialTheme.typography.titleLarge,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer)
         )
         Spacer(modifier = Modifier.height(15.dp))
     }
@@ -156,43 +160,44 @@ fun ShowCityNames(
                         ),
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Box(
+                    Card(
                         modifier = modifier
                             .clip(RoundedCornerShape(10.dp))
                             .border(
                                 border = BorderStroke(
-                                    width = 2.dp,
+                                    width = 1.dp,
                                     orangeYellowGradient
                                 ),
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .fillMaxSize()
-                            .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 5.dp),
-                        contentAlignment = Alignment.CenterStart
+
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            LocationIcon(
-                                modifier = Modifier
-                                    .padding(end = 4.dp)
-                                    .size(32.dp),
-                                contentDesc = "City Icon"
-                            )
-                            Text(
-                                text = city.city + ", " + city.state + " ${city.zip}",
-                                modifier = Modifier,
-                                style = MaterialTheme.typography.titleLarge,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        }
                         Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.CenterEnd,
+                            modifier = Modifier.fillMaxSize()
+                                .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 5.dp),
                         ) {
-                            ArrowIcon(Modifier.padding(end = 4.dp),"City Details")
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                LocationIcon(
+                                    modifier = Modifier
+                                        .padding(end = 4.dp)
+                                        .size(26.dp),
+                                    contentDesc = "City Icon"
+                                )
+                                Text(
+                                    text = city.city + ", " + city.state + " ${city.zip}",
+                                    modifier = Modifier,
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                            }
+                                ArrowIcon(Modifier.padding(end = 4.dp)
+                                    .align(Alignment.CenterEnd),"City Details")
+
                         }
+
                         //Divider(color = MaterialTheme.colorScheme.background, thickness = 5.dp)
                     }
                 }
@@ -213,7 +218,7 @@ fun PreviewHome() {
         lateinit var cities: List<CityDto>
 
         runBlocking {
-            cities = CityApiMockService().getCitiesByName("pho").cities
+            cities = (CityApiMockService().getCitiesByName("pho") as ServiceResult.Success).data
         }
 
         Surface() {
