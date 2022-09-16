@@ -1,3 +1,4 @@
+/*
 package com.example.cityapiclient.presentation.home
 
 import android.util.Log
@@ -99,12 +100,14 @@ fun EnterCityName(
             },
             modifier = Modifier
                 .fillMaxWidth(),
+*/
 /*                .border(
                     BorderStroke(
                         width = 1.dp,
                         orangeYellowGradient
                     )ha
-                ),*/
+                ),*//*
+
             textStyle = MaterialTheme.typography.titleLarge,
             colors = TextFieldDefaults.textFieldColors(
                containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -273,4 +276,4 @@ fun PreviewHome() {
             }
         }
     }
-}
+}*/
