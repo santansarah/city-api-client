@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.data.remote.CityDto
-import com.example.cityapiclient.data.succeeded
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -21,8 +20,9 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val cityApiService: CityApiService
+    private var cityApiService: CityApiService
 ) : ViewModel() {
+
 
     private val _uiState = MutableStateFlow(
         HomeUiState()
@@ -38,30 +38,31 @@ class HomeViewModel @Inject constructor(
 
     fun onCityNameSearch(prefix: String?) {
 
-        Log.d("debug", "searchCities prefix: $prefix")
+        //Log.d("debug", "searchCities prefix: $prefix")
 
         _uiState.update {
             it.copy(cityPrefix = prefix)
         }
 
-        _uiState.value.cityPrefix?.let { prefix ->
-            if (prefix.length > 2)
+        _uiState.value.cityPrefix?.let { uiPrefix ->
+            if (uiPrefix.length > 2) {
 
                 cityNameSearchJob?.cancel()
                 cityNameSearchJob = viewModelScope.launch {
 
-                val cityResponse = cityApiService.getCitiesByName(prefix)
-                    when(cityResponse) {
+                    when (val cityApiResult = cityApiService.getCitiesByName(uiPrefix)) {
                         is ServiceResult.Success -> {
                             _uiState.update {
-                                it.copy(cities = cityResponse.data)
+                                it.copy(cities = cityApiResult.data.cities)
                             }
                         }
                         is ServiceResult.Error -> {
                             //Log.d("debug", "api error: ${cityResponse.errors.toString()}")
                         }
                     }
+                }
             }
         }
     }
+
 }

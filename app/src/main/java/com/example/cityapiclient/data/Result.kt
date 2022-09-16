@@ -6,16 +6,13 @@ import kotlinx.serialization.Serializable
  * A generic class that holds a value or error.
  * @param <T>
  */
-sealed class ServiceResult<out R> {
-
+sealed class ServiceResult<out T> {
     data class Success<out T>(val data: T) : ServiceResult<T>()
-    @Serializable
     data class Error(val code: String, val message: String) : ServiceResult<Nothing>()
-
 }
 
 /**
- * `true` if [Result] is of type [Success] & holds non-null [Success.data].
+ * `true` if [ServiceResult] is [ServiceResult.Success]
  */
 val ServiceResult<*>.succeeded
-    get() = this is ServiceResult.Error
+    get() = this is ServiceResult.Success

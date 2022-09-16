@@ -1,5 +1,10 @@
 package com.example.cityapiclient.util
 
+import android.app.Service
+import androidx.compose.foundation.interaction.HoverInteraction
+import com.example.cityapiclient.data.ServiceResult
+import com.example.cityapiclient.data.remote.CityApiResponse
+import com.example.cityapiclient.data.remote.ResponseErrors
 import io.ktor.client.plugins.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -14,23 +19,27 @@ inline fun <reified T> String.toErrorResponse(): T {
     return Json.decodeFromString(errorResponse)
 }
 
-/*
-fun Exception.toErrorResult(): Result.Error {
+/**
+ * Try to return the error that came back from the ktor API;
+ * otherwise, just return a generic network error.
+ */
+fun Exception.toCityApiError(): ServiceResult.Error {
 
-    val code = "API_UNKNOWN"
+    val code = "API_ERROR"
     val message = message ?: "Network error."
 
-
-*/
-/*    try {
-        when(this) {
+    return try {
+        when (this) {
             is ServerResponseException, is ClientRequestException -> {
-                val errorResponse = this.message?.substringAfter("Text: \"").dropLast(1)
-                return Json.decodeFromString(errorResponse)
+                val cityApiResponse: CityApiResponse = message.toErrorResponse()
+                val errors = cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
+                ServiceResult.Error(errors.code, errors.message)
+            }
+            else -> {
+                ServiceResult.Error(code, message)
             }
         }
-    }*//*
-
-
-
-}*/
+    } catch (parseError: Exception) {
+        ServiceResult.Error(code, message)
+    }
+}

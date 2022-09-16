@@ -4,6 +4,6 @@ import com.example.cityapiclient.data.ServiceResult
 
 interface ICityApiService {
 
-    suspend fun getCitiesByName(prefix: String): ServiceResult<List<CityDto>>
+    suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse>
 
 }

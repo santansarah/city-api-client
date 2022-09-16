@@ -4,8 +4,8 @@ import com.example.cityapiclient.data.ServiceResult
 
 class CityApiMockService(
 ): ICityApiService {
-    override suspend fun getCitiesByName(prefix: String): ServiceResult<List<CityDto>> {
-        return ServiceResult.Success(cities)
+    override suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse> {
+        return ServiceResult.Success(CityApiResponse(cities = cities))
     }
 }
 

@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -58,7 +62,7 @@ private fun CityNameSearch(
         onPrefixChanged
     )
     ShowCityNames(
-       cities = cities
+        cities = cities
     )
 }
 
@@ -73,11 +77,18 @@ fun EnterCityName(
     ) {
 
         Spacer(modifier = Modifier.height(10.dp))
-        TextField(
+        OutlinedTextField(
             value = prefix ?: "",
             onValueChange = {
                 onPrefixChanged(it)
             },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search Cities"
+                )
+            },
+            trailingIcon = { if (!prefix.isNullOrBlank()) TrailingIcon(onPrefixChanged) else null },
             placeholder = {
                 Text(
                     text = "Enter City Name...",
@@ -94,12 +105,27 @@ fun EnterCityName(
                     )
                 ),*/
             textStyle = MaterialTheme.typography.titleLarge,
-            colors = TextFieldDefaults.textFieldColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer)
+            //colors = TextFieldDefaults.textFieldColors(
+            //    containerColor = MaterialTheme.colorScheme.primaryContainer)
         )
         Spacer(modifier = Modifier.height(15.dp))
     }
 }
+
+@Composable
+fun TrailingIcon(
+    resetField: (String) -> Unit
+) {
+    IconButton(
+        onClick = { resetField("") }
+    ) {
+        Icon(
+            Icons.Default.Clear,
+            contentDescription = "Clear",
+        )
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,7 +200,8 @@ fun ShowCityNames(
 
                     ) {
                         Box(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 5.dp),
                         ) {
                             Row(
@@ -193,8 +220,11 @@ fun ShowCityNames(
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
-                                ArrowIcon(Modifier.padding(end = 4.dp)
-                                    .align(Alignment.CenterEnd),"City Details")
+                            ArrowIcon(
+                                Modifier
+                                    .padding(end = 4.dp)
+                                    .align(Alignment.CenterEnd), "City Details"
+                            )
 
                         }
 
@@ -218,7 +248,8 @@ fun PreviewHome() {
         lateinit var cities: List<CityDto>
 
         runBlocking {
-            cities = (CityApiMockService().getCitiesByName("pho") as ServiceResult.Success).data
+            cities =
+                (CityApiMockService().getCitiesByName("pho") as ServiceResult.Success).data.cities
         }
 
         Surface() {
@@ -226,7 +257,7 @@ fun PreviewHome() {
                 modifier = Modifier.fillMaxSize()
             ) {
                 EnterCityName(
-                    prefix="pho",
+                    prefix = "pho",
                     onPrefixChanged = { }
                 )
                 ShowCityNames(cities = cities)

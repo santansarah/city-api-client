@@ -5,7 +5,10 @@ import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.ServiceResult.*
 import com.example.cityapiclient.util.AuthenticationException
 import com.example.cityapiclient.util.ErrorCode
+import com.example.cityapiclient.util.toCityApiError
 import com.example.cityapiclient.util.toErrorResponse
+import dagger.hilt.android.scopes.ActivityScoped
+import dagger.hilt.android.scopes.ServiceScoped
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -24,31 +27,28 @@ class CityApiService @Inject constructor(
         private const val API_KEY = "Pr67HTHS4VIP1eN"
     }
 
-    override suspend fun getCitiesByName(prefix: String): ServiceResult<List<CityDto>> {
+    override suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse> {
+
+        Log.d("debug", "httpclient: ${client.toString()}")
+
         return try {
-            val cityApiResponse: List<CityDto> = client.get(CityApiDefaults.CITIES) {
-                headers {
-                    append("x-api-key", CityApiDefaults.API_KEY)
-                }
-                url {
-                    parameters.append("name", prefix)
-                }
-            }.body()
+            val cityApiResponse: CityApiResponse = client.get(CityApiDefaults.CITIES) {
+                    headers {
+                        append("x-api-key", CityApiDefaults.API_KEY)
+                    }
+                    url {
+                        parameters.append("name", prefix)
+                    }
+                }.body()
+
             Success(cityApiResponse)
+
         } catch (apiError: Exception) {
 
-            Log.d("debug", apiError.message ?: "unknown")
+            val parsedError = apiError.toCityApiError()
+            Log.d("debug", parsedError.toString())
+            parsedError
 
-            Error("", "")
-            /*apiError.message?.let {
-                when (apiError) {
-                    is AuthenticationException ->
-                        it.toErrorResponse()
-                    else -> {
-                        CityApiResponse(errors = listOf(unknownError))
-                    }
-                }
-            } ?: CityApiResponse(errors = listOf(unknownError))*/
         }
     }
 }

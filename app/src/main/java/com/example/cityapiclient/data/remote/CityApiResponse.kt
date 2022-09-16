@@ -6,7 +6,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CityApiResponse(
     val userWithApp: UserWithApp = UserWithApp(),
-    val cities: List<CityDto> = emptyList()
+    val cities: List<CityDto> = emptyList(),
+    val errors: List<ResponseErrors> = emptyList()
 )
+
+@kotlinx.serialization.Serializable
+data class ResponseErrors(val code: String, val message: String)
+
 
 
