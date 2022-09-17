@@ -48,14 +48,14 @@ val AppTypography = Typography(
         letterSpacing = 0.sp,
     ),
     headlineMedium = TextStyle(
-        fontFamily = fontFamily,
+        fontFamily = titleFamily,
         fontWeight = FontWeight.Light,
-        fontSize = 28.sp,
-        lineHeight = 36.sp,
+        fontSize = 26.sp,
+        lineHeight = 34.sp,
         letterSpacing = 0.sp,
     ),
     headlineSmall = TextStyle(
-        fontFamily = fontFamily,
+        fontFamily = titleFamily,
         fontWeight = FontWeight.W400,
         fontSize = 24.sp,
         lineHeight = 32.sp,
