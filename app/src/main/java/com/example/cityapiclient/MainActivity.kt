@@ -9,6 +9,7 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import com.example.cityapiclient.data.local.UserPreferencesManager
 import com.example.cityapiclient.di.ApiModules
 import com.example.cityapiclient.presentation.AppRoot
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.*
 import kotlinx.coroutines.runBlocking
@@ -32,9 +33,11 @@ class MainActivity : ComponentActivity() {
 
             // uncomment this to test onboarding screens.
             /*runBlocking {
-                userPreferencesManager.setLastOnboardingScreen(0)
-            }*/
+                userPreferencesManager.clear()
 
+                //userPreferencesManager.setLastOnboardingScreen(0)
+            }
+*/
             /**
              * Call my container here, which provides the background for all layouts
              * and serves the content, depending on the current screen size.

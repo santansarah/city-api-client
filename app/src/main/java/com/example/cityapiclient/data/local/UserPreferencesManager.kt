@@ -2,10 +2,7 @@ package com.example.cityapiclient.data.local
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -15,7 +12,8 @@ import javax.inject.Inject
 
 data class UserPreferences(
     val lastOnboardingScreen: Int = 0,
-    val isOnboardingComplete: Boolean = false
+    val isOnboardingComplete: Boolean = false,
+    val userId: Int = 0
 )
 
 class UserPreferencesManager @Inject constructor(
@@ -24,7 +22,14 @@ class UserPreferencesManager @Inject constructor(
     private val TAG: String = "UserPreferencesManager"
 
     private object PreferencesKeys {
-        val LAST_ONBOARDING_SCREEN = stringPreferencesKey("last_onboarding")
+        val LAST_ONBOARDING_SCREEN = intPreferencesKey("last_onboarding")
+        val USER_ID = intPreferencesKey("userId")
+    }
+
+    suspend fun clear() {
+        dataStore.edit {
+            it.clear()
+        }
     }
 
     /**
@@ -57,7 +62,7 @@ class UserPreferencesManager @Inject constructor(
         // updateData handles data transactionally, ensuring that if the key is updated at the same
         // time from another thread, we won't have conflicts
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] = viewedScreen.toString()
+            preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] = viewedScreen
         }
     }
 
@@ -65,9 +70,10 @@ class UserPreferencesManager @Inject constructor(
      * Get the preferences key, then map it to the data class.
      */
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
-        val lastScreen = (preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: "0").toInt()
+        val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: 0
         val isOnBoardingComplete: Boolean = (lastScreen >= 2)
-        return UserPreferences(lastScreen, isOnBoardingComplete)
+        val userId = preferences[PreferencesKeys.USER_ID] ?: 0
+        return UserPreferences(lastScreen, isOnBoardingComplete, userId)
     }
 
 }

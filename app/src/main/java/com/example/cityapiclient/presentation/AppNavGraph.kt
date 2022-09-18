@@ -7,9 +7,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.cityapiclient.presentation.AppDestinations
+import com.example.cityapiclient.presentation.AppScreens
 import com.example.cityapiclient.presentation.home.HomeRoute
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.onboarding.OnboardingRoute
+import com.example.cityapiclient.presentation.signin.SignInRoute
 
 @Composable
 fun AppNavGraph(
@@ -37,6 +39,9 @@ fun AppNavGraph(
             OnboardingRoute(
                 appLayoutMode = appLayoutMode
             )
+        }
+        composable(AppDestinations.SIGNIN_ROUTE) {
+            SignInRoute()
         }
         composable(AppDestinations.HOME_ROUTE) {
             HomeRoute()
