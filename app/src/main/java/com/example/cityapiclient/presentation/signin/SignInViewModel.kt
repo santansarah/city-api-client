@@ -6,6 +6,8 @@ import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cityapiclient.data.ServiceResult
+import com.example.cityapiclient.data.local.UserPreferencesManager
 import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.data.remote.GoogleUserModel
@@ -22,17 +24,18 @@ import javax.inject.Inject
 
 data class SignInUiState(
     val isSignedIn: Boolean = false,
-    val googleUserModel: GoogleUserModel = GoogleUserModel()
+    val googleUserModel: GoogleUserModel = GoogleUserModel(),
+    val userId: Int = 0
 )
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val cityApiService: CityApiService,
     val googleSignInService: GoogleSignInService,
+    private val userPreferencesManager: UserPreferencesManager
 ) : ViewModel() {
 
 //    private val expired: Boolean = savedStateHandle[AppDestinationsArgs.IS_EXPIRED]!!
-
 
     private val _uiState = MutableStateFlow(
         SignInUiState()
@@ -44,18 +47,37 @@ class SignInViewModel @Inject constructor(
             _uiState.value
         )
 
+    fun signOut() {
+        googleSignInService.signOut()
+    }
+
     fun processSignIn(googleSignInAccount: GoogleSignInAccount) {
 
         Log.d("debug", googleSignInAccount.displayName ?: "no name")
 
         viewModelScope.launch {
             _uiState.update {
-                it.copy(googleUserModel = GoogleUserModel(
-                    email = googleSignInAccount.email ?: "",
-                    name = googleSignInAccount.displayName ?: "",
-                ))
+                it.copy(
+                    googleUserModel = GoogleUserModel(
+                        email = googleSignInAccount.email ?: "",
+                        name = googleSignInAccount.displayName ?: "",
+                    )
+                )
             }
 
+            when (val insertResult =
+                cityApiService.insertUser(_uiState.value.googleUserModel.email)) {
+                is ServiceResult.Success -> {
+                    userPreferencesManager.setUserId(insertResult.data.user.userId)
+                    _uiState.update {
+                        it.copy(
+                            isSignedIn = true,
+                            userId = insertResult.data.user.userId
+                        )
+                    }
+                }
+                is ServiceResult.Error -> Log.d("debug", "user insert failed.")
+            }
 
         }
 

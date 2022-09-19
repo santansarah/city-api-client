@@ -4,6 +4,23 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class NewUser(
+    val email: String = ""
+)
+
+@Serializable
+data class UserWithApp(
+    val userId: Int = 0,
+    val email: String = "",
+    val userCreateDate: String = "",
+    val userAppId: Int = 0,
+    val appName: String = "",
+    val appType: AppType = AppType.NOTSET,
+    val apiKey: String = "",
+    val appCreateDate: String = ""
+)
+
+@Serializable
 data class User(
     val userId: Int = 0,
     val email: String = "",
@@ -21,17 +38,7 @@ data class UserApp(
     val appCreateDate: String = ""
 )
 
-@Serializable
-data class UserWithApp(
-    val userId: Int = 0,
-    val email: String = "",
-    val userCreateDate: String = "",
-    val userAppId: Int = 0,
-    val appName: String = "",
-    val appType: AppType = AppType.NOTSET,
-    val apiKey: String = "",
-    val appCreateDate: String = ""
-)
+
 
 @Serializable
 enum class AppType(val value: Int) {

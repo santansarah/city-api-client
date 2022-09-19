@@ -36,7 +36,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignInRoute(
     modifier: Modifier = Modifier,
-    viewModel: SignInViewModel = hiltViewModel()
+    viewModel: SignInViewModel = hiltViewModel(),
+    onSignedIn: (userId: Int) -> Unit
 ) {
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
@@ -55,6 +56,14 @@ fun SignInRoute(
                 Log.d("debug", "Google sign in failed")
             }
         }
+
+    // Check if the Google Sign In is successful and navigate to home
+    LaunchedEffect(uiState.isSignedIn) {
+        if (uiState.isSignedIn) {
+            Log.d("debug", "navigating to home")
+            onSignedIn(uiState.userId)
+        }
+    }
 
     Scaffold(
         containerColor = Color.Transparent,
@@ -109,6 +118,10 @@ fun SignInRoute(
                     .padding(bottom = 110.dp),
                 textAlign = TextAlign.Center
             )
+
+            Button(onClick = { viewModel.signOut() }) {
+                Text(text = "Sign out")
+            }
 
             Card(
                 shape = RoundedCornerShape(10.dp),
@@ -187,7 +200,7 @@ fun SignInRoute(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "City Name Search",
                                 modifier = Modifier.size(32.dp)
-                                )
+                            )
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()

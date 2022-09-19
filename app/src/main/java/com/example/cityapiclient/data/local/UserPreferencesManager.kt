@@ -11,6 +11,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 data class UserPreferences(
+    val isLoading: Boolean = true,
     val lastOnboardingScreen: Int = 0,
     val isOnboardingComplete: Boolean = false,
     val userId: Int = 0
@@ -67,13 +68,22 @@ class UserPreferencesManager @Inject constructor(
     }
 
     /**
+     * Sets the userId that we get from the Ktor API (on button click).
+     */
+    suspend fun setUserId(userId: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USER_ID] = userId
+        }
+    }
+
+    /**
      * Get the preferences key, then map it to the data class.
      */
     private fun mapUserPreferences(preferences: Preferences): UserPreferences {
         val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: 0
         val isOnBoardingComplete: Boolean = (lastScreen >= 2)
         val userId = preferences[PreferencesKeys.USER_ID] ?: 0
-        return UserPreferences(lastScreen, isOnBoardingComplete, userId)
+        return UserPreferences(false, lastScreen, isOnBoardingComplete, userId)
     }
 
 }

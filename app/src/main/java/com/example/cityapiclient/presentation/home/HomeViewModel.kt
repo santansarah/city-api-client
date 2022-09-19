@@ -1,11 +1,13 @@
 package com.example.cityapiclient.presentation.home
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.data.remote.CityDto
+import com.example.cityapiclient.presentation.AppDestinationsArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -20,9 +22,11 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private var cityApiService: CityApiService
+    private var cityApiService: CityApiService,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    val userId: Int = savedStateHandle[AppDestinationsArgs.USER_ID]!!
 
     private val _uiState = MutableStateFlow(
         HomeUiState()

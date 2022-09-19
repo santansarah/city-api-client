@@ -1,12 +1,18 @@
-package com.example.cityapiclient
+package com.example.cityapiclient.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.cityapiclient.presentation.AppDestinations
+import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
+import com.example.cityapiclient.presentation.AppDestinationsArgs.USER_ID
+import com.example.cityapiclient.presentation.AppNavigationActions
 import com.example.cityapiclient.presentation.AppScreens
 import com.example.cityapiclient.presentation.home.HomeRoute
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
@@ -20,13 +26,18 @@ fun AppNavGraph(
     appLayoutMode: AppLayoutMode,
     //userPreferencesManager: UserPreferencesManager,
     //coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    startDestination: String
+    startDestination: String,
+    userId: Int = 0
 ) {
 
     //val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     //val currentRoute = currentNavBackStackEntry?.destination?.route ?: startDestination
 
     //Log.d("debug", "route: $startDestination")
+
+    val navActions: AppNavigationActions = remember(navController) {
+        AppNavigationActions(navController)
+    }
 
     NavHost(
         navController = navController,
@@ -41,9 +52,16 @@ fun AppNavGraph(
             )
         }
         composable(AppDestinations.SIGNIN_ROUTE) {
-            SignInRoute()
+            SignInRoute(
+                onSignedIn = { userId: Int ->
+                    navActions.navigateToHome(userId)
+                },
+            )
         }
-        composable(AppDestinations.HOME_ROUTE) {
+        composable(
+            HOME_ROUTE,
+            arguments = listOf(navArgument(USER_ID) { type = NavType.IntType; defaultValue = userId }),
+        ) {
             HomeRoute()
         }
     }

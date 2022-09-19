@@ -3,6 +3,7 @@ package com.example.cityapiclient.domain
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContract
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -23,5 +24,9 @@ class GoogleSignInService @Inject constructor(
         }
     }
 
+    fun signOut() {
+        googleSignInClient.signOut()
+        Log.d("debug", "signed out of google.")
+    }
 
 }

@@ -7,6 +7,10 @@ class CityApiMockService(
     override suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse> {
         return ServiceResult.Success(CityApiResponse(cities = cities))
     }
+
+    override suspend fun insertUser(email: String): ServiceResult<UserResponse> {
+        TODO("Not yet implemented")
+    }
 }
 
 val cities = listOf<CityDto>(

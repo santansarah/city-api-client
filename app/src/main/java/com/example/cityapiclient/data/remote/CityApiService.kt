@@ -2,17 +2,12 @@ package com.example.cityapiclient.data.remote
 
 import android.util.Log
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.ServiceResult.*
-import com.example.cityapiclient.util.AuthenticationException
-import com.example.cityapiclient.util.ErrorCode
+import com.example.cityapiclient.data.ServiceResult.Success
 import com.example.cityapiclient.util.toCityApiError
-import com.example.cityapiclient.util.toErrorResponse
-import dagger.hilt.android.scopes.ActivityScoped
-import dagger.hilt.android.scopes.ServiceScoped
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.plugins.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import javax.inject.Inject
 
 class CityApiService @Inject constructor(
@@ -23,26 +18,45 @@ class CityApiService @Inject constructor(
 
         private const val BASE_URL = "http://10.0.2.2:8080"
         const val CITIES = "$BASE_URL/cities"
+        const val INSERT_USER = "$BASE_URL/users/create"
 
         private const val API_KEY = "Pr67HTHS4VIP1eN"
     }
 
     override suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse> {
 
-        Log.d("debug", "httpclient: ${client.toString()}")
+        Log.d("debug", "httpclient: $client")
 
         return try {
-            val cityApiResponse: CityApiResponse = client.get(CityApiDefaults.CITIES) {
-                    headers {
-                        append("x-api-key", CityApiDefaults.API_KEY)
-                    }
-                    url {
-                        parameters.append("name", prefix)
-                    }
-                }.body()
+            val cityApiResponse: CityApiResponse = client.get(CITIES) {
+                headers {
+                    append("x-api-key", API_KEY)
+                }
+                url {
+                    parameters.append("name", prefix)
+                }
+            }.body()
 
             Success(cityApiResponse)
 
+        } catch (apiError: Exception) {
+
+            val parsedError = apiError.toCityApiError()
+            Log.d("debug", parsedError.toString())
+            parsedError
+
+        }
+    }
+
+    override suspend fun insertUser(email: String): ServiceResult<UserResponse> {
+
+        return try {
+            val userResponse: UserResponse = client.post(INSERT_USER)
+            {
+                contentType(ContentType.Application.Json)
+                setBody(NewUser(email))
+            }.body()
+            Success(userResponse)
         } catch (apiError: Exception) {
 
             val parsedError = apiError.toCityApiError()

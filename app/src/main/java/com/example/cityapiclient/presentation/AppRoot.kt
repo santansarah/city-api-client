@@ -12,10 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import com.example.cityapiclient.AppNavGraph
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.UserPreferences
 import com.example.cityapiclient.data.local.UserPreferencesManager
+import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
+import com.example.cityapiclient.presentation.AppScreens.HOME_SCREEN
 import com.example.cityapiclient.presentation.AppScreens.SIGNIN_SCREEN
 import com.example.cityapiclient.presentation.components.backgroundGradient
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
@@ -23,6 +26,7 @@ import com.example.cityapiclient.presentation.layouts.getWindowLayoutType
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun AppRoot(
     windowSize: WindowSizeClass,
@@ -33,37 +37,6 @@ fun AppRoot(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-
-            /**
-             * Get updates for rotations and collect UserPreferences
-             */
-            val appLayoutMode: AppLayoutMode = getWindowLayoutType(windowSize = windowSize)
-            val appPreferencesState = userPreferencesManager.userPreferencesFlow.collectAsState(
-                initial = UserPreferences()
-            ).value
-
-            /**
-             * Each Onboarding button updates the last screen viewed. Once it hit's 2,
-             * isComplete = true. This means that I don't need to pass a navigate to HOME
-             * event to the Onboarding screens.
-             */
-            val isSignedIn: Boolean = false
-            val startDestination = if (!appPreferencesState.isOnboardingComplete)
-                AppDestinations.ONBOARDING_ROUTE
-            else {
-                if (appPreferencesState.userId > 0) {
-                    // they've signed in before
-                    val googleAccount = GoogleSignIn.getLastSignedInAccount(LocalContext.current)
-                    if ((googleAccount == null) || googleAccount.isExpired)
-                        AppScreens.SIGNIN_SCREEN
-                    else
-                        AppDestinations.HOME_ROUTE
-                }
-                else
-                    AppScreens.SIGNIN_SCREEN
-            }
-
-            Log.d("debug", "approot startdest: $startDestination")
 
             /**
              * This is my background for all layouts, from COMPACT -> DESKTOP.
@@ -81,10 +54,45 @@ fun AppRoot(
                     contentScale = ContentScale.FillBounds,
                 )
 
-                AppNavGraph(
-                    appLayoutMode = appLayoutMode,
-                    startDestination = startDestination
-                )
+                /**
+                 * Get updates for rotations and collect UserPreferences
+                 */
+                val appLayoutMode: AppLayoutMode = getWindowLayoutType(windowSize = windowSize)
+                val appPreferencesState =
+                    userPreferencesManager.userPreferencesFlow.collectAsStateWithLifecycle(
+                        initialValue = UserPreferences()
+                    ).value
+
+                /**
+                 * Each Onboarding button updates the last screen viewed. Once it hit's 2,
+                 * isComplete = true. This means that I don't need to pass a navigate to HOME
+                 * event to the Onboarding screens.
+                 */
+                val startDestination = if (!appPreferencesState.isOnboardingComplete)
+                    AppDestinations.ONBOARDING_ROUTE
+                else {
+                    if (appPreferencesState.userId > 0) {
+                        // they've signed in before
+                        Log.d("debug", "user exists: ${appPreferencesState.userId}")
+                        val googleAccount =
+                            GoogleSignIn.getLastSignedInAccount(LocalContext.current)
+                        if ((googleAccount == null) || googleAccount.isExpired)
+                            SIGNIN_SCREEN
+                        else
+                            HOME_ROUTE
+                    } else
+                        SIGNIN_SCREEN
+                }
+
+                Log.d("debug", "approot startdest: $startDestination")
+
+                if (!appPreferencesState.isLoading) {
+                    AppNavGraph(
+                        appLayoutMode = appLayoutMode,
+                        startDestination = startDestination,
+                        userId = appPreferencesState.userId
+                    )
+                }
             }
         }
     }

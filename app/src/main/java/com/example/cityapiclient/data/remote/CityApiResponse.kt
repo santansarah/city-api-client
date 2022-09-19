@@ -10,6 +10,12 @@ data class CityApiResponse(
     val errors: List<ResponseErrors> = emptyList()
 )
 
+@Serializable
+data class UserResponse(
+    val user: User,
+    val errors: List<ResponseErrors> = emptyList()
+)
+
 @kotlinx.serialization.Serializable
 data class ResponseErrors(val code: String, val message: String)
 

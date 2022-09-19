@@ -36,8 +36,8 @@ class MainActivity : ComponentActivity() {
                 userPreferencesManager.clear()
 
                 //userPreferencesManager.setLastOnboardingScreen(0)
-            }
-*/
+            }*/
+
             /**
              * Call my container here, which provides the background for all layouts
              * and serves the content, depending on the current screen size.
