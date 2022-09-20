@@ -53,7 +53,7 @@ fun AppNavGraph(
         }
         composable(AppDestinations.SIGNIN_ROUTE) {
             SignInRoute(
-                onSignedIn = { userId: Int ->
+                onSignedIn = { userId ->
                     navActions.navigateToHome(userId)
                 },
             )

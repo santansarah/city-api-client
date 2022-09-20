@@ -15,6 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,7 +39,7 @@ import kotlinx.coroutines.launch
 fun SignInRoute(
     modifier: Modifier = Modifier,
     viewModel: SignInViewModel = hiltViewModel(),
-    onSignedIn: (userId: Int) -> Unit
+    onSignedIn: (Int) -> Unit
 ) {
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
@@ -163,24 +165,18 @@ fun SignInRoute(
                             Log.d("debug", "launching signin....")
                             authResultLauncher.launch(1)
                         }) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Image(
+                           Image(
                                 painter = painterResource(id = R.drawable.google_icon),
                                 contentDescription = "Sign in with Google",
                                 modifier = Modifier
-                                    .size(28.dp)
+                                    .padding(end = 18.dp)
                             )
                             Text(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.Center),
+                                    .fillMaxWidth(),
                                 text = "Sign in with Google",
                                 style = MaterialTheme.typography.titleMedium,
-                                textAlign = TextAlign.Center
                             )
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -194,28 +190,26 @@ fun SignInRoute(
                         onClick = {
                             Log.d("debug", "city name clicked...")
                         }) {
-                        Box(modifier = Modifier.fillMaxWidth())
-                        {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "City Name Search",
-                                modifier = Modifier.size(32.dp)
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.Center),
-                                text = "City Name Search",
-                                style = MaterialTheme.typography.titleMedium,
-                                textAlign = TextAlign.Center
-                            )
+                        Image(
+                            painter = painterResource(id = R.drawable.search_cities),
+                            contentDescription = "City Name Search",
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimary),
+                            modifier = Modifier
+                                .padding(end = 18.dp)
+                        )
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            text = "City Name Search",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
                         }
-                    }
                 }
             }
         }
 
     }
+
 
 }
 

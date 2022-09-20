@@ -31,7 +31,6 @@ object AppDestinations {
 /**
  * Models the navigation actions in the app.
  */
-
 class AppNavigationActions(private val navController: NavHostController) {
     fun navigateToSignIn(expired: Boolean) {
         navController.navigate("$SIGNIN_SCREEN/$expired")
