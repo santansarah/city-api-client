@@ -9,9 +9,11 @@ val textFieldContainer = Color(0xBF171C1C)
 
 // text
 val primaryTextColor = Color(0xFFbac5c5)
-val placeHolderText = Color(0xFF3a4545)
+val placeHolderText = Color(0xFF404040)
 val yellowText = Color(0xFFffff00)
 val orangeText = Color(0xFFff8400) //0xFFff8300
+
+val buttonIcon = Color(0xFF232a2a)
 
 // this is the color of my status bar too
 val md_theme_dark_primary = mainBackground
@@ -51,5 +53,5 @@ val md_theme_dark_onSurfaceVariant = primaryTextColor
 val md_theme_dark_outline = placeHolderText
 val md_theme_dark_inverseOnSurface = Color(0xFF1b1c18)
 val md_theme_dark_inverseSurface = Color(0xFFe4e3db)
-val md_theme_dark_inversePrimary = Color(0xFF476800)
+val md_theme_dark_inversePrimary = buttonIcon
 val md_theme_dark_shadow = Color(0xFF000000)

@@ -9,15 +9,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinationsArgs.USER_ID
-import com.example.cityapiclient.presentation.AppNavigationActions
-import com.example.cityapiclient.presentation.AppScreens
 import com.example.cityapiclient.presentation.home.HomeRoute
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.onboarding.OnboardingRoute
-import com.example.cityapiclient.presentation.signin.SignInRoute
+import com.example.cityapiclient.presentation.account.AccountRoute
 
 @Composable
 fun AppNavGraph(
@@ -51,8 +48,9 @@ fun AppNavGraph(
                 appLayoutMode = appLayoutMode
             )
         }
-        composable(AppDestinations.SIGNIN_ROUTE) {
-            SignInRoute(
+        composable(AppDestinations.ACCOUNT_ROUTE) {
+            AccountRoute(
+                appLayoutMode = appLayoutMode,
                 onSignedIn = { userId ->
                     navActions.navigateToHome(userId)
                 },

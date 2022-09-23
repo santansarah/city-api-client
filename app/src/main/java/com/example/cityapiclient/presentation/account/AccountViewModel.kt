@@ -1,35 +1,28 @@
-package com.example.cityapiclient.presentation.signin
+package com.example.cityapiclient.presentation.account
 
-import android.content.Intent
 import android.util.Log
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.local.UserPreferencesManager
 import com.example.cityapiclient.data.remote.CityApiService
-import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.data.remote.GoogleUserModel
 import com.example.cityapiclient.domain.GoogleSignInService
-import com.example.cityapiclient.presentation.AppDestinationsArgs
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-data class SignInUiState(
+data class AccountUiState(
     val isSignedIn: Boolean = false,
     val googleUserModel: GoogleUserModel = GoogleUserModel(),
     val userId: Int = 0
 )
 
 @HiltViewModel
-class SignInViewModel @Inject constructor(
+class AccountViewModel @Inject constructor(
     private val cityApiService: CityApiService,
     val googleSignInService: GoogleSignInService,
     private val userPreferencesManager: UserPreferencesManager
@@ -38,7 +31,7 @@ class SignInViewModel @Inject constructor(
 //    private val expired: Boolean = savedStateHandle[AppDestinationsArgs.IS_EXPIRED]!!
 
     private val _uiState = MutableStateFlow(
-        SignInUiState()
+        AccountUiState()
     )
     val uiState = _uiState
         .stateIn(

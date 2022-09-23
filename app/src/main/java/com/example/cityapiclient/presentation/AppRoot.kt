@@ -18,8 +18,7 @@ import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.UserPreferences
 import com.example.cityapiclient.data.local.UserPreferencesManager
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
-import com.example.cityapiclient.presentation.AppScreens.HOME_SCREEN
-import com.example.cityapiclient.presentation.AppScreens.SIGNIN_SCREEN
+import com.example.cityapiclient.presentation.AppScreens.ACCOUNT_SCREEN
 import com.example.cityapiclient.presentation.components.backgroundGradient
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.getWindowLayoutType
@@ -77,11 +76,11 @@ fun AppRoot(
                         val googleAccount =
                             GoogleSignIn.getLastSignedInAccount(LocalContext.current)
                         if ((googleAccount == null) || googleAccount.isExpired)
-                            SIGNIN_SCREEN
+                            ACCOUNT_SCREEN
                         else
                             HOME_ROUTE
                     } else
-                        SIGNIN_SCREEN
+                        ACCOUNT_SCREEN
                 }
 
                 Log.d("debug", "approot startdest: $startDestination")
