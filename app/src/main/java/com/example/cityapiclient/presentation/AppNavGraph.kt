@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinationsArgs.USER_ID
 import com.example.cityapiclient.presentation.home.HomeRoute
@@ -21,10 +22,9 @@ fun AppNavGraph(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     appLayoutMode: AppLayoutMode,
-    //userPreferencesManager: UserPreferencesManager,
-    //coroutineScope: CoroutineScope = rememberCoroutineScope(),
     startDestination: String,
-    userId: Int = 0
+    userId: Int = 0,
+    signInObserver: SignInObserver
 ) {
 
     //val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
@@ -48,17 +48,27 @@ fun AppNavGraph(
                 appLayoutMode = appLayoutMode
             )
         }
-        composable(AppDestinations.ACCOUNT_ROUTE) {
+        composable(AppDestinations.ACCOUNT_ROUTE,
+            arguments = listOf(navArgument(USER_ID) {
+                type = NavType.IntType;
+                defaultValue = userId
+            })
+        ) {
             AccountRoute(
                 appLayoutMode = appLayoutMode,
-                onSignedIn = { userId ->
+                onSignInSuccess = { userId ->
                     navActions.navigateToHome(userId)
                 },
+                //signInObserver = signInObserver,
+                onSignedIn = signInObserver::signIn
             )
         }
         composable(
             HOME_ROUTE,
-            arguments = listOf(navArgument(USER_ID) { type = NavType.IntType; defaultValue = userId }),
+            arguments = listOf(navArgument(USER_ID) {
+                type = NavType.IntType;
+                defaultValue = userId
+            }),
         ) {
             HomeRoute()
         }

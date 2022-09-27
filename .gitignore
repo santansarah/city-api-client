@@ -16,3 +16,5 @@ local.properties
 /.idea/vcs.xml
 /.idea/git_toolbox_prj.xml
 /.idea/deploymentTargetDropDown.xml
+/app.properties
+/app/src/main/res/values/secrets.xml

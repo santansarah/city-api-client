@@ -1,8 +1,6 @@
 package com.example.cityapiclient.presentation.account
 
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
@@ -15,55 +13,60 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.R
+import com.example.cityapiclient.data.local.AuthenticatedUser
+import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
+import kotlinx.coroutines.launch
+import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable
 fun AccountRoute(
-    modifier: Modifier = Modifier,
     viewModel: AccountViewModel = hiltViewModel(),
     appLayoutMode: AppLayoutMode,
-    onSignedIn: (Int) -> Unit
+    onSignInSuccess: (Int) -> Unit,
+    onSignedIn: suspend () -> Unit = {},
+    onSignOut: () -> Unit = {},
+    onRevoke: () -> Unit = {}
 ) {
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
-    val authResultLauncher =
-        rememberLauncherForActivityResult(contract = viewModel.googleSignInService) { task ->
-            try {
-                Log.d("debug", "getting task...")
-                val account = task?.getResult(ApiException::class.java)
-                if (account == null) {
-                    Log.d("debug", "Google sign in failed")
-                } else {
-                    viewModel.processSignIn(account)
-                }
-            } catch (e: ApiException) {
-                Log.d("debug", "Google sign in failed")
+    val scope = rememberCoroutineScope()
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {
+            scope.launch {
+                onSignedIn()
             }
-        }
+        }) {
+        Text(text = "Sign in Test")
+    }
+
 
     // Check if the Google Sign In is successful and navigate to home
-    LaunchedEffect(uiState.isSignedIn) {
-        if (uiState.isSignedIn) {
+    LaunchedEffect(uiState.newSignIn) {
+        if (uiState.newSignIn) {
             Log.d("debug", "navigating to home")
-            onSignedIn(uiState.userId)
+            onSignInSuccess(uiState.userId)
         }
     }
 
-    val launchSignInIntent = {
-        Log.d("debug", "launching signin....")
-        authResultLauncher.launch(1)
-    }
+    val title = if (viewModel.uiState.value.userId > 0)
+        "Your Account"
+    else
+        "Get Started"
 
+/*
     CompactLayoutWithScaffold(mainContent = {
-        AccountContent(appLayoutMode, viewModel::signOut, launchSignInIntent)
-    }, title = "Get Started")
+        AccountContent(
+            appLayoutMode, viewModel::signOut,
+            viewModel.uiState.value.userId,
+            viewModel.uiState.value.currentUser
+        )
+    }, title = title)
+*/
 
 }
 
@@ -71,13 +74,10 @@ fun AccountRoute(
 private fun AccountContent(
     appLayoutMode: AppLayoutMode,
     signOut: () -> Unit,
-    launchSignInIntent: () -> Unit
+    userId: Int,
+    currentUser: AuthenticatedUser
 ) {
-    AccountHeading(appLayoutMode)
-
-    Button(onClick = signOut) {
-        Text(text = "Sign out")
-    }
+    AccountHeading(appLayoutMode, userId, currentUser)
 
     val buttonModifier = Modifier.fillMaxWidth(.95f)
 
@@ -87,11 +87,19 @@ private fun AccountContent(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SignInButton(launchSignInIntent, Modifier.weight(.45f))
+                if (userId > 0 && currentUser is AuthenticatedUser.SignedInUser)
+                    SignOutButton(onSignOut = signOut, modifier = Modifier.weight(.45f))
+                else
+                    SignInButton({  }, Modifier.weight(.45f))
+
                 SearchButton(Modifier.weight(.45f))
             }
         } else {
-            SignInButton(launchSignInIntent, buttonModifier)
+            /*if (userId > 0 && currentUser is AuthenticatedUser.SignedInUser)
+                SignOutButton(onSignOut = signOut, modifier = buttonModifier)
+            else*/
+            SignInButton({  }, buttonModifier)
+
             Spacer(modifier = Modifier.height(20.dp))
             SearchButton(buttonModifier)
         }
@@ -125,15 +133,37 @@ private fun SignInButton(
 }
 
 @Composable
+private fun SignOutButton(
+    onSignOut: () -> Unit,
+    modifier: Modifier
+) {
+    AppImageButton(
+        buttonText = "Sign out from Google",
+        onClick = onSignOut,
+        imageRes = R.drawable.google_icon,
+        modifier = modifier
+    )
+}
+
+@Composable
 private fun AccountHeading(
-    appLayoutMode: AppLayoutMode
+    appLayoutMode: AppLayoutMode,
+    userId: Int,
+    currentUser: AuthenticatedUser
 ) {
     Spacer(modifier = Modifier.height(20.dp))
 
     val bottomPadding = if (appLayoutMode == AppLayoutMode.LANDSCAPE) 42.dp else 110.dp
 
+    val heading = when (currentUser) {
+        is AuthenticatedUser.ExpiredUser ->
+            "Your Google Sign In is expired. Refresh your sign in to manage your API keys."
+        else ->
+            "Sign in to create and manage your API keys, or click City Name Search to try out our API sandbox."
+    }
+
     Text(
-        text = "Sign in to create and manage your API keys, or click City Name Search to try out our API sandbox.",
+        text = heading,
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier
             .padding(bottom = bottomPadding),

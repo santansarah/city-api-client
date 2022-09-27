@@ -8,6 +8,7 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import com.example.cityapiclient.data.local.UserPreferencesManager
 import com.example.cityapiclient.di.ApiModules
+import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppRoot
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,10 +24,13 @@ class MainActivity : ComponentActivity() {
      */
     @Inject lateinit var userPreferencesManager: UserPreferencesManager
     @Inject lateinit var httpClient: HttpClient
+    @Inject lateinit var signInObserver: SignInObserver
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        lifecycle.addObserver(signInObserver)
 
         setContent {
             val windowSize = calculateWindowSizeClass(this)
@@ -42,7 +46,9 @@ class MainActivity : ComponentActivity() {
              * Call my container here, which provides the background for all layouts
              * and serves the content, depending on the current screen size.
              */
-            AppRoot(windowSize = windowSize, userPreferencesManager)
+            AppRoot(windowSize = windowSize,
+                userPreferencesManager= userPreferencesManager,
+                signInObserver = signInObserver)
         }
     }
 

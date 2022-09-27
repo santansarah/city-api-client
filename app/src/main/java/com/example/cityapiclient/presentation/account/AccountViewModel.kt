@@ -1,13 +1,11 @@
 package com.example.cityapiclient.presentation.account
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.local.UserPreferencesManager
-import com.example.cityapiclient.data.remote.CityApiService
-import com.example.cityapiclient.data.remote.GoogleUserModel
-import com.example.cityapiclient.domain.GoogleSignInService
+import com.example.cityapiclient.data.local.AuthenticatedUser
+import com.example.cityapiclient.data.local.UserRepository
+import com.example.cityapiclient.presentation.AppDestinationsArgs
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -16,23 +14,21 @@ import javax.inject.Inject
 
 
 data class AccountUiState(
-    val isSignedIn: Boolean = false,
-    val googleUserModel: GoogleUserModel = GoogleUserModel(),
+    val newSignIn: Boolean = false,
+    val currentUser: AuthenticatedUser = AuthenticatedUser.UnknownSignIn,
+    val userMessage: String = "",
     val userId: Int = 0
 )
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val cityApiService: CityApiService,
-    val googleSignInService: GoogleSignInService,
-    private val userPreferencesManager: UserPreferencesManager
+    private val userRepository: UserRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-//    private val expired: Boolean = savedStateHandle[AppDestinationsArgs.IS_EXPIRED]!!
+    private var _userId: Int = savedStateHandle[AppDestinationsArgs.USER_ID]!!
+    private val _uiState = MutableStateFlow(AccountUiState(userId = _userId))
 
-    private val _uiState = MutableStateFlow(
-        AccountUiState()
-    )
     val uiState = _uiState
         .stateIn(
             viewModelScope,
@@ -40,40 +36,54 @@ class AccountViewModel @Inject constructor(
             _uiState.value
         )
 
-    fun signOut() {
-        googleSignInService.signOut()
-    }
+    fun setCurrentUser(googleSignInAccount: GoogleSignInAccount?) {
+        val currentUser = userRepository.getUser(
+            _userId,
+            googleSignInAccount?.displayName ?: "",
+            googleSignInAccount?.email ?: "",
+            googleSignInAccount?.isExpired ?: false
+        )
 
-    fun processSignIn(googleSignInAccount: GoogleSignInAccount) {
-
-        Log.d("debug", googleSignInAccount.displayName ?: "no name")
-
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    googleUserModel = GoogleUserModel(
-                        email = googleSignInAccount.email ?: "",
-                        name = googleSignInAccount.displayName ?: "",
-                    )
-                )
-            }
-
-            when (val insertResult =
-                cityApiService.insertUser(_uiState.value.googleUserModel.email)) {
-                is ServiceResult.Success -> {
-                    userPreferencesManager.setUserId(insertResult.data.user.userId)
-                    _uiState.update {
-                        it.copy(
-                            isSignedIn = true,
-                            userId = insertResult.data.user.userId
-                        )
-                    }
-                }
-                is ServiceResult.Error -> Log.d("debug", "user insert failed.")
-            }
-
+        _uiState.update {
+            it.copy(currentUser = currentUser)
         }
-
     }
 
+    fun signIn() {
+        viewModelScope.launch {
+            //signInService.signIn()
+        }
+    }
+
+    fun signOut() {
+        //googleSignInContract.signOut()
+        _uiState.update {
+            it.copy(
+                currentUser =
+                AuthenticatedUser.ExpiredUser(userId = _userId)
+            )
+        }
+    }
+
+    fun processSignIn(name: String, email: String) {
+            viewModelScope.launch {
+                when (val signInResult = userRepository.signIn(
+                    name, email
+                )) {
+                    is ServiceResult.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                currentUser = signInResult.data,
+                                newSignIn = (_userId == 0),
+                                userId = (signInResult.data as AuthenticatedUser.SignedInUser).userId
+                            )
+                        }
+                        // not really needed, but just for good measure
+                        _userId =
+                            (signInResult.data as AuthenticatedUser.SignedInUser).userId
+                    }
+                    is ServiceResult.Error -> Log.d("debug", "user insert failed.")
+                }
+            }
+    }
 }
