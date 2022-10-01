@@ -53,9 +53,11 @@ fun CompactLayout(
 @Composable
 fun CompactLayoutWithScaffold(
     mainContent: @Composable () -> Unit,
-    title: String
+    title: String,
+    snackbarHostState: @Composable () -> Unit
 ) {
     Scaffold(
+        snackbarHost = snackbarHostState,
         containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(

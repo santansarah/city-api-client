@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.example.cityapiclient.domain.SignInObserver
+import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinationsArgs.USER_ID
 import com.example.cityapiclient.presentation.AppScreens.HOME_SCREEN
 import com.example.cityapiclient.presentation.AppScreens.ONBOARDING_SCREEN
@@ -28,7 +29,7 @@ object AppDestinationsArgs {
 
 object AppDestinations {
     const val ONBOARDING_ROUTE = ONBOARDING_SCREEN
-    const val HOME_ROUTE = "$HOME_SCREEN/{$USER_ID}"
+    const val HOME_ROUTE = HOME_SCREEN
     const val ACCOUNT_ROUTE = "$ACCOUNT_SCREEN/{$USER_ID}"
     const val SEARCH_ROUTE = SEARCH_SCREEN
 }
@@ -87,8 +88,8 @@ class AppNavigationActions(private val navController: NavHostController) {
         navController.navigate("$ACCOUNT_SCREEN/$expired")
     }
 
-    fun navigateToHome(userId: Int) {
-        navController.navigate("$HOME_SCREEN/$userId")
+    fun navigateToHome() {
+        navController.navigate(HOME_ROUTE)
     }
 }
 

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cityapiclient.data.local.OnboardingScreen
 import com.example.cityapiclient.data.local.OnboardingScreenRepo
-import com.example.cityapiclient.data.local.UserPreferencesManager
+import com.example.cityapiclient.data.local.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -19,7 +19,7 @@ data class OnboardingUiState(
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val userPreferencesManager: UserPreferencesManager,
+    private val userRepository: UserRepository,
     onBoardingScreenRepo: OnboardingScreenRepo
 ) : ViewModel() {
 
@@ -40,7 +40,7 @@ class OnboardingViewModel @Inject constructor(
      */
     init {
         viewModelScope.launch {
-            userPreferencesManager.userPreferencesFlow.collect()
+            userRepository.userPreferencesFlow.collect()
             { userPreferences ->
                 Log.d("debug", userPreferences.toString())
                 _uiState.update {
@@ -56,7 +56,7 @@ class OnboardingViewModel @Inject constructor(
     fun updateLastViewedScreen(justViewed: Int) {
         viewModelScope.launch {
             Log.d("debug", "updating userprefs")
-            userPreferencesManager.setLastOnboardingScreen(justViewed)
+            userRepository.setLastOnboardingScreen(justViewed)
         }
     }
 

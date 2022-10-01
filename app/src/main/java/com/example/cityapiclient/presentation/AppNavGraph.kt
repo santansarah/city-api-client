@@ -23,7 +23,6 @@ fun AppNavGraph(
     navController: NavHostController = rememberNavController(),
     appLayoutMode: AppLayoutMode,
     startDestination: String,
-    userId: Int = 0,
     signInObserver: SignInObserver
 ) {
 
@@ -48,28 +47,15 @@ fun AppNavGraph(
                 appLayoutMode = appLayoutMode
             )
         }
-        composable(AppDestinations.ACCOUNT_ROUTE,
-            arguments = listOf(navArgument(USER_ID) {
-                type = NavType.IntType;
-                defaultValue = userId
-            })
+        composable(AppDestinations.ACCOUNT_ROUTE
         ) {
             AccountRoute(
                 appLayoutMode = appLayoutMode,
-                onSignInSuccess = { userId ->
-                    navActions.navigateToHome(userId)
-                },
-                //signInObserver = signInObserver,
-                onSignedIn = signInObserver::signIn
+                onSignInSuccess = { navActions.navigateToHome() },
+                signInObserver = signInObserver
             )
         }
-        composable(
-            HOME_ROUTE,
-            arguments = listOf(navArgument(USER_ID) {
-                type = NavType.IntType;
-                defaultValue = userId
-            }),
-        ) {
+        composable(HOME_ROUTE) {
             HomeRoute()
         }
     }

@@ -1,10 +1,11 @@
 package com.example.cityapiclient.util
 
-import android.app.Service
-import androidx.compose.foundation.interaction.HoverInteraction
+import android.util.Log
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiResponse
 import com.example.cityapiclient.data.remote.ResponseErrors
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import io.ktor.client.plugins.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -41,5 +42,44 @@ fun Exception.toCityApiError(): ServiceResult.Error {
         }
     } catch (parseError: Exception) {
         ServiceResult.Error(code, message)
+    }
+}
+
+typealias OneTapError = Exception
+fun OneTapError.exceptionToServiceResult(): ServiceResult.Error {
+
+    Log.d("debug", "one tap error: ${this.printStackTrace()}")
+
+    val code = ErrorCode.SIGNIN_ERROR
+    val message = message ?: ErrorCode.SIGNIN_ERROR.message
+
+   return when (this) {
+        is ApiException ->
+        {
+            when (statusCode) {
+                CommonStatusCodes.CANCELED -> {
+                    Log.d("debug", "One-tap dialog was closed.")
+                    ServiceResult.Error(code.name, message)
+                }
+                CommonStatusCodes.NETWORK_ERROR -> {
+                    Log.d(
+                        "debug",
+                        "One-tap encountered a network error."
+                    )
+                    ServiceResult.Error(code.name, message)
+                }
+                else -> {
+                    Log.d(
+                        "debug", "Couldn't get credential from result."
+                                + getLocalizedMessage()
+                    )
+                    ServiceResult.Error(code.name, message)
+                }
+            }
+        }
+        else ->
+        {
+            ServiceResult.Error(code.name, message)
+        }
     }
 }

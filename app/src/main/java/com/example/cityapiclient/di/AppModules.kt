@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultRegistry
 import com.example.cityapiclient.BuildConfig
+import com.example.cityapiclient.data.local.UserRepository
+import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.domain.InsertNewUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -17,23 +19,19 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 
-@InstallIn(ActivityComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
-object ActivityModules {
+object AppModules {
 
     @Provides
-    fun provideActivity(@ActivityContext activity: Context) =
-        (activity as? ComponentActivity)
-            ?: throw IllegalArgumentException("You must use ComponentActivity")
-
-    @Provides
-    fun provideSignInObserver(
-        @ActivityContext activity: Context,
-        insertNewUser: InsertNewUser
-    ): SignInObserver {
-        return SignInObserver(activity, insertNewUser)
+    fun provideInsertNewUser(
+        userRepository: UserRepository,
+        cityApiService: CityApiService
+    ): InsertNewUser {
+        return InsertNewUser(userRepository, cityApiService)
     }
 
 }

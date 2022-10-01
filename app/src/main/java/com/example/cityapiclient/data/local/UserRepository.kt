@@ -1,81 +1,149 @@
 package com.example.cityapiclient.data.local
 
-import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.remote.CityApiService
-import com.google.android.gms.auth.api.identity.GetSignInIntentRequest
-import com.google.android.gms.auth.api.identity.SignInClient
-import kotlinx.coroutines.flow.flow
+import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import java.io.IOException
 import javax.inject.Inject
 
-sealed class AuthenticatedUser {
-    data class SignedInUser(
-        val userId: Int = 0,
-        val name: String = "",
-        val email: String = "",
-        val isExpired: Boolean = false
-    ) : AuthenticatedUser()
-
-    data class ExpiredUser(
-        val userId: Int = 0,
-        val name: String = "",
-        val email: String = "",
-        val isExpired: Boolean = false
-    ) : AuthenticatedUser()
-
-    object UnknownSignIn : AuthenticatedUser()
-}
+data class UserPreferences(
+    val lastOnboardingScreen: Int = 0,
+    val isOnboardingComplete: Boolean = false,
+    val userId: Int = 0,
+    val email: String,
+    val name: String,
+    val isSignedOut: Boolean
+)
 
 class UserRepository @Inject constructor(
-    private val cityApiService: CityApiService,
-    private val userPreferencesManager: UserPreferencesManager,
+    private val dataStore: DataStore<Preferences>
 ) {
+    private val TAG: String = "UserPreferencesManager"
 
-    fun getUser(userId: Int, name: String, email: String, isExpired: Boolean): AuthenticatedUser {
-        if (userId == 0)
-           return AuthenticatedUser.UnknownSignIn
-
-        if (isExpired)
-          return AuthenticatedUser.ExpiredUser(
-              userId = userId,
-              name = name,
-              email = email,
-              isExpired = true
-          )
-
-        return AuthenticatedUser.SignedInUser(
-            userId = userId,
-            name = name,
-            email = email,
-            isExpired = false
-        )
+    private object PreferencesKeys {
+        val LAST_ONBOARDING_SCREEN = intPreferencesKey("last_onboarding")
+        val USER_ID = intPreferencesKey("userId")
+        val USER_EMAIL = stringPreferencesKey("email")
+        val USER_NAME = stringPreferencesKey("userName")
+        val IS_SIGNED_OUT = booleanPreferencesKey("isSignedOut")
     }
 
-    suspend fun signIn(name: String, email: String): ServiceResult<AuthenticatedUser> =
-        when (val insertResult = cityApiService.insertUser(email)) {
-            is ServiceResult.Success -> {
-                with(insertResult.data) {
-                    userPreferencesManager.setUserId(user.userId)
-                    ServiceResult.Success(
-                        AuthenticatedUser.SignedInUser(
-                            userId = user.userId,
-                            name = name,
-                            email = user.email
-                        )
-                    )
-                }
+    suspend fun clear() {
+        dataStore.edit {
+            it.clear()
+        }
+    }
+
+    /**
+     * Use this if you don't want to observe a flow.
+     */
+    suspend fun fetchInitialPreferences() =
+        mapUserPreferences(dataStore.data.first().toPreferences())
+
+    /**
+     * Get the user preferences flow. When it's collected, keys are mapped to the
+     * [UserPreferences] data class.
+     */
+    val userPreferencesFlow: Flow<UserPreferences> = dataStore.data
+        .catch { exception ->
+            // dataStore.data throws an IOException when an error is encountered when reading data
+            if (exception is IOException) {
+                Log.e(TAG, "Error reading preferences.", exception)
+                emit(emptyPreferences())
+            } else {
+                throw exception
             }
-            is ServiceResult.Error -> insertResult
+        }.map { preferences ->
+            mapUserPreferences(preferences)
         }
 
-}
+/*
+    val currentUserFlow: Flow<UserModel> = dataStore.data
+        .catch {
+            emit(UserModel.UnknownSignIn)
+        }.map { preferences ->
+            preferencesToCurrentUser(preferences)
+        }
+*/
 
-class AuthRepositoryImpl  @Inject constructor(
-    private var signInClient: SignInClient,
-    private var signInRequest: GetSignInIntentRequest,
-)  {
-    fun signInWithGoogle() {
-        signInClient.getSignInIntent(signInRequest)
+    /**
+     * Sets the last onboarding screen that was viewed (on button click).
+     */
+    suspend fun setLastOnboardingScreen(viewedScreen: Int) {
+        // updateData handles data transactionally, ensuring that if the key is updated at the same
+        // time from another thread, we won't have conflicts
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] = viewedScreen
+        }
+    }
 
+    /**
+     * Sets the userId that we get from the Ktor API (on button click).
+     */
+    suspend fun setUserId(userId: Int) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USER_ID] = userId
+        }
+    }
+
+    suspend fun setEmail(email: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USER_EMAIL] = email
+        }
+    }
+
+    suspend fun setName(name: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USER_NAME] = name
+        }
+    }
+
+    suspend fun isSignedOut(isSignedOut: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.IS_SIGNED_OUT] = isSignedOut
+        }
+    }
+
+    suspend fun setUserInfo(userId: Int, name: String, email: String) {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.USER_ID] = userId
+            preferences[PreferencesKeys.USER_NAME] = name
+            preferences[PreferencesKeys.USER_EMAIL] = email
+        }
+    }
+
+    /**
+     * Get the preferences key, then map it to the data class.
+     */
+    private fun mapUserPreferences(preferences: Preferences): UserPreferences {
+        val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: 0
+        val isOnBoardingComplete: Boolean = (lastScreen >= 2)
+        val userId = preferences[PreferencesKeys.USER_ID] ?: 0
+        val email = preferences[PreferencesKeys.USER_EMAIL] ?: ""
+        val name = preferences[PreferencesKeys.USER_NAME] ?: ""
+        val isSignedOut = preferences[PreferencesKeys.IS_SIGNED_OUT] ?: false
+        return UserPreferences(lastScreen, isOnBoardingComplete, userId, email, name, isSignedOut)
+    }
+
+    private fun preferencesToCurrentUser(preferences: Preferences): CurrentUser {
+        val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: 0
+        val isOnBoardingComplete: Boolean = (lastScreen >= 2)
+        val userId = preferences[PreferencesKeys.USER_ID] ?: 0
+        val email = preferences[PreferencesKeys.USER_EMAIL] ?: ""
+        val name = preferences[PreferencesKeys.USER_NAME] ?: ""
+        val isSignedOut = preferences[PreferencesKeys.IS_SIGNED_OUT] ?: false
+
+        if (userId == 0)
+            return CurrentUser.UnknownSignIn
+
+        if (isSignedOut)
+            return CurrentUser.SignedOutUser(userId, name, email)
+
+        return CurrentUser.SignedInUser(userId, name, email)
     }
 
 }

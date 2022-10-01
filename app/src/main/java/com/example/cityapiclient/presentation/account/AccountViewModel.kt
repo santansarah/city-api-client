@@ -1,12 +1,10 @@
 package com.example.cityapiclient.presentation.account
 
-import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.*
-import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.local.AuthenticatedUser
+import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.local.UserRepository
-import com.example.cityapiclient.presentation.AppDestinationsArgs
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.example.cityapiclient.data.local.toCurrentUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -15,75 +13,52 @@ import javax.inject.Inject
 
 data class AccountUiState(
     val newSignIn: Boolean = false,
-    val currentUser: AuthenticatedUser = AuthenticatedUser.UnknownSignIn,
+    val currentUser: CurrentUser = CurrentUser.UnknownSignIn,
     val userMessage: String = "",
-    val userId: Int = 0
+    val isLoading: Boolean = true
 )
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    savedStateHandle: SavedStateHandle
+    userRepository: UserRepository
 ) : ViewModel() {
 
-    private var _userId: Int = savedStateHandle[AppDestinationsArgs.USER_ID]!!
-    private val _uiState = MutableStateFlow(AccountUiState(userId = _userId))
+    private val _uiState = MutableStateFlow(AccountUiState())
+    val uiState = _uiState.asStateFlow()
 
-    val uiState = _uiState
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            _uiState.value
-        )
+    private val _userPreferences = userRepository.userPreferencesFlow
+    private var _userId = -1
 
-    fun setCurrentUser(googleSignInAccount: GoogleSignInAccount?) {
-        val currentUser = userRepository.getUser(
-            _userId,
-            googleSignInAccount?.displayName ?: "",
-            googleSignInAccount?.email ?: "",
-            googleSignInAccount?.isExpired ?: false
-        )
-
-        _uiState.update {
-            it.copy(currentUser = currentUser)
-        }
-    }
-
-    fun signIn() {
+    init {
         viewModelScope.launch {
-            //signInService.signIn()
-        }
-    }
-
-    fun signOut() {
-        //googleSignInContract.signOut()
-        _uiState.update {
-            it.copy(
-                currentUser =
-                AuthenticatedUser.ExpiredUser(userId = _userId)
-            )
-        }
-    }
-
-    fun processSignIn(name: String, email: String) {
-            viewModelScope.launch {
-                when (val signInResult = userRepository.signIn(
-                    name, email
-                )) {
-                    is ServiceResult.Success -> {
-                        _uiState.update {
-                            it.copy(
-                                currentUser = signInResult.data,
-                                newSignIn = (_userId == 0),
-                                userId = (signInResult.data as AuthenticatedUser.SignedInUser).userId
-                            )
-                        }
-                        // not really needed, but just for good measure
-                        _userId =
-                            (signInResult.data as AuthenticatedUser.SignedInUser).userId
-                    }
-                    is ServiceResult.Error -> Log.d("debug", "user insert failed.")
-                }
+            _userPreferences.collect() {
+                val currentUser = it.toCurrentUser()
+                // do not reorder!
+                val newSignIn = (_userId == 0 && currentUser is CurrentUser.SignedInUser)
+                _userId = it.userId
+                AccountUiState(
+                    isLoading = false,
+                    currentUser = currentUser,
+                    newSignIn = newSignIn
+                )
             }
+        }
     }
+
+    /*val uiState = combine(_isNewUser, _userPreferences)
+    { isNewUser, userPreferences ->
+        val currentUser = userPreferences.toCurrentUser()
+        // do not reorder!
+        val newSignIn = (_userId == 0 && currentUser is CurrentUser.SignedInUser)
+        _userId = userPreferences.userId
+        AccountUiState(
+            currentUser = currentUser,
+            newSignIn =  newSignIn
+        )
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        AccountUiState()
+    )*/
+
 }

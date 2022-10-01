@@ -7,66 +7,73 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.R
-import com.example.cityapiclient.data.local.AuthenticatedUser
+import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.reflect.KSuspendFunction0
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
 @Composable
 fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
     appLayoutMode: AppLayoutMode,
-    onSignInSuccess: (Int) -> Unit,
-    onSignedIn: suspend () -> Unit = {},
-    onSignOut: () -> Unit = {},
-    onRevoke: () -> Unit = {}
+    signInObserver: SignInObserver,
+    onSignInSuccess: () -> Unit
 ) {
 
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    /** [SignInObserver] updates the preferences datastore, but the viewmodel observes changes
+     * to the datastore so this composable stays as stateless as possible.
+     */
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val signInState by signInObserver.signInState.collectAsStateWithLifecycle()
 
-    val scope = rememberCoroutineScope()
-    Button(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = {
-            scope.launch {
-                onSignedIn()
-            }
-        }) {
-        Text(text = "Sign in Test")
-    }
-
-
+    var context = LocalContext.current
     // Check if the Google Sign In is successful and navigate to home
     LaunchedEffect(uiState.newSignIn) {
         if (uiState.newSignIn) {
             Log.d("debug", "navigating to home")
-            onSignInSuccess(uiState.userId)
+            //onSignInSuccess()
         }
     }
 
-    val title = if (viewModel.uiState.value.userId > 0)
-        "Your Account"
-    else
+    val title = if (uiState.currentUser is CurrentUser.UnknownSignIn)
         "Get Started"
+    else
+        "Your Account"
 
-/*
-    CompactLayoutWithScaffold(mainContent = {
-        AccountContent(
-            appLayoutMode, viewModel::signOut,
-            viewModel.uiState.value.userId,
-            viewModel.uiState.value.currentUser
-        )
-    }, title = title)
-*/
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    // Check for user messages to display on the screen
+    signInState.userMessage?.let { userMessage ->
+        LaunchedEffect(snackbarHostState, signInState, userMessage) {
+            snackbarHostState.showSnackbar(userMessage)
+            signInObserver.userMessageShown()
+        }
+    }
+
+    CompactLayoutWithScaffold(
+        snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
+        mainContent = {
+            AccountContent(
+                appLayoutMode,
+                {scope.launch { signInObserver.signOut() }},
+                {scope.launch { signInObserver.signUp() }},
+                uiState.currentUser
+            )
+        }, title = title
+    )
 
 }
 
@@ -74,12 +81,10 @@ fun AccountRoute(
 private fun AccountContent(
     appLayoutMode: AppLayoutMode,
     signOut: () -> Unit,
-    userId: Int,
-    currentUser: AuthenticatedUser
+    signUp: () -> Unit,
+    currentUser: CurrentUser
 ) {
-    AccountHeading(appLayoutMode, userId, currentUser)
-
-    val buttonModifier = Modifier.fillMaxWidth(.95f)
+    AccountHeading(appLayoutMode, currentUser)
 
     AppCard {
         if (appLayoutMode == AppLayoutMode.LANDSCAPE) {
@@ -87,18 +92,19 @@ private fun AccountContent(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                if (userId > 0 && currentUser is AuthenticatedUser.SignedInUser)
+                if (currentUser is CurrentUser.SignedInUser)
                     SignOutButton(onSignOut = signOut, modifier = Modifier.weight(.45f))
                 else
-                    SignInButton({  }, Modifier.weight(.45f))
+                    SignInButton(signUp, currentUser, Modifier.weight(.45f))
 
                 SearchButton(Modifier.weight(.45f))
             }
         } else {
-            /*if (userId > 0 && currentUser is AuthenticatedUser.SignedInUser)
+            val buttonModifier = Modifier.fillMaxWidth(.95f)
+            if (currentUser is CurrentUser.SignedInUser)
                 SignOutButton(onSignOut = signOut, modifier = buttonModifier)
-            else*/
-            SignInButton({  }, buttonModifier)
+            else
+                SignInButton(signUp, currentUser, buttonModifier)
 
             Spacer(modifier = Modifier.height(20.dp))
             SearchButton(buttonModifier)
@@ -122,10 +128,17 @@ private fun SearchButton(
 @Composable
 private fun SignInButton(
     onSignedIn: () -> Unit,
+    currentUser: CurrentUser,
     modifier: Modifier
 ) {
-    AppImageButton(
-        buttonText = "Sign in with Google",
+
+    val signInText = if (currentUser is CurrentUser.UnknownSignIn)
+        "Sign up with Google"
+    else
+        "Sign in with Google"
+
+    AppImageButtonSuspend(
+        buttonText = signInText,
         onClick = onSignedIn,
         imageRes = R.drawable.google_icon,
         modifier = modifier
@@ -137,8 +150,8 @@ private fun SignOutButton(
     onSignOut: () -> Unit,
     modifier: Modifier
 ) {
-    AppImageButton(
-        buttonText = "Sign out from Google",
+    AppImageButtonSuspend(
+        buttonText = "Sign out with Google",
         onClick = onSignOut,
         imageRes = R.drawable.google_icon,
         modifier = modifier
@@ -148,16 +161,15 @@ private fun SignOutButton(
 @Composable
 private fun AccountHeading(
     appLayoutMode: AppLayoutMode,
-    userId: Int,
-    currentUser: AuthenticatedUser
+    currentUser: CurrentUser
 ) {
     Spacer(modifier = Modifier.height(20.dp))
 
     val bottomPadding = if (appLayoutMode == AppLayoutMode.LANDSCAPE) 42.dp else 110.dp
 
     val heading = when (currentUser) {
-        is AuthenticatedUser.ExpiredUser ->
-            "Your Google Sign In is expired. Refresh your sign in to manage your API keys."
+        is CurrentUser.SignedOutUser ->
+            "Refresh your sign in to manage your API keys."
         else ->
             "Sign in to create and manage your API keys, or click City Name Search to try out our API sandbox."
     }

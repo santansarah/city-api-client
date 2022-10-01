@@ -18,7 +18,8 @@ enum class ErrorCode(val message: String) {
     INVALID_JSON("Your JSON must match the format in this sample response."),
     INVALID_CITY_QUERY("You must pass a city name or zip prefix."),
     INVALID_API_KEY("Bad API key. Use x-api-key in the header."),
-    SERVER_ERROR("Unknown API server error.")
+    SERVER_ERROR("Unknown API server error."),
+    SIGNIN_ERROR("Unknown sign in error. Try again.")
 }
 
 class AuthenticationException : RuntimeException()
