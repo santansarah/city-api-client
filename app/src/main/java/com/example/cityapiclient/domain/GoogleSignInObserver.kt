@@ -2,6 +2,7 @@ package com.example.cityapiclient.domain
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
@@ -16,6 +17,7 @@ import com.example.cityapiclient.util.exceptionToServiceResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,7 +26,8 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 data class SignInState(
-    val userMessage: String?
+    val userMessage: String?,
+    val isSigningIn: Boolean
 )
 
 class SignInObserver @Inject constructor(
@@ -32,8 +35,12 @@ class SignInObserver @Inject constructor(
     private val insertNewUser: InsertNewUser
 ) : DefaultLifecycleObserver {
 
-    // only using one value for now, but keeping it a data class in case this changes
-    private val _signInState = MutableStateFlow(SignInState(null))
+    private val _signInState = MutableStateFlow(
+        SignInState(
+            userMessage = null,
+            isSigningIn = false
+        )
+    )
     val signInState = _signInState.asStateFlow()
 
     companion object {
@@ -61,6 +68,7 @@ class SignInObserver @Inject constructor(
     }
 
     override fun onCreate(owner: LifecycleOwner) {
+        Log.d("debug", "onCreate GoogleSignUp.")
         signUpResultHandler = registerSignUpHandler(owner)
     }
 
@@ -69,6 +77,9 @@ class SignInObserver @Inject constructor(
         ActivityResultContracts.StartIntentSenderForResult()
     )
     { result ->
+
+        Log.d("debug", "signup result received.")
+
         try {
             when (result.resultCode) {
                 Activity.RESULT_CANCELED -> {
@@ -78,7 +89,7 @@ class SignInObserver @Inject constructor(
                     // use the phone code for development: *#*#66382723#*#*
                     _signInState.update {
                         it.copy(
-                            userMessage = "Sign in to manage your API Keys."
+                            userMessage = "(3) sign in attempts remaining for today."
                         )
                     }
                 }
@@ -88,7 +99,7 @@ class SignInObserver @Inject constructor(
                     val email = credential.id
 
                     owner.lifecycleScope.launch {
-                        owner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        owner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                             when (val insertUserResult = insertNewUser(name, email)) {
                                 is ServiceResult.Success -> {
                                     _signInState.update {
@@ -106,11 +117,17 @@ class SignInObserver @Inject constructor(
                             }
                         }
                     }
+                    _signInState.update {
+                        it.copy(
+                            isSigningIn = false
+                        )
+                    }
                 }
             }
         } catch (signUpError: OneTapError) {
             _signInState.update {
                 it.copy(
+                    isSigningIn = false,
                     userMessage = signUpError.exceptionToServiceResult().message
                 )
             }
@@ -118,7 +135,17 @@ class SignInObserver @Inject constructor(
     }
 
     suspend fun signUp() {
+
+        Log.d("debug", "entering signUp method.")
+
         try {
+
+            _signInState.update {
+                it.copy(
+                    isSigningIn = true
+                )
+            }
+
             val result = signInClient.beginSignIn(signUpRequest).await()
             val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent).build()
             signUpResultHandler.launch(intentSenderRequest)
@@ -136,6 +163,7 @@ class SignInObserver @Inject constructor(
     }
 
     fun userMessageShown() {
+        Log.d("debug", "user message set to null.")
         _signInState.update {
             it.copy(userMessage = null)
         }

@@ -57,7 +57,7 @@ fun AccountRoute(
 
     // Check for user messages to display on the screen
     signInState.userMessage?.let { userMessage ->
-        LaunchedEffect(snackbarHostState, signInState, userMessage) {
+        LaunchedEffect(signInState.userMessage, userMessage) {
             snackbarHostState.showSnackbar(userMessage)
             signInObserver.userMessageShown()
         }

@@ -1,11 +1,13 @@
 package com.example.cityapiclient.data.remote
 
 import android.util.Log
+import com.example.cityapiclient.BuildConfig
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.ServiceResult.Success
 import com.example.cityapiclient.util.toCityApiError
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import javax.inject.Inject
@@ -16,7 +18,7 @@ class CityApiService @Inject constructor(
 
     companion object CityApiDefaults {
 
-        private const val BASE_URL = "http://10.0.2.2:8080"
+        private const val BASE_URL = "http://${BuildConfig.KTOR_IP_ADDR}:8080"
         const val CITIES = "$BASE_URL/cities"
         const val INSERT_USER = "$BASE_URL/users/create"
 
@@ -41,7 +43,7 @@ class CityApiService @Inject constructor(
 
         } catch (apiError: Exception) {
 
-            val parsedError = apiError.toCityApiError()
+            val parsedError = apiError.toCityApiError<CityApiResponse>()
             Log.d("debug", parsedError.toString())
             parsedError
 
@@ -49,6 +51,8 @@ class CityApiService @Inject constructor(
     }
 
     override suspend fun insertUser(email: String): ServiceResult<UserResponse> {
+
+        Log.d("debug", "Inserting new user...")
 
         return try {
             val userResponse: UserResponse = client.post(INSERT_USER)
@@ -59,8 +63,7 @@ class CityApiService @Inject constructor(
             Success(userResponse)
         } catch (apiError: Exception) {
 
-            val parsedError = apiError.toCityApiError()
-            Log.d("debug", parsedError.toString())
+            val parsedError = apiError.toCityApiError<UserResponse>()
             parsedError
 
         }

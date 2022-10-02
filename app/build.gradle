@@ -17,6 +17,7 @@ android {
     defaultConfig {
 
         buildConfigField("String", "WEB_CLIENT_ID", appProperties['WEB_CLIENT_ID'])
+        buildConfigField("String", "KTOR_IP_ADDR", appProperties['KTOR_IP_ADDR'])
 
         applicationId "com.example.cityapiclient"
         minSdk 23

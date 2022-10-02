@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiResponse
 import com.example.cityapiclient.data.remote.ResponseErrors
+import com.example.cityapiclient.data.remote.UserResponse
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import io.ktor.client.plugins.*
@@ -17,6 +18,7 @@ import kotlinx.serialization.json.Json
  */
 inline fun <reified T> String.toErrorResponse(): T {
     val errorResponse = this.substringAfter("Text: \"").dropLast(1)
+    Log.d("debug", "errorResponse parsed: $errorResponse")
     return Json.decodeFromString(errorResponse)
 }
 
@@ -24,7 +26,7 @@ inline fun <reified T> String.toErrorResponse(): T {
  * Try to return the error that came back from the ktor API;
  * otherwise, just return a generic network error.
  */
-fun Exception.toCityApiError(): ServiceResult.Error {
+inline fun <reified T> Exception.toCityApiError(): ServiceResult.Error {
 
     val code = "API_ERROR"
     val message = message ?: "Network error."
@@ -32,8 +34,17 @@ fun Exception.toCityApiError(): ServiceResult.Error {
     return try {
         when (this) {
             is ServerResponseException, is ClientRequestException -> {
-                val cityApiResponse: CityApiResponse = message.toErrorResponse()
-                val errors = cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
+                val errors = when (val cityApiResponse: T = message.toErrorResponse()) {
+                    is CityApiResponse ->
+                    {
+                        cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
+                    }
+                    is UserResponse ->
+                    {
+                        cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
+                    }
+                    else -> {ResponseErrors(code, message)}
+                }
                 ServiceResult.Error(errors.code, errors.message)
             }
             else -> {
@@ -41,6 +52,7 @@ fun Exception.toCityApiError(): ServiceResult.Error {
             }
         }
     } catch (parseError: Exception) {
+        Log.d("debug", "parse error: $parseError")
         ServiceResult.Error(code, message)
     }
 }
