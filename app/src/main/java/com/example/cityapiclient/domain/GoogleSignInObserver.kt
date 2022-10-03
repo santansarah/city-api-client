@@ -89,6 +89,7 @@ class SignInObserver @Inject constructor(
                     // use the phone code for development: *#*#66382723#*#*
                     _signInState.update {
                         it.copy(
+                            isSigningIn = false,
                             userMessage = "(3) sign in attempts remaining for today."
                         )
                     }
@@ -103,24 +104,21 @@ class SignInObserver @Inject constructor(
                             when (val insertUserResult = insertNewUser(name, email)) {
                                 is ServiceResult.Success -> {
                                     _signInState.update {
-                                        it.copy(userMessage = "Successfully signed in.")
+                                        it.copy(
+                                            isSigningIn = false,
+                                            userMessage = "Successfully signed in.")
                                     }
                                 }
                                 is ServiceResult.Error -> {
                                     _signInState.update {
                                         it.copy(
-                                            userMessage =
-                                            insertUserResult.message
+                                            isSigningIn = false,
+                                            userMessage = insertUserResult.message
                                         )
                                     }
                                 }
                             }
                         }
-                    }
-                    _signInState.update {
-                        it.copy(
-                            isSigningIn = false
-                        )
                     }
                 }
             }

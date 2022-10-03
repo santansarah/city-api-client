@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,7 +19,6 @@ import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
@@ -63,6 +61,8 @@ fun AccountRoute(
         }
     }
 
+    Log.d("debug", "isSigining in from composable: ${signInState.isSigningIn}")
+
     CompactLayoutWithScaffold(
         snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
         mainContent = {
@@ -70,7 +70,8 @@ fun AccountRoute(
                 appLayoutMode,
                 {scope.launch { signInObserver.signOut() }},
                 {scope.launch { signInObserver.signUp() }},
-                uiState.currentUser
+                uiState.currentUser,
+                signInState.isSigningIn
             )
         }, title = title
     )
@@ -82,7 +83,8 @@ private fun AccountContent(
     appLayoutMode: AppLayoutMode,
     signOut: () -> Unit,
     signUp: () -> Unit,
-    currentUser: CurrentUser
+    currentUser: CurrentUser,
+    isSigningIn: Boolean
 ) {
     AccountHeading(appLayoutMode, currentUser)
 
@@ -95,7 +97,7 @@ private fun AccountContent(
                 if (currentUser is CurrentUser.SignedInUser)
                     SignOutButton(onSignOut = signOut, modifier = Modifier.weight(.45f))
                 else
-                    SignInButton(signUp, currentUser, Modifier.weight(.45f))
+                    SignInButton(signUp, currentUser, Modifier.weight(.45f), isSigningIn)
 
                 SearchButton(Modifier.weight(.45f))
             }
@@ -104,7 +106,7 @@ private fun AccountContent(
             if (currentUser is CurrentUser.SignedInUser)
                 SignOutButton(onSignOut = signOut, modifier = buttonModifier)
             else
-                SignInButton(signUp, currentUser, buttonModifier)
+                SignInButton(signUp, currentUser, buttonModifier, isSigningIn)
 
             Spacer(modifier = Modifier.height(20.dp))
             SearchButton(buttonModifier)
@@ -129,7 +131,8 @@ private fun SearchButton(
 private fun SignInButton(
     onSignedIn: () -> Unit,
     currentUser: CurrentUser,
-    modifier: Modifier
+    modifier: Modifier,
+    isSigningIn: Boolean
 ) {
 
     val signInText = if (currentUser is CurrentUser.UnknownSignIn)
@@ -137,11 +140,12 @@ private fun SignInButton(
     else
         "Sign in with Google"
 
-    AppImageButtonSuspend(
+    GoogleSignInButton(
         buttonText = signInText,
         onClick = onSignedIn,
         imageRes = R.drawable.google_icon,
-        modifier = modifier
+        modifier = modifier,
+        isSigningIn = isSigningIn
     )
 }
 
@@ -150,11 +154,12 @@ private fun SignOutButton(
     onSignOut: () -> Unit,
     modifier: Modifier
 ) {
-    AppImageButtonSuspend(
+    GoogleSignInButton(
         buttonText = "Sign out with Google",
         onClick = onSignOut,
         imageRes = R.drawable.google_icon,
-        modifier = modifier
+        modifier = modifier,
+        isSigningIn = false
     )
 }
 
