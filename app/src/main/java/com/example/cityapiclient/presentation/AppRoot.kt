@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -28,7 +29,8 @@ import kotlinx.coroutines.flow.combine
 data class AppUiState(
     val isLoading: Boolean,
     val appLayoutMode: AppLayoutMode,
-    val startDestination: String
+    val startDestination: String,
+    val signInFromApp: Boolean = false
 )
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -43,6 +45,7 @@ fun AppRoot(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
+
 
             /**
              * This is my background for all layouts, from COMPACT -> DESKTOP.
@@ -65,11 +68,14 @@ fun AppRoot(
                  */
                 val _appLayoutMode = MutableStateFlow(getWindowLayoutType(windowSize = windowSize))
                 val _appPreferencesState = userRepository.userPreferencesFlow
+                val _test = signInObserver.signInState
 
+                // all of this is recreated on configuration changes
                 val appUiState = combine(
                     _appLayoutMode,
-                    _appPreferencesState
-                ) { appLayoutMode, appPreferencesState ->
+                    _appPreferencesState,
+                    _test
+                ) { appLayoutMode, appPreferencesState, test ->
                     AppUiState(
                         isLoading = false,
                         appLayoutMode = appLayoutMode,
@@ -80,7 +86,8 @@ fun AppRoot(
                                 HOME_ROUTE
                             else
                                 ACCOUNT_ROUTE
-                        }
+                        },
+                        signInFromApp = test.isSigningIn
                     )
 
                 }.collectAsStateWithLifecycle(
@@ -91,6 +98,7 @@ fun AppRoot(
                     )
                 ).value
 
+                Log.d("debug", "approot issigning in: ${appUiState.signInFromApp}")
                 Log.d("debug", "approot startdest: ${appUiState.startDestination}")
 
                 if (!appUiState.isLoading) {

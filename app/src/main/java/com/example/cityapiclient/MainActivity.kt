@@ -50,9 +50,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun finish() {
-        super.finish()
-        Log.d("debug", "finish called")
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+       // outState.putParcelable("test", signInObserver.signInState.value)
     }
 
     /**
@@ -61,10 +62,11 @@ class MainActivity : ComponentActivity() {
      * Because we're using a Hilt Singleton, you also can't get a new object.
      * So calling this [onStop] won't work.
      */
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun finish() {
+        super.finish()
 
         if (this::httpClient.isInitialized) {
+            Log.d("debug", "closing ktor client")
             httpClient.close()
         }
     }

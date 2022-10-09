@@ -36,12 +36,11 @@ fun AccountRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val signInState by signInObserver.signInState.collectAsStateWithLifecycle()
 
-    var context = LocalContext.current
     // Check if the Google Sign In is successful and navigate to home
     LaunchedEffect(uiState.newSignIn) {
         if (uiState.newSignIn) {
             Log.d("debug", "navigating to home")
-            //onSignInSuccess()
+            onSignInSuccess()
         }
     }
 

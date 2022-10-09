@@ -24,6 +24,7 @@ data class UserWithApp(
 data class User(
     val userId: Int = 0,
     val email: String = "",
+    val name: String = "",
     val userCreateDate: String = "",
     val apps: List<UserApp> = emptyList()
 )

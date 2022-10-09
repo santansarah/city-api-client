@@ -8,6 +8,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.ActivityResultRegistry
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.*
 import com.example.cityapiclient.BuildConfig
 import com.example.cityapiclient.data.ServiceResult
@@ -17,6 +19,7 @@ import com.example.cityapiclient.util.exceptionToServiceResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
+import io.ktor.util.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,6 +48,7 @@ class SignInObserver @Inject constructor(
 
     companion object {
         private const val REQUEST_CODE_GOOGLE_SIGN_UP = "googleSignUp"
+        lateinit var SERVER_NONCE: String
 
         lateinit var registry: ActivityResultRegistry
         lateinit var signInClient: SignInClient
@@ -56,12 +60,16 @@ class SignInObserver @Inject constructor(
         registry = (activity as ComponentActivity).activityResultRegistry
         signInClient = Identity.getSignInClient(activity)
 
+        SERVER_NONCE = generateNonce()
+        Log.d("debug", "nonce value: $SERVER_NONCE")
+
         signUpRequest = BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
                     .setServerClientId(BuildConfig.WEB_CLIENT_ID)
                     .setFilterByAuthorizedAccounts(false)
+                    .setNonce(SERVER_NONCE)
                     .build()
             )
             .build()
@@ -96,8 +104,11 @@ class SignInObserver @Inject constructor(
                 }
                 Activity.RESULT_OK -> {
                     val credential = signInClient.getSignInCredentialFromIntent(result.data)
+
                     val name = credential.displayName ?: "User"
                     val email = credential.id
+                    val idTokenWithNonce = credential.googleIdToken
+                    Log.d("debug", "idToken: $idTokenWithNonce")
 
                     owner.lifecycleScope.launch {
                         owner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -165,6 +176,26 @@ class SignInObserver @Inject constructor(
         _signInState.update {
             it.copy(userMessage = null)
         }
+    }
+
+
+
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+
+        Log.d("debug", "App paused")
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+
+        Log.d("debug", "App Destroyed")
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+
+        Log.d("debug", "App resumed.")
     }
 
 }
