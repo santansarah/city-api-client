@@ -1,5 +1,8 @@
 package com.example.cityapiclient.data.local
 
+/**
+ * Track the user's signed in state.
+ */
 sealed class CurrentUser {
     data class SignedInUser(
         val userId: Int = 0,

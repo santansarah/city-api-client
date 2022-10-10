@@ -29,8 +29,7 @@ import kotlinx.coroutines.flow.combine
 data class AppUiState(
     val isLoading: Boolean,
     val appLayoutMode: AppLayoutMode,
-    val startDestination: String,
-    val signInFromApp: Boolean = false
+    val startDestination: String
 )
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -64,18 +63,16 @@ fun AppRoot(
                 )
 
                 /**
-                 * Get updates for rotations and collect UserPreferences
+                 * Get updates for rotations and collect UserPreferences. None of these
+                 * values are preserved during config changes, but that's OK here.
                  */
                 val _appLayoutMode = MutableStateFlow(getWindowLayoutType(windowSize = windowSize))
                 val _appPreferencesState = userRepository.userPreferencesFlow
-                val _test = signInObserver.signInState
 
-                // all of this is recreated on configuration changes
                 val appUiState = combine(
                     _appLayoutMode,
-                    _appPreferencesState,
-                    _test
-                ) { appLayoutMode, appPreferencesState, test ->
+                    _appPreferencesState
+                ) { appLayoutMode, appPreferencesState ->
                     AppUiState(
                         isLoading = false,
                         appLayoutMode = appLayoutMode,
@@ -86,8 +83,7 @@ fun AppRoot(
                                 HOME_ROUTE
                             else
                                 ACCOUNT_ROUTE
-                        },
-                        signInFromApp = test.isSigningIn
+                        }
                     )
 
                 }.collectAsStateWithLifecycle(
@@ -98,7 +94,6 @@ fun AppRoot(
                     )
                 ).value
 
-                Log.d("debug", "approot issigning in: ${appUiState.signInFromApp}")
                 Log.d("debug", "approot startdest: ${appUiState.startDestination}")
 
                 if (!appUiState.isLoading) {

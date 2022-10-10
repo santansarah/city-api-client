@@ -1,42 +1,19 @@
-# Jetpack Compose: Adaptive Layout Templates, Datastore Preferences with Hilt, Dynamic Onboarding Screens
+# Jetpack Compose: Google One Tap Sign Up with Nonce, Ktor HttpClient, Hilt
 
-This Jetpack Compose app features an adaptive layout for phones, tablets,
-foldables, and desktops. It serves as a front-end for a Ktor API that
-gets city data and allows users to manage their API keys.
+This branch implements Google Identity Services with One Tap Sign Up. It features a
+DefaultLifecycleObserver, activityResultRegistry, ActivityResultLauncher, and sending an Nonce to
+the backend Ktor API. With this design, the UI remains light, while the backend does all of the
+work. This creates a strong separation of responsibility, in case the sign up process changes in the
+future.
 
-## Part 1
+When the app gets the Google credentials, a Google JWT token is sent to the backend Ktor API. This
+uses Ktor HttpClient, and sends the JWT token with Bearer Authentication. My Ktor backend then
+validates the Google JWT token.
 
 Links:
-* YouTube Video: https://youtu.be/5qKq4w2zTYM
-* GitHub: https://github.com/santansarah/city-api-client
-* Free SVGs: https://freesvg.org
-* Inkscape: https://inkscape.org/
-* SVG Minifier: https://www.svgminify.com/
 
-In part 1, I'll go over my onboarding screens, which include:
-
-* Custom SVG icons
-* Neon/Glassmorphism design
-* Material 3 Dark Theme
-* Google Font Resources
-* Adaptive layouts
-* English/Spanish/German Support
-* Datastore Preferences with Hilt
-
-## Design
-
-Inspiration: City lights, Neon
-
-### App SVG Icon
-
-![Icon](launcher_icon.png)
-
-### Onboarding - Welcome
-
-![Onboarding](onboarding.png)
-
-## Part 2
-
-* Sign in with Google
-* Get city data from a Ktor API
-* Users can manage API keys
+* YouTube Video: TBD
+* GitHub: https://github.com/santansarah/ktor-city-api/tree/google-one-tap
+* Ktor API: https://github.com/santansarah/ktor-city-api/tree/google-one-tap
+* Google One Tap Guide: https://developers.google.com/identity/one-tap/android/overview
+* Activity Result APIs: https://developer.android.com/training/basics/intents/result

@@ -1,43 +1,20 @@
 package com.example.cityapiclient.presentation.home
 
-import android.util.Log
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.cityapiclient.data.remote.CityDto
-import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
-import com.example.cityapiclient.R
-import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.remote.CityApiMockService
-import com.example.cityapiclient.presentation.components.*
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.presentation.layouts.CompactLayout
-import com.example.cityapiclient.presentation.layouts.CompactLayoutScrollable
-import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
-import io.ktor.util.reflect.*
-import kotlinx.coroutines.runBlocking
+import com.example.cityapiclient.data.local.CurrentUser
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
@@ -47,11 +24,35 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
 
-    Text(
-        modifier = Modifier.padding(16.dp),
-        text = "home route",
-        style = MaterialTheme.typography.displayMedium
-    )
+    val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
 
+    Column(Modifier.padding(16.dp)) {
+        Text(
+            text = "home route",
+            style = MaterialTheme.typography.displayMedium
+        )
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        when (homeUiState.currentUser) {
+            is CurrentUser.SignedInUser -> {
+
+                with(homeUiState.currentUser as CurrentUser.SignedInUser) {
+                    Text(
+                        modifier = Modifier.padding(4.dp),
+                        text = this.name,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        modifier = Modifier.padding(4.dp),
+                        text = this.email,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+
+            }
+            else -> {}
+        }
+    }
 }
 
