@@ -22,8 +22,7 @@ import javax.inject.Inject
 
 data class HomeUiState(
     val currentUser: CurrentUser = CurrentUser.UnknownSignIn,
-    val cityPrefix: String? = "",
-    val cities: List<CityDto> = emptyList()
+    val isLoading: Boolean = true
 )
 
 @HiltViewModel
@@ -32,22 +31,36 @@ class HomeViewModel @Inject constructor(
     userRepository: UserRepository
 ) : ViewModel() {
 
-    val _appPreferencesState = userRepository.userPreferencesFlow
-    val _homeUIState = MutableStateFlow(HomeUiState())
+    private val _appPreferencesState = userRepository.userPreferencesFlow
+    private val _homeUIState = MutableStateFlow(HomeUiState())
+    val homeUiState = _homeUIState.asStateFlow()
 
-    val homeUiState = combine(
+    init {
+        viewModelScope.launch {
+            _appPreferencesState.collect() { userPrefs ->
+                _homeUIState.update {
+                    it.copy(
+                        currentUser = userPrefs.toCurrentUser(),
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    /*val homeUiState = combine(
         _appPreferencesState,
         _homeUIState
-    ) { appPreferencesState, homeUIState ->
+    ) { appPreferencesState, _ ->
         HomeUiState(
+            isLoading = false,
             currentUser = appPreferencesState.toCurrentUser()
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = HomeUiState()
-    )
-
+    )*/
 
     override fun onCleared() {
         super.onCleared()

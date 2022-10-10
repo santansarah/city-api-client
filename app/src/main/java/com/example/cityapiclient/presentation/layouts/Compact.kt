@@ -79,14 +79,6 @@ fun CompactLayoutWithScaffold(
                             contentDescription = "Localized description"
                         )
                     }
-                },
-                actions = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = "Localized description"
-                        )
-                    }
                 }
             )
         },

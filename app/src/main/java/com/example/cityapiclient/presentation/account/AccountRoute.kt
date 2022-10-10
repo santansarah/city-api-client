@@ -38,6 +38,7 @@ fun AccountRoute(
 
     // Check if the Google Sign In is successful and navigate to home
     LaunchedEffect(uiState.newSignIn) {
+        Log.d("debug", "triggered newSignInLE")
         if (uiState.newSignIn) {
             Log.d("debug", "navigating to home")
             onSignInSuccess()

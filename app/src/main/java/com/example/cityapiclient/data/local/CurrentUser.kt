@@ -1,5 +1,7 @@
 package com.example.cityapiclient.data.local
 
+import android.util.Log
+
 /**
  * Track the user's signed in state.
  */
@@ -20,6 +22,7 @@ sealed class CurrentUser {
 }
 
 fun UserPreferences.toCurrentUser(): CurrentUser {
+    Log.d("debug", "current user from user prefs: $this")
     if (userId == 0)
         return CurrentUser.UnknownSignIn
 

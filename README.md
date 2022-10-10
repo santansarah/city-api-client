@@ -17,3 +17,20 @@ Links:
 * Ktor API: https://github.com/santansarah/ktor-city-api/tree/google-one-tap
 * Google One Tap Guide: https://developers.google.com/identity/one-tap/android/overview
 * Activity Result APIs: https://developer.android.com/training/basics/intents/result
+
+## Send the Google One Tap Request
+
+The Ktor API expects the following request, including a custom `x-nonce` header field and the
+Google `Bearer Authorization` JWT token.
+
+
+```
+curl --location --request POST 'http://127.0.0.1:8080/users/create' \
+--header 'x-nonce: XXXaaa000YYyy' \
+--header 'Authorization: Bearer xxxxXXXX.yyyyYYYY.zzzzZZZZ' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email":"test@gmail.com",
+    "name":"Sarah Tester"
+}'
+```

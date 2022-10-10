@@ -34,24 +34,25 @@ fun HomeRoute(
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        when (homeUiState.currentUser) {
-            is CurrentUser.SignedInUser -> {
+        if (!homeUiState.isLoading) {
+            when (homeUiState.currentUser) {
+                is CurrentUser.SignedInUser -> {
+                    with(homeUiState.currentUser as CurrentUser.SignedInUser) {
+                        Text(
+                            modifier = Modifier.padding(4.dp),
+                            text = this.name,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            modifier = Modifier.padding(4.dp),
+                            text = this.email,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
 
-                with(homeUiState.currentUser as CurrentUser.SignedInUser) {
-                    Text(
-                        modifier = Modifier.padding(4.dp),
-                        text = this.name,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Text(
-                        modifier = Modifier.padding(4.dp),
-                        text = this.email,
-                        style = MaterialTheme.typography.titleMedium
-                    )
                 }
-
+                else -> {}
             }
-            else -> {}
         }
     }
 }
