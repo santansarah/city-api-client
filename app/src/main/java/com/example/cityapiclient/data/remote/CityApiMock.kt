@@ -8,7 +8,8 @@ class CityApiMockService(
         return ServiceResult.Success(CityApiResponse(cities = cities))
     }
 
-    override suspend fun insertUser(email: String): ServiceResult<UserResponse> {
+    override suspend fun insertUser(email: String, name: String, nonce: String,
+                                    jwtToken: String): ServiceResult<UserResponse> {
         TODO("Not yet implemented")
     }
 }

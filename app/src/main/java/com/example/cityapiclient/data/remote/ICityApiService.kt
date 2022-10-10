@@ -6,6 +6,9 @@ interface ICityApiService {
 
     suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse>
 
-    suspend fun insertUser(email: String): ServiceResult<UserResponse>
+    suspend fun insertUser(email: String,
+                           name: String,
+                           nonce: String,
+                            jwtToken: String): ServiceResult<UserResponse>
 
 }

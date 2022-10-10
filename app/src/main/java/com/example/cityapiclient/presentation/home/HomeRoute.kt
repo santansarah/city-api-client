@@ -47,11 +47,11 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
 
-   Text(text = "home route",
-   style = MaterialTheme.typography.displayLarge)
-
-    Text(text = viewModel.userId.toString(),
-        style = MaterialTheme.typography.displayLarge)
+    Text(
+        modifier = Modifier.padding(16.dp),
+        text = "home route",
+        style = MaterialTheme.typography.displayMedium
+    )
 
 }
 

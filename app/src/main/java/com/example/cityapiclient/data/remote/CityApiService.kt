@@ -50,15 +50,24 @@ class CityApiService @Inject constructor(
         }
     }
 
-    override suspend fun insertUser(email: String): ServiceResult<UserResponse> {
+    override suspend fun insertUser(
+        email: String,
+        name: String,
+        nonce: String,
+        jwtToken: String
+    ): ServiceResult<UserResponse> {
 
         Log.d("debug", "Inserting new user...")
 
         return try {
             val userResponse: UserResponse = client.post(INSERT_USER)
             {
+                bearerAuth(jwtToken)
+                headers {
+                    append("x-nonce", nonce)
+                }
                 contentType(ContentType.Application.Json)
-                setBody(NewUser(email))
+                setBody(NewUser(email = email, name = name))
             }.body()
             Success(userResponse)
         } catch (apiError: Exception) {

@@ -9,7 +9,7 @@ val textFieldContainer = Color(0xBF171C1C)
 
 // text
 val primaryTextColor = Color(0xFFbac5c5)
-val placeHolderText = Color(0xFF404040)
+val placeHolderText = Color(0xFF666666)
 val yellowText = Color(0xFFffff00)
 val orangeText = Color(0xFFff8400) //0xFFff8300
 

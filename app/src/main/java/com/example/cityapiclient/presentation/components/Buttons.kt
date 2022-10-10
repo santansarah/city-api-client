@@ -37,7 +37,7 @@ fun GoogleSignInButton(
 
     Button(
         modifier = modifier
-            .height(46.dp),
+            .height(48.dp),
         border = BorderStroke(1.dp, blueYellowGradient),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -108,7 +108,7 @@ fun AppIconButton(
 ) {
     Button(
         modifier = modifier
-            .height(46.dp),
+            .height(48.dp),
         border = BorderStroke(1.dp, blueYellowGradient),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(

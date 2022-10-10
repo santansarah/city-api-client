@@ -4,6 +4,7 @@ plugins {
     id 'com.google.dagger.hilt.android'
     id 'kotlin-kapt'
     id 'kotlinx-serialization'
+    id 'kotlin-parcelize'
 }
 
 def appPropertiesFile = rootProject.file("app.properties")

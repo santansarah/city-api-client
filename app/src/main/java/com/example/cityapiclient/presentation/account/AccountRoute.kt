@@ -175,7 +175,7 @@ private fun AccountHeading(
         is CurrentUser.SignedOutUser ->
             "Refresh your sign in to manage your API keys."
         else ->
-            "Sign in to create and manage your API keys, or click City Name Search to try out our API sandbox."
+            "Sign up to create and manage your API keys, or click City Name Search to try out our API sandbox."
     }
 
     Text(

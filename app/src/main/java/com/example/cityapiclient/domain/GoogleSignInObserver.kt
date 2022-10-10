@@ -2,6 +2,7 @@ package com.example.cityapiclient.domain
 
 import android.app.Activity
 import android.content.Context
+import android.os.Parcelable
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -26,12 +27,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlin.math.sign
 
+@Parcelize
 data class SignInState(
     val userMessage: String?,
     val isSigningIn: Boolean
-)
+) : Parcelable
 
 class SignInObserver @Inject constructor(
     activity: Context,
@@ -48,7 +52,7 @@ class SignInObserver @Inject constructor(
 
     companion object {
         private const val REQUEST_CODE_GOOGLE_SIGN_UP = "googleSignUp"
-        lateinit var SERVER_NONCE: String
+        private val SERVER_NONCE: String = generateNonce()
 
         lateinit var registry: ActivityResultRegistry
         lateinit var signInClient: SignInClient
@@ -57,11 +61,9 @@ class SignInObserver @Inject constructor(
     }
 
     init {
+
         registry = (activity as ComponentActivity).activityResultRegistry
         signInClient = Identity.getSignInClient(activity)
-
-        SERVER_NONCE = generateNonce()
-        Log.d("debug", "nonce value: $SERVER_NONCE")
 
         signUpRequest = BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
@@ -73,6 +75,9 @@ class SignInObserver @Inject constructor(
                     .build()
             )
             .build()
+
+        Log.d("debug", "nonce value: $SERVER_NONCE")
+
     }
 
     override fun onCreate(owner: LifecycleOwner) {
@@ -107,17 +112,24 @@ class SignInObserver @Inject constructor(
 
                     val name = credential.displayName ?: "User"
                     val email = credential.id
-                    val idTokenWithNonce = credential.googleIdToken
+                    val idTokenWithNonce = credential.googleIdToken ?: ""
                     Log.d("debug", "idToken: $idTokenWithNonce")
+                    Log.d("debug", "nonce from result: $SERVER_NONCE")
 
                     owner.lifecycleScope.launch {
                         owner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                            when (val insertUserResult = insertNewUser(name, email)) {
+                            when (val insertUserResult = insertNewUser(
+                                name,
+                                email,
+                                SERVER_NONCE,
+                                idTokenWithNonce
+                            )) {
                                 is ServiceResult.Success -> {
                                     _signInState.update {
                                         it.copy(
                                             isSigningIn = false,
-                                            userMessage = "Successfully signed in.")
+                                            userMessage = "Successfully signed in."
+                                        )
                                     }
                                 }
                                 is ServiceResult.Error -> {
@@ -178,7 +190,14 @@ class SignInObserver @Inject constructor(
         }
     }
 
-
+    fun restoreState(signInState: SignInState) {
+        _signInState.update {
+            it.copy(
+                userMessage = signInState.userMessage,
+                isSigningIn = signInState.isSigningIn
+            )
+        }
+    }
 
     override fun onPause(owner: LifecycleOwner) {
         super.onPause(owner)

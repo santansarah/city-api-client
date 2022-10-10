@@ -22,11 +22,8 @@ data class HomeUiState(
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private var cityApiService: CityApiService,
-    savedStateHandle: SavedStateHandle
+    private var cityApiService: CityApiService
 ) : ViewModel() {
-
-    val userId: Int = savedStateHandle[AppDestinationsArgs.USER_ID]!!
 
     private val _uiState = MutableStateFlow(
         HomeUiState()

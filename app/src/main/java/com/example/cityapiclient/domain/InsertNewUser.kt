@@ -14,9 +14,11 @@ class InsertNewUser @Inject constructor
 
     suspend operator fun invoke(
         name: String,
-        email: String
+        email: String,
+        nonce: String,
+        jwtToken: String
     ): ServiceResult<CurrentUser> =
-        when (val insertResult = cityApiService.insertUser(email)) {
+        when (val insertResult = cityApiService.insertUser(email,name,nonce,jwtToken)) {
             is ServiceResult.Success -> {
                 with(insertResult.data) {
                     userRepository.setUserInfo(user.userId, name, email)
