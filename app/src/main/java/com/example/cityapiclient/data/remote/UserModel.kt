@@ -13,6 +13,7 @@ data class NewUser(
 data class UserWithApp(
     val userId: Int = 0,
     val email: String = "",
+    val name: String = "",
     val userCreateDate: String = "",
     val userAppId: Int = 0,
     val appName: String = "",

@@ -5,7 +5,6 @@ import androidx.compose.runtime.MutableState
 import androidx.lifecycle.*
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.local.UserRepository
-import com.example.cityapiclient.data.local.toCurrentUser
 import com.example.cityapiclient.presentation.home.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -30,6 +29,7 @@ class AccountViewModel @Inject constructor(
 
     private val _userPreferences = userRepository.userPreferencesFlow
 
+/*
     val uiState = combine(
         _userPreferences,
         _uiState
@@ -49,6 +49,7 @@ class AccountViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(),
         initialValue = AccountUiState()
     )
+*/
 
     /*val uiState = combine(_isNewUser, _userPreferences)
     { isNewUser, userPreferences ->

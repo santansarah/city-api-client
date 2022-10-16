@@ -56,7 +56,10 @@ fun AppNavGraph(
             )
         }
         composable(HOME_ROUTE) {
-            HomeRoute()
+            HomeRoute(
+                signInObserver = signInObserver,
+                appLayoutMode = appLayoutMode
+            )
         }
     }
 }

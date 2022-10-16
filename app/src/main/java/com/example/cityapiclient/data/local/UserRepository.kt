@@ -3,6 +3,8 @@ package com.example.cityapiclient.data.local
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import com.example.cityapiclient.data.ServiceResult
+import com.example.cityapiclient.data.remote.CityApiService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -14,21 +16,18 @@ data class UserPreferences(
     val lastOnboardingScreen: Int = 0,
     val isOnboardingComplete: Boolean = false,
     val userId: Int = 0,
-    val email: String,
-    val name: String,
     val isSignedOut: Boolean
 )
 
 class UserRepository @Inject constructor(
-    private val dataStore: DataStore<Preferences>
+    private val dataStore: DataStore<Preferences>,
+    private val cityApiService: CityApiService
 ) {
     private val TAG: String = "UserPreferencesManager"
 
     private object PreferencesKeys {
         val LAST_ONBOARDING_SCREEN = intPreferencesKey("last_onboarding")
         val USER_ID = intPreferencesKey("userId")
-        val USER_EMAIL = stringPreferencesKey("email")
-        val USER_NAME = stringPreferencesKey("userName")
         val IS_SIGNED_OUT = booleanPreferencesKey("isSignedOut")
     }
 
@@ -61,14 +60,23 @@ class UserRepository @Inject constructor(
             mapUserPreferences(preferences)
         }
 
-/*
-    val currentUserFlow: Flow<UserModel> = dataStore.data
+    val currentUserFlow: Flow<CurrentUser> = dataStore.data
         .catch {
-            emit(UserModel.UnknownSignIn)
+            CurrentUser.UnknownSignIn
         }.map { preferences ->
-            preferencesToCurrentUser(preferences)
+            mapUserPreferences(preferences)
+        }.map {
+            Log.d("debug", "collecting CurrentUser: $it")
+            if (it.userId <= 0)
+                CurrentUser.UnknownSignIn
+            else {
+                if (it.isSignedOut)
+                    CurrentUser.SignedOutUser()
+                else
+                    getUser(it.userId)
+            }
         }
-*/
+
 
     /**
      * Sets the last onboarding screen that was viewed (on button click).
@@ -90,29 +98,9 @@ class UserRepository @Inject constructor(
         }
     }
 
-    suspend fun setEmail(email: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.USER_EMAIL] = email
-        }
-    }
-
-    suspend fun setName(name: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.USER_NAME] = name
-        }
-    }
-
     suspend fun isSignedOut(isSignedOut: Boolean) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.IS_SIGNED_OUT] = isSignedOut
-        }
-    }
-
-    suspend fun setUserInfo(userId: Int, name: String, email: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.USER_ID] = userId
-            preferences[PreferencesKeys.USER_NAME] = name
-            preferences[PreferencesKeys.USER_EMAIL] = email
         }
     }
 
@@ -123,27 +111,25 @@ class UserRepository @Inject constructor(
         val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: 0
         val isOnBoardingComplete: Boolean = (lastScreen >= 2)
         val userId = preferences[PreferencesKeys.USER_ID] ?: 0
-        val email = preferences[PreferencesKeys.USER_EMAIL] ?: ""
-        val name = preferences[PreferencesKeys.USER_NAME] ?: ""
-        val isSignedOut = preferences[PreferencesKeys.IS_SIGNED_OUT] ?: false
-        return UserPreferences(lastScreen, isOnBoardingComplete, userId, email, name, isSignedOut)
-    }
-
-    private fun preferencesToCurrentUser(preferences: Preferences): CurrentUser {
-        val lastScreen = preferences[PreferencesKeys.LAST_ONBOARDING_SCREEN] ?: 0
-        val isOnBoardingComplete: Boolean = (lastScreen >= 2)
-        val userId = preferences[PreferencesKeys.USER_ID] ?: 0
-        val email = preferences[PreferencesKeys.USER_EMAIL] ?: ""
-        val name = preferences[PreferencesKeys.USER_NAME] ?: ""
         val isSignedOut = preferences[PreferencesKeys.IS_SIGNED_OUT] ?: false
 
-        if (userId == 0)
-            return CurrentUser.UnknownSignIn
-
-        if (isSignedOut)
-            return CurrentUser.SignedOutUser(userId, name, email)
-
-        return CurrentUser.SignedInUser(userId, name, email)
+        return UserPreferences(lastScreen, isOnBoardingComplete, userId, isSignedOut)
     }
 
+    private suspend fun getUser(userId: Int): CurrentUser {
+        return when (val getUserResult = cityApiService.getUser(userId)) {
+            is ServiceResult.Success ->
+                with(getUserResult.data.user) {
+                    CurrentUser.SignedInUser(
+                        userId = userId,
+                        email = email,
+                        name = name
+                    )
+                }
+            is ServiceResult.Error -> {
+                Log.d("debug", "getuser: ${getUserResult.message}")
+                CurrentUser.UnknownSignIn
+            }
+        }
+    }
 }

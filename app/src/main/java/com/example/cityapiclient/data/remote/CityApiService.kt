@@ -4,10 +4,10 @@ import android.util.Log
 import com.example.cityapiclient.BuildConfig
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.ServiceResult.Success
+import com.example.cityapiclient.domain.interfaces.ICityApiService
 import com.example.cityapiclient.util.toCityApiError
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import javax.inject.Inject
@@ -21,6 +21,8 @@ class CityApiService @Inject constructor(
         private const val BASE_URL = "http://${BuildConfig.KTOR_IP_ADDR}:8080"
         const val CITIES = "$BASE_URL/cities"
         const val INSERT_USER = "$BASE_URL/users/create"
+        const val USER_BY_JWT = "$BASE_URL/users/get"
+        const val USER_BY_ID = "$BASE_URL/users"
 
         private const val API_KEY = "Pr67HTHS4VIP1eN"
     }
@@ -50,24 +52,22 @@ class CityApiService @Inject constructor(
         }
     }
 
-    override suspend fun insertUser(
-        email: String,
-        name: String,
+    override suspend fun getUser(
         nonce: String,
-        jwtToken: String
+        jwtToken: String,
+        isNew: Boolean
     ): ServiceResult<UserResponse> {
 
-        Log.d("debug", "Inserting new user...")
+        Log.d("debug", "Insert or get user from API...")
 
         return try {
-            val userResponse: UserResponse = client.post(INSERT_USER)
+            val userResponse: UserResponse = client.get(if (isNew) INSERT_USER else USER_BY_JWT)
             {
                 bearerAuth(jwtToken)
                 headers {
                     append("x-nonce", nonce)
                 }
                 contentType(ContentType.Application.Json)
-                setBody(NewUser(email = email, name = name))
             }.body()
             Success(userResponse)
         } catch (apiError: Exception) {
@@ -75,6 +75,30 @@ class CityApiService @Inject constructor(
             val parsedError = apiError.toCityApiError<UserResponse>()
             parsedError
 
+        }
+    }
+
+    override suspend fun getUser(id: Int): ServiceResult<UserResponse> {
+
+        Log.d("debug", "httpclient: $client")
+
+        return try {
+            val userResponse: UserResponse = client.get(USER_BY_ID) {
+                headers {
+                    append("x-api-key", API_KEY)
+                }
+                url {
+                    appendPathSegments(id.toString())
+                }
+            }.body()
+
+            Log.d("debug", "user from getuser: $userResponse")
+
+            Success(userResponse)
+
+        } catch (apiError: Exception) {
+            val parsedError = apiError.toCityApiError<UserResponse>()
+            parsedError
         }
     }
 }

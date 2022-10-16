@@ -7,12 +7,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.lifecycle.lifecycleScope
 import com.example.cityapiclient.data.local.UserRepository
+import com.example.cityapiclient.data.remote.CityApiService
+import com.example.cityapiclient.data.remote.UserWithAppResponse
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.domain.SignInState
 import com.example.cityapiclient.presentation.AppRoot
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
@@ -50,12 +56,13 @@ class MainActivity : ComponentActivity() {
             val windowSize = calculateWindowSizeClass(this)
 
             // uncomment this to test onboarding screens.
-            /*runBlocking {
+/*
+            runBlocking {
                 userRepository.clear()
 
                 //userPreferencesManager.setLastOnboardingScreen(0)
-            }*/
-
+            }
+*/
             /**
              * Call my container here, which provides the background for all layouts
              * and serves the content, depending on the current screen size.

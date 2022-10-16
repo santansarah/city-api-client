@@ -21,15 +21,5 @@ sealed class CurrentUser {
     object UnknownSignIn : CurrentUser()
 }
 
-fun UserPreferences.toCurrentUser(): CurrentUser {
-    Log.d("debug", "current user from user prefs: $this")
-    if (userId == 0)
-        return CurrentUser.UnknownSignIn
-
-    if (isSignedOut)
-        return CurrentUser.SignedOutUser(userId, name, email)
-
-    return CurrentUser.SignedInUser(userId, name, email)
-}
 
 

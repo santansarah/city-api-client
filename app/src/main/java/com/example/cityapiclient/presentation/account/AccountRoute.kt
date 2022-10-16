@@ -33,48 +33,11 @@ fun AccountRoute(
     /** [SignInObserver] updates the preferences datastore, but the viewmodel observes changes
      * to the datastore so this composable stays as stateless as possible.
      */
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+   // val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val signInState by signInObserver.signInState.collectAsStateWithLifecycle()
-
-    // Check if the Google Sign In is successful and navigate to home
-    LaunchedEffect(uiState.newSignIn) {
-        Log.d("debug", "triggered newSignInLE")
-        if (uiState.newSignIn) {
-            Log.d("debug", "navigating to home")
-            onSignInSuccess()
-        }
-    }
-
-    val title = if (uiState.currentUser is CurrentUser.UnknownSignIn)
-        "Get Started"
-    else
-        "Your Account"
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-
-    // Check for user messages to display on the screen
-    signInState.userMessage?.let { userMessage ->
-        LaunchedEffect(signInState.userMessage, userMessage) {
-            snackbarHostState.showSnackbar(userMessage)
-            signInObserver.userMessageShown()
-        }
-    }
 
     Log.d("debug", "isSigining in from composable: ${signInState.isSigningIn}")
 
-    CompactLayoutWithScaffold(
-        snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
-        mainContent = {
-            AccountContent(
-                appLayoutMode,
-                {scope.launch { signInObserver.signOut() }},
-                {scope.launch { signInObserver.signUp() }},
-                uiState.currentUser,
-                signInState.isSigningIn
-            )
-        }, title = title
-    )
 
 }
 

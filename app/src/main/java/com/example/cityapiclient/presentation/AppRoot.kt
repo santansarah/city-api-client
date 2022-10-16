@@ -19,16 +19,17 @@ import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations.ACCOUNT_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
+import com.example.cityapiclient.presentation.AppDestinations.ONBOARDING_ROUTE
 import com.example.cityapiclient.presentation.components.backgroundGradient
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.getWindowLayoutType
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 
 data class AppUiState(
     val isLoading: Boolean,
-    val appLayoutMode: AppLayoutMode,
     val startDestination: String
 )
 
@@ -66,39 +67,23 @@ fun AppRoot(
                  * Get updates for rotations and collect UserPreferences. None of these
                  * values are preserved during config changes, but that's OK here.
                  */
-                val _appLayoutMode = MutableStateFlow(getWindowLayoutType(windowSize = windowSize))
-                val _appPreferencesState = userRepository.userPreferencesFlow
-
-                val appUiState = combine(
-                    _appLayoutMode,
-                    _appPreferencesState
-                ) { appLayoutMode, appPreferencesState ->
+                val appLayoutMode = getWindowLayoutType(windowSize = windowSize)
+                val appUiState = userRepository.userPreferencesFlow.map {
                     AppUiState(
                         isLoading = false,
-                        appLayoutMode = appLayoutMode,
-                        startDestination = if (!appPreferencesState.isOnboardingComplete)
-                            AppDestinations.ONBOARDING_ROUTE
+                        startDestination = if (!it.isOnboardingComplete)
+                            ONBOARDING_ROUTE
                         else {
-                            if (appPreferencesState.userId > 0 && !appPreferencesState.isSignedOut)
-                                HOME_ROUTE
-                            else
-                                ACCOUNT_ROUTE
+                            HOME_ROUTE
                         }
                     )
-
                 }.collectAsStateWithLifecycle(
-                    initialValue = AppUiState(
-                        isLoading = true,
-                        appLayoutMode = _appLayoutMode.value,
-                        startDestination = AppDestinations.ONBOARDING_ROUTE
-                    )
+                    initialValue = AppUiState(true, ONBOARDING_ROUTE)
                 ).value
-
-                Log.d("debug", "approot startdest: ${appUiState.startDestination}")
 
                 if (!appUiState.isLoading) {
                     AppNavGraph(
-                        appLayoutMode = appUiState.appLayoutMode,
+                        appLayoutMode = appLayoutMode,
                         startDestination = appUiState.startDestination,
                         signInObserver = signInObserver
                     )

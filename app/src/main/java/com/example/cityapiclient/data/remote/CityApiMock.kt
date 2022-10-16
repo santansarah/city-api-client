@@ -1,6 +1,7 @@
 package com.example.cityapiclient.data.remote
 
 import com.example.cityapiclient.data.ServiceResult
+import com.example.cityapiclient.domain.interfaces.ICityApiService
 
 class CityApiMockService(
 ): ICityApiService {
@@ -8,8 +9,15 @@ class CityApiMockService(
         return ServiceResult.Success(CityApiResponse(cities = cities))
     }
 
-    override suspend fun insertUser(email: String, name: String, nonce: String,
-                                    jwtToken: String): ServiceResult<UserResponse> {
+    override suspend fun getUser(
+        nonce: String,
+        jwtToken: String,
+        isNew: Boolean
+    ): ServiceResult<UserResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getUser(id: Int): ServiceResult<UserResponse> {
         TODO("Not yet implemented")
     }
 }
