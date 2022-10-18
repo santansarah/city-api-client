@@ -1,18 +1,12 @@
 package com.example.cityapiclient.presentation.components
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -20,19 +14,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun GoogleSignInButton(
+fun AnimatedButton(
     buttonText: String,
     onClick: () -> Unit,
     imageRes: Int,
     modifier: Modifier = Modifier,
-    isSigningIn: Boolean
+    isProcessing: Boolean
 ) {
 
     Button(
@@ -48,21 +38,21 @@ fun GoogleSignInButton(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
+            Icon(
                 painter = painterResource(id = imageRes),
                 contentDescription = buttonText,
                 modifier = Modifier
                     .align(Alignment.CenterStart),
-                colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.outline)
+                tint = MaterialTheme.colorScheme.outline
             )
 
             AnimatedLoadingBoxes(
-                animationKey = isSigningIn,
+                animationKey = isProcessing,
                 rowModifier = Modifier.fillMaxWidth(.5f)
             )
 
             androidx.compose.animation.AnimatedVisibility(
-                visible = !isSigningIn,
+                visible = !isProcessing,
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
@@ -88,12 +78,12 @@ fun PreviewHome() {
     CityAPIClientTheme {
 
         Column() {
-            GoogleSignInButton(
+            AnimatedButton(
                 buttonText = "Sign up with Google",
                 onClick = {},
                 imageRes = R.drawable.google_icon,
                 modifier = Modifier.fillMaxWidth(.75f),
-                isSigningIn = true
+                isProcessing = true
             )
         }
     }

@@ -19,7 +19,7 @@ enum class ErrorCode(val message: String) {
     INVALID_CITY_QUERY("You must pass a city name or zip prefix."),
     INVALID_API_KEY("Bad API key. Use x-api-key in the header."),
     SERVER_ERROR("Unknown API server error."),
-    SIGNIN_ERROR("Unknown sign in error. Try again.")
+    SIGNIN_ERROR("We're having trouble reaching our backend server. Sign in to try again.")
 }
 
 class AuthenticationException : RuntimeException()

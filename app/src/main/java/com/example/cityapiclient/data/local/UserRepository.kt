@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiService
+import com.example.cityapiclient.util.ErrorCode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
@@ -71,7 +72,7 @@ class UserRepository @Inject constructor(
                 CurrentUser.UnknownSignIn
             else {
                 if (it.isSignedOut)
-                    CurrentUser.SignedOutUser()
+                    CurrentUser.SignedOutUser
                 else
                     getUser(it.userId)
             }
@@ -116,7 +117,7 @@ class UserRepository @Inject constructor(
         return UserPreferences(lastScreen, isOnBoardingComplete, userId, isSignedOut)
     }
 
-    private suspend fun getUser(userId: Int): CurrentUser {
+    suspend fun getUser(userId: Int): CurrentUser {
         return when (val getUserResult = cityApiService.getUser(userId)) {
             is ServiceResult.Success ->
                 with(getUserResult.data.user) {
@@ -128,7 +129,9 @@ class UserRepository @Inject constructor(
                 }
             is ServiceResult.Error -> {
                 Log.d("debug", "getuser: ${getUserResult.message}")
-                CurrentUser.UnknownSignIn
+                CurrentUser.UnAuthorizedUser(
+                    userId,
+                    ErrorCode.SIGNIN_ERROR)
             }
         }
     }

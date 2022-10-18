@@ -13,8 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.R
 
 /**
  * This is the template for phones - Portrait and Landscape.
@@ -75,8 +77,9 @@ fun CompactLayoutWithScaffold(
                 navigationIcon = {
                     IconButton(onClick = { /* doSomething() */ }) {
                         Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
+                            painter = painterResource(id = R.drawable.cityneon),
+                            contentDescription = "Menu",
+                            tint = Color.Transparent
                         )
                     }
                 }

@@ -9,20 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.presentation.components.AppCard
 import com.example.cityapiclient.presentation.components.AppIconButton
-import com.example.cityapiclient.presentation.components.GoogleSignInButton
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
 
 @Composable
-fun SignUpScreen(
+fun HomeSignInOrSignUp(
     appLayoutMode: AppLayoutMode,
-    signUp: () -> Unit,
-    isSigningIn: Boolean
+    currentUser: CurrentUser,
+    googleButton: @Composable () -> Unit
 ) {
-    SignUpHeading(appLayoutMode)
+    SignUpHeading(appLayoutMode, currentUser)
 
     AppCard {
         if (appLayoutMode == AppLayoutMode.LANDSCAPE) {
@@ -30,57 +29,42 @@ fun SignUpScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SignUpButton(signUp, Modifier.weight(.45f), isSigningIn)
-                SearchButton(Modifier.weight(.45f))
+                DoubleScreenLayout(leftContent = { googleButton() },
+                    rightContent = { SearchButton() })
             }
         } else {
-            val buttonModifier = Modifier.fillMaxWidth(.95f)
-            SignUpButton(signUp, buttonModifier, isSigningIn)
-            Spacer(modifier = Modifier.height(20.dp))
-            SearchButton(buttonModifier)
+            googleButton()
+            Spacer(modifier = Modifier.height(16.dp))
+            SearchButton()
         }
     }
 }
 
 @Composable
-private fun SearchButton(
-    modifier: Modifier
-) {
+private fun SearchButton() {
     AppIconButton(
         buttonText = "City Name Search",
         onClick = { /*TODO*/ },
         imageRes = Icons.Outlined.Search,
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun SignUpButton(
-    onSignedIn: () -> Unit,
-    modifier: Modifier,
-    isSigningIn: Boolean
-) {
-
-    val signInText = "Sign up with Google"
-
-    GoogleSignInButton(
-        buttonText = signInText,
-        onClick = onSignedIn,
-        imageRes = R.drawable.google_icon,
-        modifier = modifier,
-        isSigningIn = isSigningIn
+        modifier = Modifier
     )
 }
 
 @Composable
 private fun SignUpHeading(
     appLayoutMode: AppLayoutMode,
+    currentUser: CurrentUser
 ) {
     Spacer(modifier = Modifier.height(20.dp))
 
     val bottomPadding = if (appLayoutMode == AppLayoutMode.LANDSCAPE) 42.dp else 110.dp
 
-    val heading = "Sign up to create and manage your API keys, or click City Name Search to try out our API sandbox."
+    val heading = when (currentUser) {
+        is CurrentUser.UnAuthorizedUser -> currentUser.error.message
+        is CurrentUser.SignedOutUser -> "You're currently signed out. Sign in to manage your API keys."
+        else -> "Sign up to create and manage your API keys, or click City Name Search " +
+                "to try out our API sandbox."
+    }
 
     Text(
         text = heading,

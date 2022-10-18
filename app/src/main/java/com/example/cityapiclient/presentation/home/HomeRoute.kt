@@ -14,18 +14,20 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
+import com.example.cityapiclient.presentation.components.GoogleButton
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
     signInObserver: SignInObserver,
-    appLayoutMode: AppLayoutMode
+    appLayoutMode: AppLayoutMode,
+    onGoToAccount: () -> Unit
 ) {
 
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
@@ -42,19 +44,52 @@ fun HomeRoute(
         }
     }
 
+    // Check for user messages to display on the screen
+    homeUiState.userMessage?.let { userMessage ->
+        LaunchedEffect(homeUiState.userMessage, userMessage) {
+            snackbarHostState.showSnackbar(userMessage)
+            viewModel.userMessageShown()
+        }
+    }
+
     Log.d("debug", "isSigining in from composable: ${signInState.isSigningIn}")
 
-    CompactLayoutWithScaffold(
-        snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
-        mainContent = {
+    if (!homeUiState.isLoading) {
+        CompactLayoutWithScaffold(
+            snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
+            mainContent = {
 
-            if (!homeUiState.isLoading) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Button(onClick = { onGoToAccount() }) {
+                    Text(text = "Go to Account")
+                }
+
                 when (homeUiState.currentUser) {
                     is CurrentUser.UnknownSignIn -> {
-                        SignUpScreen(
-                            appLayoutMode,
-                            { scope.launch { signInObserver.signUp() } },
-                            signInState.isSigningIn
+                        HomeSignInOrSignUp(
+                            appLayoutMode = appLayoutMode,
+                            currentUser = homeUiState.currentUser,
+                            googleButton = {
+                                GoogleButton(
+                                    onClick = { scope.launch { signInObserver.signUp() } },
+                                    buttonText = "Sign up with Google",
+                                    isProcessing = signInState.isSigningIn
+                                )
+                            }
+                        )
+                    }
+                    is CurrentUser.UnAuthorizedUser -> {
+                        HomeSignInOrSignUp(
+                            appLayoutMode = appLayoutMode,
+                            currentUser = homeUiState.currentUser,
+                            googleButton = {
+                                GoogleButton(
+                                    onClick = viewModel::getUser,
+                                    buttonText = "Try again",
+                                    isProcessing = signInState.isSigningIn
+                                )
+                            }
                         )
                     }
                     is CurrentUser.SignedInUser -> {
@@ -72,15 +107,28 @@ fun HomeRoute(
                                 text = (homeUiState.currentUser as CurrentUser.SignedInUser).email,
                                 style = MaterialTheme.typography.titleMedium
                             )
+
                         }
 
                     }
-                    else -> {}
+                    is CurrentUser.SignedOutUser -> {
+                        HomeSignInOrSignUp(
+                            appLayoutMode = appLayoutMode,
+                            currentUser = homeUiState.currentUser,
+                            googleButton = {
+                                GoogleButton(
+                                    onClick = { scope.launch { signInObserver.signIn() } },
+                                    buttonText = "Sign in with Google",
+                                    isProcessing = signInState.isSigningIn
+                                )
+                            }
+                        )
+                    }
                 }
-            }
 
-        }, title = if (!homeUiState.isLoading) HomeAppBarTitle(homeUiState.currentUser) else ""
-    )
+            }, title = HomeAppBarTitle(homeUiState.currentUser)
+        )
+    }
 
 }
 

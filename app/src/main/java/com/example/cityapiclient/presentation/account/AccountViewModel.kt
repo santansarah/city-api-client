@@ -1,7 +1,6 @@
 package com.example.cityapiclient.presentation.account
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.*
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.local.UserRepository
@@ -13,58 +12,36 @@ import javax.inject.Inject
 
 
 data class AccountUiState(
-    val newSignIn: Boolean = false,
     val currentUser: CurrentUser = CurrentUser.UnknownSignIn,
-    val userMessage: String = "",
     val isLoading: Boolean = true
 )
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    userRepository: UserRepository
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(AccountUiState())
-    private var _userId = -1
+    private val _currentUserFlow = userRepository.currentUserFlow
+    private val _accountUiState = MutableStateFlow(AccountUiState())
+    val accountUiState = _accountUiState.asStateFlow()
 
-    private val _userPreferences = userRepository.userPreferencesFlow
+    init {
+        viewModelScope.launch {
+            _currentUserFlow.collect() { user ->
+                Log.d("debug", "currentUser(Home): $user")
+                _accountUiState.update {
+                    it.copy(
+                        currentUser = user,
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
 
-/*
-    val uiState = combine(
-        _userPreferences,
-        _uiState
-    ) { userPreferences, uiState ->
-        val currentUser = userPreferences.toCurrentUser()
-        // do not reorder!
-        val newSignIn = (_userId == 0 && (currentUser is CurrentUser.SignedInUser))
-        Log.d("debug", "new signin: $_userId, $newSignIn, $currentUser")
-        _userId = userPreferences.userId
-        AccountUiState(
-            isLoading = false,
-            currentUser = currentUser,
-            newSignIn = newSignIn
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = AccountUiState()
-    )
-*/
-
-    /*val uiState = combine(_isNewUser, _userPreferences)
-    { isNewUser, userPreferences ->
-        val currentUser = userPreferences.toCurrentUser()
-        // do not reorder!
-        val newSignIn = (_userId == 0 && currentUser is CurrentUser.SignedInUser)
-        _userId = userPreferences.userId
-        AccountUiState(
-            currentUser = currentUser,
-            newSignIn =  newSignIn
-        )
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        AccountUiState()
-    )*/
-
+    fun signOut() {
+        viewModelScope.launch {
+            userRepository.isSignedOut(true)
+        }
+    }
 }

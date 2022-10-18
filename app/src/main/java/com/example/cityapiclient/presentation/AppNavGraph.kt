@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.cityapiclient.domain.SignInObserver
+import com.example.cityapiclient.presentation.AppDestinations.ACCOUNT_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinationsArgs.USER_ID
 import com.example.cityapiclient.presentation.home.HomeRoute
@@ -51,14 +52,15 @@ fun AppNavGraph(
         ) {
             AccountRoute(
                 appLayoutMode = appLayoutMode,
-                onSignInSuccess = { navActions.navigateToHome() },
-                signInObserver = signInObserver
+                signInObserver = signInObserver,
+                onGoToHome = {navController.navigate(HOME_ROUTE)}
             )
         }
         composable(HOME_ROUTE) {
             HomeRoute(
                 signInObserver = signInObserver,
-                appLayoutMode = appLayoutMode
+                appLayoutMode = appLayoutMode,
+                onGoToAccount = { navController.navigate(ACCOUNT_ROUTE) }
             )
         }
     }

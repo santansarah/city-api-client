@@ -32,7 +32,7 @@ import javax.inject.Inject
 data class SignInState(
     val userMessage: String?,
     val isSigningIn: Boolean,
-    val isSignedIn: Boolean = false
+    val isSignedOut: Boolean = false
 ) : Parcelable
 
 class SignInObserver @Inject constructor(
@@ -146,7 +146,7 @@ class SignInObserver @Inject constructor(
                                     _signInState.update {
                                         it.copy(
                                             isSigningIn = false,
-                                            isSignedIn = true
+                                            isSignedOut = false
                                         )
                                     }
                                 }
@@ -206,8 +206,11 @@ class SignInObserver @Inject constructor(
         }
     }
 
-    suspend fun signOut() {
-        TODO()
+    fun signOut() {
+        _signInState.update {
+            it.copy(isSignedOut = true)
+        }
+        signInClient.signOut()
     }
 
     fun userMessageShown() {
