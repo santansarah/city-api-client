@@ -38,10 +38,4 @@ class AccountViewModel @Inject constructor(
             }
         }
     }
-
-    fun signOut() {
-        viewModelScope.launch {
-            userRepository.isSignedOut(true)
-        }
-    }
 }

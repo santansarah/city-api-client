@@ -45,13 +45,6 @@ fun AccountRoute(
         }
     }
 
-    LaunchedEffect(signInState.isSignedOut) {
-        if (signInState.isSignedOut)
-        {
-            viewModel.signOut()
-        }
-    }
-
     CompactLayoutWithScaffold(
         snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
         mainContent = {
@@ -59,8 +52,8 @@ fun AccountRoute(
             if (!accountUiState.isLoading) {
                 AccountContent(
                     appLayoutMode = appLayoutMode,
-                    signOut = { scope.launch { signInObserver.signOut() } },
-                    signIn = { scope.launch { signInObserver.signUp() } },
+                    signOut = { scope.launch { signInObserver.signOut() }},
+                    signIn = { scope.launch { signInObserver.signIn() } },
                     currentUser = accountUiState.currentUser,
                     isProcessing = signInState.isSigningIn,
                     onGoToHome = onGoToHome
@@ -126,7 +119,7 @@ private fun AccountContent(
             )
         }
         Text(
-            text = "Permanently revoke your Google sign in and delete your API keys. " +
+            text = "Delete your account and API keys. " +
                     "This can not be undone.",
             style = MaterialTheme.typography.labelSmall,
             textAlign = TextAlign.Center

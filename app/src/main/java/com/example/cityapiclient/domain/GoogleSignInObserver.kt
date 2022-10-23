@@ -14,6 +14,7 @@ import androidx.lifecycle.*
 import com.example.cityapiclient.BuildConfig
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.domain.usecases.GetUserFromGoogleJWT
+import com.example.cityapiclient.domain.usecases.SignUserInOrOut
 import com.example.cityapiclient.util.OneTapError
 import com.example.cityapiclient.util.exceptionToServiceResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -31,13 +32,13 @@ import javax.inject.Inject
 @Parcelize
 data class SignInState(
     val userMessage: String?,
-    val isSigningIn: Boolean,
-    val isSignedOut: Boolean = false
+    val isSigningIn: Boolean
 ) : Parcelable
 
 class SignInObserver @Inject constructor(
     activity: Context,
-    private val getUserFromGoogleJWT: GetUserFromGoogleJWT
+    private val getUserFromGoogleJWT: GetUserFromGoogleJWT,
+    private val signUserInOrOut: SignUserInOrOut
 ) : DefaultLifecycleObserver {
 
     private val _signInState = MutableStateFlow(
@@ -112,7 +113,7 @@ class SignInObserver @Inject constructor(
         owner: LifecycleOwner,
         isNew: Boolean
     ) {
-        Log.d("debug", "signup result received.")
+        Log.d("debug", "signup result received: ${result.resultCode}")
 
         try {
             when (result.resultCode) {
@@ -143,10 +144,10 @@ class SignInObserver @Inject constructor(
                                 isNew
                             )) {
                                 is ServiceResult.Success -> {
+                                    signUserInOrOut(false)
                                     _signInState.update {
                                         it.copy(
-                                            isSigningIn = false,
-                                            isSignedOut = false
+                                            isSigningIn = false
                                         )
                                     }
                                 }
@@ -178,6 +179,7 @@ class SignInObserver @Inject constructor(
     }
 
     suspend fun signIn() {
+        Log.d("debug", "calling Sign In handler...")
         launchOneTap(signInRequest, signInResultHandler)
     }
 
@@ -200,17 +202,16 @@ class SignInObserver @Inject constructor(
         } catch (signUpError: OneTapError) {
             _signInState.update {
                 it.copy(
+                    isSigningIn = false,
                     userMessage = signUpError.exceptionToServiceResult().message
                 )
             }
         }
     }
 
-    fun signOut() {
-        _signInState.update {
-            it.copy(isSignedOut = true)
-        }
+    suspend fun signOut() {
         signInClient.signOut()
+        signUserInOrOut(true)
     }
 
     fun userMessageShown() {

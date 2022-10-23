@@ -48,7 +48,7 @@ fun AppNavGraph(
                 appLayoutMode = appLayoutMode
             )
         }
-        composable(AppDestinations.ACCOUNT_ROUTE
+        composable(ACCOUNT_ROUTE
         ) {
             AccountRoute(
                 appLayoutMode = appLayoutMode,

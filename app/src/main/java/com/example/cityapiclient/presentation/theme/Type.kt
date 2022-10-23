@@ -23,21 +23,18 @@ val AppTypography = Typography(
         fontFamily = titleFamily,
         fontWeight = FontWeight.W400,
         fontSize = 52.sp,
-        lineHeight = 64.sp,
         letterSpacing = (-0.25).sp,
     ),
     displayMedium = TextStyle(
         fontFamily = titleFamily,
         fontWeight = FontWeight.W400,
         fontSize = 45.sp,
-        lineHeight = 52.sp,
         letterSpacing = 0.sp,
     ),
     displaySmall = TextStyle(
         fontFamily = titleFamily,
         fontWeight = FontWeight.W400,
         fontSize = 36.sp,
-        lineHeight = 44.sp,
         letterSpacing = 0.sp,
     ),
     headlineLarge = TextStyle(

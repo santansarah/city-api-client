@@ -79,7 +79,7 @@ fun CompactLayoutWithScaffold(
                         Icon(
                             painter = painterResource(id = R.drawable.cityneon),
                             contentDescription = "Menu",
-                            tint = Color.Transparent
+                            tint = Color.Unspecified
                         )
                     }
                 }

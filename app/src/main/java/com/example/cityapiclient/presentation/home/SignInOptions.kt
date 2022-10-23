@@ -3,15 +3,15 @@ package com.example.cityapiclient.presentation.home
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.presentation.components.AppCard
 import com.example.cityapiclient.presentation.components.AppIconButton
+import com.example.cityapiclient.presentation.components.OnboardingSubHeading
+import com.example.cityapiclient.presentation.components.SubHeading
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
 
@@ -57,21 +57,14 @@ private fun SignUpHeading(
 ) {
     Spacer(modifier = Modifier.height(20.dp))
 
-    val bottomPadding = if (appLayoutMode == AppLayoutMode.LANDSCAPE) 42.dp else 110.dp
-
-    val heading = when (currentUser) {
-        is CurrentUser.UnAuthorizedUser -> currentUser.error.message
-        is CurrentUser.SignedOutUser -> "You're currently signed out. Sign in to manage your API keys."
-        else -> "Sign up to create and manage your API keys, or click City Name Search " +
-                "to try out our API sandbox."
+    when (currentUser) {
+        is CurrentUser.UnAuthorizedUser -> SubHeading(headingText = 0,
+            appLayoutMode = appLayoutMode,
+            dynamicText = currentUser.error.message)
+        is CurrentUser.SignedOutUser -> SubHeading(headingText = R.string.signed_out,
+            appLayoutMode = appLayoutMode)
+        else -> SubHeading(headingText = R.string.sign_up, appLayoutMode = appLayoutMode)
     }
 
-    Text(
-        text = heading,
-        style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier
-            .padding(bottom = bottomPadding),
-        textAlign = TextAlign.Center
-    )
 }
 

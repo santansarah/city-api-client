@@ -69,7 +69,7 @@ fun getOnboardingSubHeadingHeight(appLayoutMode: AppLayoutMode, language: String
         40.dp
     else {
         when(language) {
-            Languages.ENGLISH.code -> 70.dp
+            Languages.ENGLISH.code -> 100.dp
             Languages.SPANISH.code -> 80.dp
             Languages.GERMAN.code -> 70.dp
             else -> 70.dp
@@ -113,3 +113,23 @@ fun cardText(
         modifier = modifier,
     )
 }
+
+@Composable
+fun SubHeading(
+    headingText: Int,
+    appLayoutMode: AppLayoutMode,
+    dynamicText: String? = null
+) {
+
+    val languageCode = Locale.current.language
+    Log.d("debug", "current lang: $languageCode")
+
+    Text(
+        text = if (!dynamicText.isNullOrBlank()) dynamicText else stringResource(id = headingText),
+        style = MaterialTheme.typography.titleLarge,
+        modifier = Modifier
+            .padding(bottom = 40.dp)
+    )
+
+}
+
