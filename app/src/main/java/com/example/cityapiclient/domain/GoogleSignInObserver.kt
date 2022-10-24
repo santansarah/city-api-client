@@ -13,16 +13,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.*
 import com.example.cityapiclient.BuildConfig
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.domain.usecases.GetUserFromGoogleJWT
-import com.example.cityapiclient.domain.usecases.SignUserInOrOut
+import com.example.cityapiclient.data.local.CurrentUser
+import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.util.OneTapError
 import com.example.cityapiclient.util.exceptionToServiceResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.common.api.ApiException
 import io.ktor.util.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -37,8 +39,7 @@ data class SignInState(
 
 class SignInObserver @Inject constructor(
     activity: Context,
-    private val getUserFromGoogleJWT: GetUserFromGoogleJWT,
-    private val signUserInOrOut: SignUserInOrOut
+    private val userRepository: UserRepository
 ) : DefaultLifecycleObserver {
 
     private val _signInState = MutableStateFlow(
@@ -138,13 +139,11 @@ class SignInObserver @Inject constructor(
 
                     owner.lifecycleScope.launch {
                         owner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
-                            when (val getUserResult = getUserFromGoogleJWT(
+                            when (val getUserResult = userRepository.getUser(
                                 SERVER_NONCE,
-                                idTokenWithNonce,
-                                isNew
+                                idTokenWithNonce
                             )) {
                                 is ServiceResult.Success -> {
-                                    signUserInOrOut(false)
                                     _signInState.update {
                                         it.copy(
                                             isSigningIn = false
@@ -211,7 +210,7 @@ class SignInObserver @Inject constructor(
 
     suspend fun signOut() {
         signInClient.signOut()
-        signUserInOrOut(true)
+        userRepository.isSignedOut(true)
     }
 
     fun userMessageShown() {

@@ -1,11 +1,14 @@
 package com.example.cityapiclient.presentation.home
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
@@ -16,7 +19,6 @@ import com.example.cityapiclient.presentation.components.GoogleButton
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
@@ -57,12 +59,16 @@ fun HomeRoute(
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
             mainContent = {
 
+                Spacer(modifier = Modifier.height(4.dp))
+
                 Button(onClick = {
                     Log.d("debug", "going to account...")
                     onGoToAccount()
                 }) {
                     Text(text = "Go to Account")
                 }
+
+                Spacer(modifier = Modifier.height(4.dp))
 
                 when (homeUiState.currentUser) {
                     is CurrentUser.UnknownSignIn -> {
@@ -73,19 +79,6 @@ fun HomeRoute(
                                 GoogleButton(
                                     onClick = { scope.launch { signInObserver.signUp() } },
                                     buttonText = "Sign up with Google",
-                                    isProcessing = signInState.isSigningIn
-                                )
-                            }
-                        )
-                    }
-                    is CurrentUser.UnAuthorizedUser -> {
-                        HomeSignInOrSignUp(
-                            appLayoutMode = appLayoutMode,
-                            currentUser = homeUiState.currentUser,
-                            googleButton = {
-                                GoogleButton(
-                                    onClick = viewModel::getUser,
-                                    buttonText = "Try again",
                                     isProcessing = signInState.isSigningIn
                                 )
                             }
@@ -110,7 +103,7 @@ fun HomeRoute(
                         }
 
                     }
-                    is CurrentUser.SignedOutUser -> {
+                    is CurrentUser.SignedOutUser, is CurrentUser.NotAuthenticated -> {
                         HomeSignInOrSignUp(
                             appLayoutMode = appLayoutMode,
                             currentUser = homeUiState.currentUser,
@@ -136,7 +129,7 @@ private fun HomeAppBarTitle(currentUser: CurrentUser): String =
     if (currentUser is CurrentUser.UnknownSignIn)
         "Get Started"
     else
-        "Your Apps"
+        "API KEYS"
 
 
 

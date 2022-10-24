@@ -11,7 +11,7 @@ interface ICityApiService {
 
     //suspend fun insertUser(nonce: String, jwtToken: String): ServiceResult<UserResponse>
 
-    suspend fun getUser(nonce: String, jwtToken: String, isNew: Boolean): ServiceResult<UserResponse>
+    suspend fun getUser(nonce: String, jwtToken: String): ServiceResult<UserResponse>
 
     suspend fun getUser(id: Int): ServiceResult<UserResponse>
 

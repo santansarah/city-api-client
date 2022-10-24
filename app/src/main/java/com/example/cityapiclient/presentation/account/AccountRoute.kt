@@ -3,19 +3,24 @@ package com.example.cityapiclient.presentation.account
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.AppCard
 import com.example.cityapiclient.presentation.components.GetGoogleButtonFromUserState
+import com.example.cityapiclient.presentation.components.SubHeading
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.presentation.layouts.CardWithHeader
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import kotlinx.coroutines.launch
 
@@ -52,7 +57,7 @@ fun AccountRoute(
             if (!accountUiState.isLoading) {
                 AccountContent(
                     appLayoutMode = appLayoutMode,
-                    signOut = { scope.launch { signInObserver.signOut() }},
+                    signOut = { scope.launch { signInObserver.signOut() } },
                     signIn = { scope.launch { signInObserver.signIn() } },
                     currentUser = accountUiState.currentUser,
                     isProcessing = signInState.isSigningIn,
@@ -60,7 +65,7 @@ fun AccountRoute(
                 )
             }
 
-        }, title = "Your Account"
+        }, title = "Account"
     )
 
 }
@@ -81,50 +86,57 @@ private fun AccountContent(
         Text(text = "Go to Home")
     }
 
-    AccountHeading(appLayoutMode, currentUser)
+    Spacer(modifier = Modifier.height(4.dp))
 
-    AppCard {
-        if (appLayoutMode == AppLayoutMode.LANDSCAPE) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
+    CardWithHeader(appLayoutMode = appLayoutMode, header = {
+        AccountHeading(appLayoutMode, currentUser)
+    }) {
+        AppCard {
+            if (appLayoutMode == AppLayoutMode.LANDSCAPE) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    GetGoogleButtonFromUserState(
+                        signOut = signOut,
+                        signIn = signIn,
+                        signUp = {},
+                        currentUser = currentUser,
+                        modifier = Modifier.weight(.45f),
+                        isProcessing = isProcessing
+                    )
+                }
+            } else {
+                val buttonModifier = Modifier.fillMaxWidth()
                 GetGoogleButtonFromUserState(
                     signOut = signOut,
                     signIn = signIn,
                     signUp = {},
                     currentUser = currentUser,
-                    modifier = Modifier.weight(.45f),
+                    modifier = buttonModifier,
                     isProcessing = isProcessing
                 )
             }
-        } else {
-            val buttonModifier = Modifier.fillMaxWidth(.95f)
-            GetGoogleButtonFromUserState(
-                signOut = signOut,
-                signIn = signIn,
-                signUp = {},
-                currentUser = currentUser,
-                modifier = buttonModifier,
-                isProcessing = isProcessing
-            )
-        }
-        Spacer(modifier = Modifier.height(18.dp))
-        TextButton(onClick = { /*TODO*/ }) {
+            Spacer(modifier = Modifier.height(18.dp))
+            TextButton(modifier = Modifier.fillMaxWidth(),
+                onClick = { /*TODO*/ }) {
+                Text(
+                    text = "Delete Account",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textDecoration = TextDecoration.Underline,
+                    textAlign = TextAlign.Center
+                )
+            }
             Text(
-                text = "Delete Account",
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onPrimary,
-                textDecoration = TextDecoration.Underline
+                text = "Delete your account and API keys. " +
+                        "This can not be undone.",
+                style = MaterialTheme.typography.labelSmall,
+                textAlign = TextAlign.Center
             )
         }
-        Text(
-            text = "Delete your account and API keys. " +
-                    "This can not be undone.",
-            style = MaterialTheme.typography.labelSmall,
-            textAlign = TextAlign.Center
-        )
     }
+
 }
 
 @Composable
@@ -132,45 +144,27 @@ private fun AccountHeading(
     appLayoutMode: AppLayoutMode,
     currentUser: CurrentUser
 ) {
-
-    val bottomPadding = if (appLayoutMode == AppLayoutMode.LANDSCAPE) 16.dp else 110.dp
-
     when (currentUser) {
         is CurrentUser.SignedInUser -> {
-            Column(
-                Modifier
-                    .padding(16.dp)
-                    .padding(bottom = bottomPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = currentUser.name,
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = currentUser.email,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
+            Text(
+                modifier = Modifier.padding(4.dp),
+                text = currentUser.name,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                modifier = Modifier.padding(4.dp),
+                text = currentUser.email,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center
+            )
 
         }
         else -> {
-            Column(
-                Modifier
-                    .padding(16.dp)
-                    .padding(bottom = bottomPadding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = "You're currently signed out. Sign back in to access your API keys.",
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
+            SubHeading(
+                headingText = R.string.signed_out,
+                appLayoutMode = appLayoutMode
+            )
         }
     }
 

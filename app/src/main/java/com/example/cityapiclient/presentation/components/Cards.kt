@@ -11,6 +11,7 @@ import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.util.Languages
@@ -79,7 +80,7 @@ fun getOnboardingCardHeight(appLayoutMode: AppLayoutMode, language: String) =
     if (appLayoutMode == AppLayoutMode.LANDSCAPE)
         240.dp
     else {
-        when(language) {
+        when (language) {
             Languages.ENGLISH.code -> 360.dp
             Languages.SPANISH.code -> 360.dp
             Languages.GERMAN.code -> 390.dp
@@ -109,7 +110,11 @@ fun AppCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            mainContent()
+            Column(
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                mainContent()
+            }
         }
     }
 }

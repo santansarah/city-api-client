@@ -11,8 +11,7 @@ class CityApiMockService(
 
     override suspend fun getUser(
         nonce: String,
-        jwtToken: String,
-        isNew: Boolean
+        jwtToken: String
     ): ServiceResult<UserResponse> {
         TODO("Not yet implemented")
     }

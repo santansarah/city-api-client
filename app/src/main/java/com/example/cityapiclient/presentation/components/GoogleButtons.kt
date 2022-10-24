@@ -49,7 +49,7 @@ fun GetGoogleButtonFromUserState(
                 modifier = modifier,
                 isProcessing = isProcessing
             )
-        is CurrentUser.SignedOutUser, is CurrentUser.UnAuthorizedUser ->
+        is CurrentUser.SignedOutUser, is CurrentUser.NotAuthenticated ->
             AnimatedButton(
                 buttonText = "Sign in with Google",
                 onClick = signIn,

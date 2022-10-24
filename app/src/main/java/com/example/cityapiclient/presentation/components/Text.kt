@@ -127,8 +127,7 @@ fun SubHeading(
     Text(
         text = if (!dynamicText.isNullOrBlank()) dynamicText else stringResource(id = headingText),
         style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier
-            .padding(bottom = 40.dp)
+        //modifier = Modifier.padding(bottom = bottomPadding)
     )
 
 }

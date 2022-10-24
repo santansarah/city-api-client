@@ -117,9 +117,28 @@ class UserRepository @Inject constructor(
         return UserPreferences(lastScreen, isOnBoardingComplete, userId, isSignedOut)
     }
 
+    suspend fun getUser(nonce: String, jwtToken: String): ServiceResult<CurrentUser> =
+        when (val insertResult = cityApiService.getUser(nonce,jwtToken)) {
+            is ServiceResult.Success -> {
+                isSignedOut(false)
+                with(insertResult.data) {
+                    setUserId(user.userId)
+                    ServiceResult.Success(
+                        CurrentUser.SignedInUser(
+                            userId = user.userId,
+                            name = user.name,
+                            email = user.email
+                        )
+                    )
+                }
+            }
+            is ServiceResult.Error -> insertResult
+        }
+
     suspend fun getUser(userId: Int): CurrentUser {
         return when (val getUserResult = cityApiService.getUser(userId)) {
-            is ServiceResult.Success ->
+            is ServiceResult.Success -> {
+                isSignedOut(false)
                 with(getUserResult.data.user) {
                     CurrentUser.SignedInUser(
                         userId = userId,
@@ -127,9 +146,10 @@ class UserRepository @Inject constructor(
                         name = name
                     )
                 }
+            }
             is ServiceResult.Error -> {
                 Log.d("debug", "getuser: ${getUserResult.message}")
-                CurrentUser.UnAuthorizedUser(
+                CurrentUser.NotAuthenticated(
                     userId,
                     ErrorCode.SIGNIN_ERROR)
             }

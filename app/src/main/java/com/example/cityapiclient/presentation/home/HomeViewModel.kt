@@ -9,6 +9,7 @@ import com.example.cityapiclient.data.remote.CityApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,7 +38,7 @@ class HomeViewModel @Inject constructor(
                     it.copy(
                         currentUser = user,
                         isLoading = false,
-                        userMessage = if (user is CurrentUser.UnAuthorizedUser) "Network error." else null
+                        userMessage = if (user is CurrentUser.NotAuthenticated) "Network error." else null
                     )
                 }
             }
@@ -46,11 +47,11 @@ class HomeViewModel @Inject constructor(
 
     fun getUser() {
         val currentUser = _homeUIState.value.currentUser
-        if (currentUser is CurrentUser.UnAuthorizedUser && currentUser.userId > 0)
+        if (currentUser is CurrentUser.NotAuthenticated && currentUser.userId > 0)
         {
             viewModelScope.launch {
                 val reTryUser = userRepository.getUser(currentUser.userId)
-                if (reTryUser is CurrentUser.UnAuthorizedUser) {
+                if (reTryUser is CurrentUser.NotAuthenticated) {
                     // there's still an error
                     _homeUIState.update {
                         it.copy(userMessage = "Network error. Try again.")

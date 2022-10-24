@@ -35,15 +35,15 @@ inline fun <reified T> Exception.toCityApiError(): ServiceResult.Error {
         when (this) {
             is ServerResponseException, is ClientRequestException -> {
                 val errors = when (val cityApiResponse: T = message.toErrorResponse()) {
-                    is CityApiResponse ->
-                    {
+                    is CityApiResponse -> {
                         cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
                     }
-                    is UserResponse ->
-                    {
+                    is UserResponse -> {
                         cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
                     }
-                    else -> {ResponseErrors(code, message)}
+                    else -> {
+                        ResponseErrors(code, message)
+                    }
                 }
                 ServiceResult.Error(errors.code, errors.message)
             }
@@ -58,20 +58,24 @@ inline fun <reified T> Exception.toCityApiError(): ServiceResult.Error {
 }
 
 typealias OneTapError = Exception
+
 fun OneTapError.exceptionToServiceResult(): ServiceResult.Error {
 
-    Log.d("debug", "one tap error: ${this.printStackTrace()}")
+    Log.d("debug", "code: ${this.cause}, message: ${this.message}")
 
     val code = ErrorCode.SIGNIN_ERROR
     val message = message ?: ErrorCode.SIGNIN_ERROR.message
 
-   return when (this) {
-        is ApiException ->
-        {
+    return when (this) {
+        is ApiException -> {
+            Log.d("debug", "apicode: ${this.statusCode}, message: ${this.message}")
             when (statusCode) {
                 CommonStatusCodes.CANCELED -> {
                     Log.d("debug", "One-tap dialog was closed.")
-                    ServiceResult.Error(code.name, message)
+                    ServiceResult.Error(
+                        code.name,
+                        "Can't sign up: You must have at least one Google account on your device."
+                    )
                 }
                 CommonStatusCodes.NETWORK_ERROR -> {
                     Log.d(
@@ -89,8 +93,7 @@ fun OneTapError.exceptionToServiceResult(): ServiceResult.Error {
                 }
             }
         }
-        else ->
-        {
+        else -> {
             ServiceResult.Error(code.name, message)
         }
     }

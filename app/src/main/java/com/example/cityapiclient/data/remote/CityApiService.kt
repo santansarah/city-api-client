@@ -20,8 +20,7 @@ class CityApiService @Inject constructor(
 
         private const val BASE_URL = "http://${BuildConfig.KTOR_IP_ADDR}:8080"
         const val CITIES = "$BASE_URL/cities"
-        const val INSERT_USER = "$BASE_URL/users/create"
-        const val USER_BY_JWT = "$BASE_URL/users/get"
+        const val USER_BY_JWT = "$BASE_URL/users/authenticate"
         const val USER_BY_ID = "$BASE_URL/users"
 
         private const val API_KEY = "Pr67HTHS4VIP1eN"
@@ -54,14 +53,13 @@ class CityApiService @Inject constructor(
 
     override suspend fun getUser(
         nonce: String,
-        jwtToken: String,
-        isNew: Boolean
+        jwtToken: String
     ): ServiceResult<UserResponse> {
 
         Log.d("debug", "Insert or get user from API...")
 
         return try {
-            val userResponse: UserResponse = client.get(if (isNew) INSERT_USER else USER_BY_JWT)
+            val userResponse: UserResponse = client.get(USER_BY_JWT)
             {
                 bearerAuth(jwtToken)
                 headers {

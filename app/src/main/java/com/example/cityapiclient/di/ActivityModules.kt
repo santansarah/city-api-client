@@ -2,9 +2,8 @@ package com.example.cityapiclient.di
 
 import android.content.Context
 import androidx.activity.ComponentActivity
-import com.example.cityapiclient.domain.usecases.GetUserFromGoogleJWT
+import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.domain.SignInObserver
-import com.example.cityapiclient.domain.usecases.SignUserInOrOut
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,10 +22,9 @@ object ActivityModules {
     @Provides
     fun provideSignInObserver(
         @ActivityContext activity: Context,
-        getUserFromGoogleJWT: GetUserFromGoogleJWT,
-        signUserInOrOut: SignUserInOrOut
+        userRepository: UserRepository
     ): SignInObserver {
-        return SignInObserver(activity, getUserFromGoogleJWT, signUserInOrOut)
+        return SignInObserver(activity, userRepository)
     }
 
 }

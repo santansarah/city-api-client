@@ -1,7 +1,9 @@
 package com.example.cityapiclient.presentation.layouts
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
@@ -99,4 +103,26 @@ fun CompactLayoutWithScaffold(
             mainContent()
         }
     }
+}
+
+@Composable
+fun CardWithHeader(
+    appLayoutMode: AppLayoutMode,
+    header: @Composable () -> Unit,
+    card: @Composable () -> Unit
+) {
+
+    val languageCode = Locale.current.language
+    Log.d("debug", "current lang: $languageCode")
+
+    val headingHeight = if (appLayoutMode == AppLayoutMode.LANDSCAPE)
+        60.dp else 120.dp
+
+    Column(
+        modifier = Modifier.height(headingHeight)
+    ) {
+        header()
+    }
+    card()
+
 }
