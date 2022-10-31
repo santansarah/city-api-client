@@ -31,6 +31,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
+//    rememberLauncherForActivityResult(contract = , onResult = )
 @Parcelize
 data class SignInState(
     val userMessage: String?,

@@ -74,7 +74,7 @@ fun OneTapError.exceptionToServiceResult(): ServiceResult.Error {
                     Log.d("debug", "One-tap dialog was closed.")
                     ServiceResult.Error(
                         code.name,
-                        "Can't sign up: You must have at least one Google account on your device."
+                        message
                     )
                 }
                 CommonStatusCodes.NETWORK_ERROR -> {
