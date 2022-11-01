@@ -1,5 +1,17 @@
 # Google One Tap with Jetpack Compose, Ktor HttpClient, Hilt
 
+## YouTube Videos
+
+[Google One Tap with Jetpack Compose and Ktor - Playlist](https://www.youtube.com/playlist?list=PLzxawGXQRFswx9iqiCCnrDtYJw1zwGLkd)
+
+[Google One tap for Android with Ktor JWT Validation: Overview and Cloud Setup](https://youtu.be/WsnNiQje1o8)
+
+[Validate Google One Tap JWT and Nonce with Ktor](https://youtu.be/Q7PgQdXfETU)
+
+[Google One Tap with Jetpack Compose, Ktor HttpClient, ActivityResultRegistry](https://youtu.be/O_SBoS8aH7w)
+
+## Overview
+
 This branch implements Google Identity Services with One Tap Sign Up. It features a
 DefaultLifecycleObserver, activityResultRegistry, ActivityResultLauncher, and sending an Nonce to
 the backend Ktor API. With this design, the UI remains light, while the business layer does all of
@@ -12,8 +24,6 @@ validates the Google JWT token.
 
 Links:
 
-* YouTube Video: TBD
-* GitHub: https://github.com/santansarah/ktor-city-api/tree/google-one-tap
 * Ktor API: https://github.com/santansarah/ktor-city-api/tree/google-one-tap
 * Google One Tap Guide: https://developers.google.com/identity/one-tap/android/overview
 * Activity Result APIs: https://developer.android.com/training/basics/intents/result
