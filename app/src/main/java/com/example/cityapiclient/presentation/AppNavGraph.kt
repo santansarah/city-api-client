@@ -12,11 +12,13 @@ import androidx.navigation.navArgument
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations.ACCOUNT_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
+import com.example.cityapiclient.presentation.AppDestinations.SEARCH_ROUTE
 import com.example.cityapiclient.presentation.AppDestinationsArgs.USER_ID
 import com.example.cityapiclient.presentation.home.HomeRoute
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.onboarding.OnboardingRoute
 import com.example.cityapiclient.presentation.account.AccountRoute
+import com.example.cityapiclient.presentation.search.SearchRoute
 
 @Composable
 fun AppNavGraph(
@@ -59,6 +61,12 @@ fun AppNavGraph(
         composable(HOME_ROUTE) {
             HomeRoute(
                 signInObserver = signInObserver,
+                appLayoutMode = appLayoutMode,
+                navigateToTopLevelDestination = navActions::navigateTo
+            )
+        }
+        composable(SEARCH_ROUTE) {
+            SearchRoute(
                 appLayoutMode = appLayoutMode,
                 navigateToTopLevelDestination = navActions::navigateTo
             )

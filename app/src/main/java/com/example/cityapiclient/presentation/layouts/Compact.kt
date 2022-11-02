@@ -62,7 +62,8 @@ fun CompactLayoutWithScaffold(
     title: String,
     snackbarHostState: @Composable () -> Unit,
     navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
-    selectedBottomBarDestination: String
+    selectedBottomBarDestination: String,
+    allowScroll: Boolean = true
 ) {
     Scaffold(
         snackbarHost = snackbarHostState,
@@ -100,12 +101,16 @@ fun CompactLayoutWithScaffold(
     )
     { padding ->
 
+        val scrollableLayout: Modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 16.dp, end = 16.dp)
+
+         if (allowScroll) {
+             scrollableLayout.verticalScroll(rememberScrollState())
+         }
+
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(start = 16.dp, end = 16.dp)
-                .verticalScroll(rememberScrollState()),
+            modifier = scrollableLayout.padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             mainContent()

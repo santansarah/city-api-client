@@ -83,7 +83,7 @@ fun cardHeading(
     Text(
         text = stringResource(id = textContent),
         style = MaterialTheme.typography.headlineLarge,
-        color = MaterialTheme.colorScheme.onPrimaryContainer,
+        color = MaterialTheme.colorScheme.onSecondary,
         modifier = Modifier
             .padding(bottom = 16.dp)
             .fillMaxWidth()

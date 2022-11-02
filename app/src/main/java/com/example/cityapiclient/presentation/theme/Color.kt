@@ -5,11 +5,12 @@ import androidx.compose.ui.graphics.Color
 // backgrounds
 val mainBackground = Color(0xFF0C0E0E)
 val transparentDark = Color(0xB30C0E0E)
-val textFieldContainer = Color(0xBF171C1C)
+val textFieldContainer = Color(0xFF171c1c)
+val navHoverAndSecContainer = Color(0xFF3b4545)
 
 // text
 val primaryTextColor = Color(0xFFbac5c5)
-val placeHolderText = Color(0xFF666666)
+val placeHolderText = Color(0xFF526060)
 val yellowText = Color(0xFFffff00)
 val orangeText = Color(0xFFff8400) //0xFFff8300
 
@@ -20,13 +21,13 @@ val md_theme_dark_primary = mainBackground
 val md_theme_dark_onPrimary = primaryTextColor
 
 val md_theme_dark_primaryContainer = textFieldContainer
-val md_theme_dark_onPrimaryContainer = yellowText
+val md_theme_dark_onPrimaryContainer = navHoverAndSecContainer //this is hover color on bottom nav
 
 val md_theme_dark_secondary = Color(0xFFc2caab)
-val md_theme_dark_onSecondary = Color(0xFFff8400)
+val md_theme_dark_onSecondary = yellowText
 
-val md_theme_dark_secondaryContainer = Color(0xFF3b4545)
-val md_theme_dark_onSecondaryContainer = Color(0xFF0ffff0)
+val md_theme_dark_secondaryContainer = navHoverAndSecContainer
+val md_theme_dark_onSecondaryContainer = Color(0xFF0ffff0)  //active icon color on bottom nav
 
 val md_theme_dark_tertiary = Color(0xFFa0d0c8)
 val md_theme_dark_onTertiary = Color(0xFF003732)
@@ -51,7 +52,7 @@ val md_theme_dark_onSurfaceVariant = primaryTextColor
 
 
 val md_theme_dark_outline = placeHolderText
-val md_theme_dark_inverseOnSurface = Color(0xFF1b1c18)
-val md_theme_dark_inverseSurface = Color(0xFFe4e3db)
+val md_theme_dark_inverseOnSurface = mainBackground
+val md_theme_dark_inverseSurface = Color(0xCCF1F3F3)  // snackbar container color
 val md_theme_dark_inversePrimary = buttonIcon
 val md_theme_dark_shadow = Color(0xFF000000)
