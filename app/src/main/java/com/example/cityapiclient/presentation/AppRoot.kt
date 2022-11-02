@@ -82,6 +82,8 @@ fun AppRoot(
                     initialValue = AppUiState(true, ONBOARDING_ROUTE)
                 ).value
 
+
+
                 if (!appUiState.isLoading) {
                     AppNavGraph(
                         appLayoutMode = appLayoutMode,
@@ -89,6 +91,10 @@ fun AppRoot(
                         signInObserver = signInObserver
                     )
                 }
+
+
+
+
             }
         }
     }

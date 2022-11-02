@@ -2,9 +2,7 @@ package com.example.cityapiclient.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,6 +27,7 @@ fun BottomNavigationBar(
         containerColor = Color(0xFF171c1c),
         //tonalElevation = 20.dp,
         modifier = Modifier.fillMaxWidth()
+            .height(60.dp)
     ) {
         TOP_LEVEL_DESTINATIONS.forEach { destination ->
             NavigationBarItem(
