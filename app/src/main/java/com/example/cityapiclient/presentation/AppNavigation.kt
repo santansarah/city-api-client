@@ -1,5 +1,6 @@
 package com.example.cityapiclient.presentation
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 object AppScreens {
     const val ONBOARDING_SCREEN = "onboarding"
-    const val ACCOUNT_SCREEN = "signin"
+    const val ACCOUNT_SCREEN = "account"
     const val HOME_SCREEN = "home"
     const val SEARCH_SCREEN = "search"
 }
@@ -30,7 +31,7 @@ object AppDestinationsArgs {
 object AppDestinations {
     const val ONBOARDING_ROUTE = ONBOARDING_SCREEN
     const val HOME_ROUTE = HOME_SCREEN
-    const val ACCOUNT_ROUTE = "$ACCOUNT_SCREEN/{$USER_ID}"
+    const val ACCOUNT_ROUTE = ACCOUNT_SCREEN
     const val SEARCH_ROUTE = SEARCH_SCREEN
 }
 
@@ -68,24 +69,30 @@ val TOP_LEVEL_DESTINATIONS = listOf(
  */
 class AppNavigationActions(private val navController: NavHostController) {
 
+    /**
+     * This function keeps the backstack clean with popUpTo; otherwise,
+     * each click on the bottom icons would keep building up.
+     * launchSingleTop avoids dup backstack entries when clicking
+     * on an already selected icon. restoreState restores the state set
+     * from saveState in popUpTo.
+     */
     fun navigateTo(destination: TopLevelDestination) {
         navController.navigate(destination.route) {
-            // Pop up to the start destination of the graph to
-            // avoid building up a large stack of destinations
-            // on the back stack as users select items
+            var entries: String = ""
+            navController.backQueue.forEach() {
+                entries += "${it.destination.route};"
+            }
+            Log.d("debug", "navBackStack: $entries")
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
             }
-            // Avoid multiple copies of the same destination when
-            // reselecting the same item
             launchSingleTop = true
-            // Restore state when reselecting a previously selected item
             restoreState = true
         }
     }
 
-    fun navigateToSignIn(expired: Boolean) {
-        navController.navigate("$ACCOUNT_SCREEN/$expired")
+    fun navigateToSignIn() {
+        navController.navigate(ACCOUNT_SCREEN)
     }
 
     fun navigateToHome() {

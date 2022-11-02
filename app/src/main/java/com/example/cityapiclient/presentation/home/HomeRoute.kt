@@ -16,6 +16,8 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
+import com.example.cityapiclient.presentation.AppDestinations
+import com.example.cityapiclient.presentation.TopLevelDestination
 import com.example.cityapiclient.presentation.components.GoogleButton
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
@@ -28,7 +30,7 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     signInObserver: SignInObserver,
     appLayoutMode: AppLayoutMode,
-    onGoToAccount: () -> Unit
+    navigateToTopLevelDestination: (TopLevelDestination) -> Unit
 ) {
 
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
@@ -59,17 +61,6 @@ fun HomeRoute(
         CompactLayoutWithScaffold(
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
             mainContent = {
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Button(onClick = {
-                    Log.d("debug", "going to account...")
-                    onGoToAccount()
-                }) {
-                    Text(text = "Go to Account")
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
 
                 when (homeUiState.currentUser) {
                     is CurrentUser.UnknownSignIn -> {
@@ -119,7 +110,9 @@ fun HomeRoute(
                     }
                 }
 
-            }, title = HomeAppBarTitle(homeUiState.currentUser)
+            }, title = HomeAppBarTitle(homeUiState.currentUser),
+            navigateToTopLevelDestination = navigateToTopLevelDestination,
+            selectedBottomBarDestination = AppDestinations.HOME_ROUTE
         )
     }
 

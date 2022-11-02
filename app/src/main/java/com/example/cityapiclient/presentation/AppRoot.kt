@@ -20,6 +20,7 @@ import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations.ACCOUNT_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.ONBOARDING_ROUTE
+import com.example.cityapiclient.presentation.components.BottomNavigationBar
 import com.example.cityapiclient.presentation.components.backgroundGradient
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.getWindowLayoutType

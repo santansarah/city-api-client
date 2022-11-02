@@ -16,6 +16,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
+import com.example.cityapiclient.presentation.AppDestinations
+import com.example.cityapiclient.presentation.TopLevelDestination
 import com.example.cityapiclient.presentation.components.AppCard
 import com.example.cityapiclient.presentation.components.GetGoogleButtonFromUserState
 import com.example.cityapiclient.presentation.components.SubHeading
@@ -30,7 +32,7 @@ fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
     appLayoutMode: AppLayoutMode,
     signInObserver: SignInObserver,
-    onGoToHome: () -> Unit
+    navigateToTopLevelDestination: (TopLevelDestination) -> Unit
 ) {
 
     /** [SignInObserver] updates the preferences datastore, but the viewmodel observes changes
@@ -60,12 +62,13 @@ fun AccountRoute(
                     signOut = { scope.launch { signInObserver.signOut() } },
                     signIn = { scope.launch { signInObserver.signIn() } },
                     currentUser = accountUiState.currentUser,
-                    isProcessing = signInState.isSigningIn,
-                    onGoToHome = onGoToHome
+                    isProcessing = signInState.isSigningIn
                 )
             }
 
-        }, title = "Account"
+        }, title = "Account",
+        navigateToTopLevelDestination = navigateToTopLevelDestination,
+        selectedBottomBarDestination = AppDestinations.ACCOUNT_ROUTE
     )
 
 }
@@ -76,17 +79,8 @@ private fun AccountContent(
     signOut: () -> Unit,
     signIn: () -> Unit,
     currentUser: CurrentUser,
-    isProcessing: Boolean,
-    onGoToHome: () -> Unit
+    isProcessing: Boolean
 ) {
-
-    Spacer(modifier = Modifier.height(4.dp))
-
-    Button(onClick = { onGoToHome() }) {
-        Text(text = "Go to Home")
-    }
-
-    Spacer(modifier = Modifier.height(4.dp))
 
     CardWithHeader(appLayoutMode = appLayoutMode, header = {
         AccountHeading(appLayoutMode, currentUser)

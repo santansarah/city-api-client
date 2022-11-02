@@ -53,14 +53,14 @@ fun AppNavGraph(
             AccountRoute(
                 appLayoutMode = appLayoutMode,
                 signInObserver = signInObserver,
-                onGoToHome = {navController.navigate(HOME_ROUTE)}
+                navigateToTopLevelDestination = navActions::navigateTo
             )
         }
         composable(HOME_ROUTE) {
             HomeRoute(
                 signInObserver = signInObserver,
                 appLayoutMode = appLayoutMode,
-                onGoToAccount = { navController.navigate(ACCOUNT_ROUTE) }
+                navigateToTopLevelDestination = navActions::navigateTo
             )
         }
     }

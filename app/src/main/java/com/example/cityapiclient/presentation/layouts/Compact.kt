@@ -1,10 +1,7 @@
 package com.example.cityapiclient.presentation.layouts
 
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -21,6 +18,9 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
+import com.example.cityapiclient.presentation.AppDestinations
+import com.example.cityapiclient.presentation.TopLevelDestination
+import com.example.cityapiclient.presentation.components.BottomNavigationBar
 
 /**
  * This is the template for phones - Portrait and Landscape.
@@ -60,7 +60,9 @@ fun CompactLayout(
 fun CompactLayoutWithScaffold(
     mainContent: @Composable () -> Unit,
     title: String,
-    snackbarHostState: @Composable () -> Unit
+    snackbarHostState: @Composable () -> Unit,
+    navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
+    selectedBottomBarDestination: String
 ) {
     Scaffold(
         snackbarHost = snackbarHostState,
@@ -89,6 +91,12 @@ fun CompactLayoutWithScaffold(
                 }
             )
         },
+        bottomBar = {
+            BottomNavigationBar(
+                selectedDestination = selectedBottomBarDestination,
+                navigateToTopLevelDestination = navigateToTopLevelDestination
+            )
+        }
     )
     { padding ->
 
@@ -116,11 +124,12 @@ fun CardWithHeader(
     Log.d("debug", "current lang: $languageCode")
 
     val headingHeight = if (appLayoutMode == AppLayoutMode.LANDSCAPE)
-        60.dp else 120.dp
+        60.dp else 160.dp
 
     Column(
-        modifier = Modifier.height(headingHeight)
+        modifier = Modifier.height(headingHeight),
     ) {
+        Spacer(modifier = Modifier.height(20.dp))
         header()
     }
     card()
