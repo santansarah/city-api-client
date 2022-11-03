@@ -45,7 +45,8 @@ fun SearchRoute(
     viewModel: SearchViewModel = hiltViewModel(),
     appLayoutMode: AppLayoutMode,
     snackbarHostState: SnackbarHostState,
-    appScaffoldPaddingValues: PaddingValues
+    appScaffoldPaddingValues: PaddingValues,
+    onCityClicked: (Int) -> Unit
 ) {
 
     val uiState = viewModel.searchUiState.collectAsStateWithLifecycle().value
@@ -68,7 +69,8 @@ fun SearchRoute(
                 uiState.cityPrefix,
                 viewModel::onCityNameSearch,
                 uiState.cities,
-                focusManager
+                focusManager,
+                onCityClicked
             )
         }, title = "City Search",
         appScaffoldPaddingValues = appScaffoldPaddingValues,
@@ -81,7 +83,8 @@ private fun CityNameSearch(
     prefix: String,
     onPrefixChanged: (String) -> Unit,
     cities: List<CityDto>,
-    focusManager: FocusManager
+    focusManager: FocusManager,
+    onCityClicked: (Int) -> Unit
 ) {
     EnterCityName(
         prefix,
@@ -89,7 +92,8 @@ private fun CityNameSearch(
         focusManager
     )
     ShowCityNames(
-        cities = cities
+        cities = cities,
+        onCityClicked = onCityClicked
     )
 }
 
@@ -124,7 +128,8 @@ fun EnterCityName(
 @Composable
 fun ShowCityNames(
     modifier: Modifier = Modifier,
-    cities: List<CityDto>
+    cities: List<CityDto>,
+    onCityClicked: (Int) -> Unit
 ) {
     //val (selectedOption,) = remember { mutableStateOf("") }
     var isClicked by remember {
@@ -141,7 +146,7 @@ fun ShowCityNames(
                         onClick = {
                             Log.d("debug", "Clicked column...")
                             isClicked = true
-                            // onEvent(NewCityEvent.OnAddCityClick(city))
+                            onCityClicked(city.zip)
                         }
                     ),
                 verticalArrangement = Arrangement.Center

@@ -3,25 +3,23 @@ package com.example.cityapiclient.presentation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavAction
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations.ACCOUNT_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
+import com.example.cityapiclient.presentation.AppDestinations.ONBOARDING_ROUTE
+import com.example.cityapiclient.presentation.AppDestinations.SEARCH_DETAIL_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.SEARCH_ROUTE
-import com.example.cityapiclient.presentation.AppDestinationsArgs.USER_ID
+import com.example.cityapiclient.presentation.account.AccountRoute
 import com.example.cityapiclient.presentation.home.HomeRoute
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.onboarding.OnboardingRoute
-import com.example.cityapiclient.presentation.account.AccountRoute
+import com.example.cityapiclient.presentation.search.SearchDetailRoute
 import com.example.cityapiclient.presentation.search.SearchRoute
 
 @Composable
@@ -47,16 +45,12 @@ fun AppNavGraph(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        composable(
-            AppDestinations.ONBOARDING_ROUTE
-        ) { entry ->
+        composable(ONBOARDING_ROUTE) { entry ->
             OnboardingRoute(
                 appLayoutMode = appLayoutMode
             )
         }
-        composable(
-            ACCOUNT_ROUTE
-        ) {
+        composable(ACCOUNT_ROUTE) {
             AccountRoute(
                 appLayoutMode = appLayoutMode,
                 signInObserver = signInObserver,
@@ -77,7 +71,19 @@ fun AppNavGraph(
             SearchRoute(
                 appLayoutMode = appLayoutMode,
                 snackbarHostState = snackbarHostState,
-                appScaffoldPaddingValues = appScaffoldPadding
+                appScaffoldPaddingValues = appScaffoldPadding,
+                onCityClicked = { zipCode -> navActions.navigateToSearchDetail(zipCode) },
+            )
+        }
+        composable(SEARCH_DETAIL_ROUTE,
+            arguments = listOf(
+                navArgument(AppDestinationsArgs.ZIP_CODE) { type = NavType.IntType },
+            )) {
+            SearchDetailRoute(
+                appLayoutMode = appLayoutMode,
+                snackbarHostState = snackbarHostState,
+                appScaffoldPaddingValues = appScaffoldPadding,
+                onBack = { navController.popBackStack() }
             )
         }
     }

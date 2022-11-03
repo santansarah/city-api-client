@@ -95,10 +95,11 @@ fun AppRoot(
                     snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
                     containerColor = Color.Transparent,
                     bottomBar = {
-                        BottomNavigationBar(
-                            selectedDestination = currentTopLevel?.route ?: HOME_ROUTE,
-                            navigateToTopLevelDestination = navActions::navigateTo
-                        )
+                        if (currentTopLevel != null)
+                            BottomNavigationBar(
+                                selectedDestination = currentTopLevel?.route ?: HOME_ROUTE,
+                                navigateToTopLevelDestination = navActions::navigateTo
+                            )
                     }
                 )
                 { padding ->

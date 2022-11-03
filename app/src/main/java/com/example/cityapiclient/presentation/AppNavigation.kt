@@ -8,24 +8,23 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import com.example.cityapiclient.domain.SignInObserver
-import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
-import com.example.cityapiclient.presentation.AppDestinationsArgs.USER_ID
+import com.example.cityapiclient.presentation.AppDestinationsArgs.ZIP_CODE
+import com.example.cityapiclient.presentation.AppScreens.ACCOUNT_SCREEN
 import com.example.cityapiclient.presentation.AppScreens.HOME_SCREEN
 import com.example.cityapiclient.presentation.AppScreens.ONBOARDING_SCREEN
-import com.example.cityapiclient.presentation.AppScreens.ACCOUNT_SCREEN
+import com.example.cityapiclient.presentation.AppScreens.SEARCH_DETAIL_SCREEN
 import com.example.cityapiclient.presentation.AppScreens.SEARCH_SCREEN
-import javax.inject.Inject
 
 object AppScreens {
     const val ONBOARDING_SCREEN = "onboarding"
     const val ACCOUNT_SCREEN = "account"
     const val HOME_SCREEN = "home"
     const val SEARCH_SCREEN = "search"
+    const val SEARCH_DETAIL_SCREEN = "searchDetail"
 }
 
 object AppDestinationsArgs {
-    const val USER_ID = "userId"
+    const val ZIP_CODE = "zipCode"
 }
 
 object AppDestinations {
@@ -33,6 +32,7 @@ object AppDestinations {
     const val HOME_ROUTE = HOME_SCREEN
     const val ACCOUNT_ROUTE = ACCOUNT_SCREEN
     const val SEARCH_ROUTE = SEARCH_SCREEN
+    const val SEARCH_DETAIL_ROUTE = "$SEARCH_DETAIL_SCREEN/{$ZIP_CODE}"
 }
 
 data class TopLevelDestination(
@@ -91,12 +91,8 @@ class AppNavigationActions(private val navController: NavHostController) {
         }
     }
 
-    fun navigateToSignIn() {
-        navController.navigate(ACCOUNT_SCREEN)
-    }
-
-    fun navigateToHome() {
-        navController.navigate(HOME_ROUTE)
+    fun navigateToSearchDetail(zipCode: Int) {
+        navController.navigate("$SEARCH_DETAIL_SCREEN/$zipCode")
     }
 }
 
