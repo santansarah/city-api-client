@@ -10,6 +10,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
@@ -18,26 +19,34 @@ import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TopLevelDestination
+import com.example.cityapiclient.presentation.components.AppSnackbarHost
 import com.example.cityapiclient.presentation.components.GoogleButton
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalLifecycleComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
     signInObserver: SignInObserver,
     appLayoutMode: AppLayoutMode,
-    onSearchClicked: () -> Unit
+    onSearchClicked: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    appScaffoldPaddingValues: PaddingValues
 ) {
 
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val signInState by signInObserver.signInState.collectAsStateWithLifecycle()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(true) {
+        snackbarHostState.showSnackbar("Message from home.")
+        // signInObserver.userMessageShown()
+    }
+
 
     // Check for user messages to display on the screen
     signInState.userMessage?.let { userMessage ->
@@ -59,7 +68,7 @@ fun HomeRoute(
 
     if (!homeUiState.isLoading) {
         CompactLayoutWithScaffold(
-            snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
             mainContent = {
 
                 when (homeUiState.currentUser) {
@@ -112,7 +121,8 @@ fun HomeRoute(
                     }
                 }
 
-            }, title = HomeAppBarTitle(homeUiState.currentUser)
+            }, title = HomeAppBarTitle(homeUiState.currentUser),
+            appScaffoldPaddingValues = appScaffoldPaddingValues
         )
     }
 

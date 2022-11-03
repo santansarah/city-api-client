@@ -109,7 +109,9 @@ fun AppRoot(
                             navController = navController,
                             navActions = navActions,
                             startDestination = appUiState.startDestination,
-                            signInObserver = signInObserver
+                            signInObserver = signInObserver,
+                            snackbarHostState = appSnackBarHostState,
+                            appScaffoldPadding = padding
                         )
                     }
                 }

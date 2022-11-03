@@ -19,6 +19,7 @@ import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TopLevelDestination
 import com.example.cityapiclient.presentation.components.AppCard
+import com.example.cityapiclient.presentation.components.AppSnackbarHost
 import com.example.cityapiclient.presentation.components.GetGoogleButtonFromUserState
 import com.example.cityapiclient.presentation.components.SubHeading
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
@@ -31,7 +32,9 @@ import kotlinx.coroutines.launch
 fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
     appLayoutMode: AppLayoutMode,
-    signInObserver: SignInObserver
+    signInObserver: SignInObserver,
+    snackbarHostState: SnackbarHostState,
+    appScaffoldPaddingValues: PaddingValues
 ) {
 
     /** [SignInObserver] updates the preferences datastore, but the viewmodel observes changes
@@ -40,7 +43,6 @@ fun AccountRoute(
     val accountUiState by viewModel.accountUiState.collectAsStateWithLifecycle()
     val signInState by signInObserver.signInState.collectAsStateWithLifecycle()
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
     // Check for user messages to display on the screen
@@ -52,7 +54,7 @@ fun AccountRoute(
     }
 
     CompactLayoutWithScaffold(
-        snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
         mainContent = {
 
             if (!accountUiState.isLoading) {
@@ -65,7 +67,8 @@ fun AccountRoute(
                 )
             }
 
-        }, title = "Account"
+        }, title = "Account",
+        appScaffoldPaddingValues = appScaffoldPaddingValues
     )
 
 }

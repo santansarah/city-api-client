@@ -1,6 +1,7 @@
 package com.example.cityapiclient.presentation.layouts
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -61,7 +62,8 @@ fun CompactLayoutWithScaffold(
     mainContent: @Composable () -> Unit,
     title: String,
     snackbarHostState: @Composable () -> Unit,
-    allowScroll: Boolean = true
+    allowScroll: Boolean = true,
+    appScaffoldPaddingValues: PaddingValues = PaddingValues()
 ) {
     Scaffold(
         snackbarHost = snackbarHostState,
@@ -93,16 +95,22 @@ fun CompactLayoutWithScaffold(
     )
     { padding ->
 
+        val nestedPaddingValues = PaddingValues(
+            top = padding.calculateTopPadding(),
+            bottom = appScaffoldPaddingValues.calculateBottomPadding()
+        )
+
         val scrollableLayout: Modifier = Modifier
             .fillMaxSize()
             .padding(start = 16.dp, end = 16.dp)
 
-         if (allowScroll) {
-             scrollableLayout.verticalScroll(rememberScrollState())
-         }
+        if (allowScroll) {
+            scrollableLayout.verticalScroll(rememberScrollState())
+        }
 
         Column(
-            modifier = scrollableLayout.padding(padding),
+            modifier = scrollableLayout
+                .padding(nestedPaddingValues),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             mainContent()

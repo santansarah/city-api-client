@@ -60,7 +60,12 @@ class SearchViewModel @Inject constructor(
                             }
                         }
                         is ServiceResult.Error -> {
-                            //Log.d("debug", "api error: ${cityResponse.errors.toString()}")
+                            Log.d("debug", "api error: ${cityApiResult.message}")
+                            _searchUiState.update {
+                                it.copy(
+                                    userMessage = cityApiResult.message
+                                )
+                            }
                         }
                     }
                 }

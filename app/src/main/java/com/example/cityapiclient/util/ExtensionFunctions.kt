@@ -59,6 +59,9 @@ inline fun <reified T> Exception.toCityApiError(): ServiceResult.Error {
 
 typealias OneTapError = Exception
 
+/**
+ * https://developers.google.com/android/reference/com/google/android/gms/common/api/CommonStatusCodes
+ */
 fun OneTapError.exceptionToServiceResult(): ServiceResult.Error {
 
     Log.d("debug", "code: ${this.cause}, message: ${this.message}")
@@ -70,12 +73,29 @@ fun OneTapError.exceptionToServiceResult(): ServiceResult.Error {
         is ApiException -> {
             Log.d("debug", "apicode: ${this.statusCode}, message: ${this.message}")
             when (statusCode) {
+                CommonStatusCodes.DEVELOPER_ERROR -> ServiceResult.Error(
+                    code.name,
+                    "API Error. Try reinstalling Google Play Services."
+                )
                 CommonStatusCodes.CANCELED -> {
-                    Log.d("debug", "One-tap dialog was closed.")
-                    ServiceResult.Error(
-                        code.name,
-                        message
-                    )
+                    // api error 16 can be many things!
+                    with(message) {
+                        when {
+                            contains("Caller has been temporarily blocked") -> ServiceResult.Error(
+                                code.name,
+                                "Too many sign in attempts. Try again in 24 hours."
+                            )
+                            contains("Cannot find a matching credential") -> ServiceResult.Error(
+                                code.name,
+                                "Can't find a Google Account on this device."
+                            )
+                            else ->
+                                ServiceResult.Error(
+                                    code.name,
+                                    message
+                                )
+                        }
+                    }
                 }
                 CommonStatusCodes.NETWORK_ERROR -> {
                     Log.d(

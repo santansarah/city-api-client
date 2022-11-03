@@ -1,5 +1,7 @@
 package com.example.cityapiclient.presentation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -29,7 +31,9 @@ fun AppNavGraph(
     navActions: AppNavigationActions,
     appLayoutMode: AppLayoutMode,
     startDestination: String,
-    signInObserver: SignInObserver
+    signInObserver: SignInObserver,
+    snackbarHostState: SnackbarHostState,
+    appScaffoldPadding: PaddingValues
 ) {
 
     //val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
@@ -55,19 +59,25 @@ fun AppNavGraph(
         ) {
             AccountRoute(
                 appLayoutMode = appLayoutMode,
-                signInObserver = signInObserver
+                signInObserver = signInObserver,
+                snackbarHostState = snackbarHostState,
+                appScaffoldPaddingValues = appScaffoldPadding
             )
         }
         composable(HOME_ROUTE) {
             HomeRoute(
                 signInObserver = signInObserver,
                 appLayoutMode = appLayoutMode,
-                onSearchClicked = { navActions.navigateTo(TOP_LEVEL_DESTINATIONS[2]) }
+                onSearchClicked = { navActions.navigateTo(TOP_LEVEL_DESTINATIONS[2]) },
+                snackbarHostState = snackbarHostState,
+                appScaffoldPaddingValues = appScaffoldPadding
             )
         }
         composable(SEARCH_ROUTE) {
             SearchRoute(
-                appLayoutMode = appLayoutMode
+                appLayoutMode = appLayoutMode,
+                snackbarHostState = snackbarHostState,
+                appScaffoldPaddingValues = appScaffoldPadding
             )
         }
     }

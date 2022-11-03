@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,12 +43,21 @@ fun SearchRoute(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel(),
     appLayoutMode: AppLayoutMode,
+    snackbarHostState: SnackbarHostState,
+    appScaffoldPaddingValues: PaddingValues
 ) {
 
     val uiState = viewModel.searchUiState.collectAsStateWithLifecycle().value
 
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    // Check for user messages to display on the screen
+    val focusManager = LocalFocusManager.current
+    uiState.userMessage?.let { userMessage ->
+        LaunchedEffect(uiState.userMessage, userMessage) {
+            focusManager.clearFocus()
+            snackbarHostState.showSnackbar(userMessage)
+            viewModel.userMessageShown()
+        }
+    }
 
     CompactLayoutWithScaffold(
         snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
@@ -59,6 +69,7 @@ fun SearchRoute(
                 uiState.cities
             )
         }, title = "City Search",
+        appScaffoldPaddingValues = appScaffoldPaddingValues,
         allowScroll = false
     )
 }
