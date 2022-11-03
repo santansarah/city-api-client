@@ -3,6 +3,7 @@ package com.example.cityapiclient.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -50,7 +51,8 @@ fun AppNavGraph(
                 appLayoutMode = appLayoutMode
             )
         }
-        composable(ACCOUNT_ROUTE
+        composable(
+            ACCOUNT_ROUTE
         ) {
             AccountRoute(
                 appLayoutMode = appLayoutMode,
@@ -62,7 +64,8 @@ fun AppNavGraph(
             HomeRoute(
                 signInObserver = signInObserver,
                 appLayoutMode = appLayoutMode,
-                navigateToTopLevelDestination = navActions::navigateTo
+                navigateToTopLevelDestination = navActions::navigateTo,
+                onSearchClicked = { navActions.navigateTo(TOP_LEVEL_DESTINATIONS[2]) }
             )
         }
         composable(SEARCH_ROUTE) {

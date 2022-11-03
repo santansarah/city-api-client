@@ -22,7 +22,8 @@ import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
 fun HomeSignInOrSignUp(
     appLayoutMode: AppLayoutMode,
     currentUser: CurrentUser,
-    googleButton: @Composable () -> Unit
+    googleButton: @Composable () -> Unit,
+    onSearchClicked: () -> Unit
 ) {
 
     CardWithHeader(appLayoutMode = appLayoutMode,
@@ -36,22 +37,24 @@ fun HomeSignInOrSignUp(
                 ) {
                     DoubleScreenLayout(
                         leftContent = { googleButton() },
-                        rightContent = { SearchButton() })
+                        rightContent = { SearchButton(onSearchClicked) })
                 }
             } else {
                 googleButton()
                 Spacer(modifier = Modifier.height(38.dp))
-                SearchButton()
+                SearchButton(onSearchClicked)
             }
         }
     }
 }
 
 @Composable
-private fun SearchButton() {
+private fun SearchButton(
+    onSearchClicked: () -> Unit
+) {
     AppIconButton(
         buttonText = "City Name Search",
-        onClick = { /*TODO*/ },
+        onClick = onSearchClicked,
         imageRes = Icons.Outlined.Search,
         modifier = Modifier
     )

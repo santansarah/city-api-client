@@ -30,7 +30,8 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     signInObserver: SignInObserver,
     appLayoutMode: AppLayoutMode,
-    navigateToTopLevelDestination: (TopLevelDestination) -> Unit
+    navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
+    onSearchClicked: () -> Unit
 ) {
 
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
@@ -38,11 +39,6 @@ fun HomeRoute(
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-
-    LaunchedEffect(true) {
-        snackbarHostState.showSnackbar("Hi, this is a test.")
-       // signInObserver.userMessageShown()
-    }
 
     // Check for user messages to display on the screen
     signInState.userMessage?.let { userMessage ->
@@ -78,7 +74,8 @@ fun HomeRoute(
                                     buttonText = "Sign up with Google",
                                     isProcessing = signInState.isSigningIn
                                 )
-                            }
+                            },
+                            onSearchClicked = onSearchClicked
                         )
                     }
                     is CurrentUser.SignedInUser -> {
@@ -110,7 +107,8 @@ fun HomeRoute(
                                     buttonText = "Sign in with Google",
                                     isProcessing = signInState.isSigningIn
                                 )
-                            }
+                            },
+                            onSearchClicked = onSearchClicked
                         )
                     }
                 }
