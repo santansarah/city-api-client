@@ -30,7 +30,6 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     signInObserver: SignInObserver,
     appLayoutMode: AppLayoutMode,
-    navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
     onSearchClicked: () -> Unit
 ) {
 
@@ -113,9 +112,7 @@ fun HomeRoute(
                     }
                 }
 
-            }, title = HomeAppBarTitle(homeUiState.currentUser),
-            navigateToTopLevelDestination = navigateToTopLevelDestination,
-            selectedBottomBarDestination = AppDestinations.HOME_ROUTE
+            }, title = HomeAppBarTitle(homeUiState.currentUser)
         )
     }
 

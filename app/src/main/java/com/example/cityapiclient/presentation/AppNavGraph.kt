@@ -3,6 +3,7 @@ package com.example.cityapiclient.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavAction
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -24,7 +25,8 @@ import com.example.cityapiclient.presentation.search.SearchRoute
 @Composable
 fun AppNavGraph(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController,
+    navActions: AppNavigationActions,
     appLayoutMode: AppLayoutMode,
     startDestination: String,
     signInObserver: SignInObserver
@@ -35,9 +37,6 @@ fun AppNavGraph(
 
     //Log.d("debug", "route: $startDestination")
 
-    val navActions: AppNavigationActions = remember(navController) {
-        AppNavigationActions(navController)
-    }
 
     NavHost(
         navController = navController,
@@ -56,22 +55,19 @@ fun AppNavGraph(
         ) {
             AccountRoute(
                 appLayoutMode = appLayoutMode,
-                signInObserver = signInObserver,
-                navigateToTopLevelDestination = navActions::navigateTo
+                signInObserver = signInObserver
             )
         }
         composable(HOME_ROUTE) {
             HomeRoute(
                 signInObserver = signInObserver,
                 appLayoutMode = appLayoutMode,
-                navigateToTopLevelDestination = navActions::navigateTo,
                 onSearchClicked = { navActions.navigateTo(TOP_LEVEL_DESTINATIONS[2]) }
             )
         }
         composable(SEARCH_ROUTE) {
             SearchRoute(
-                appLayoutMode = appLayoutMode,
-                navigateToTopLevelDestination = navActions::navigateTo
+                appLayoutMode = appLayoutMode
             )
         }
     }

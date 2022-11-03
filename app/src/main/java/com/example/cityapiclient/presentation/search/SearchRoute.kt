@@ -42,7 +42,6 @@ fun SearchRoute(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel(),
     appLayoutMode: AppLayoutMode,
-    navigateToTopLevelDestination: (TopLevelDestination) -> Unit
 ) {
 
     val uiState = viewModel.searchUiState.collectAsStateWithLifecycle().value
@@ -60,8 +59,6 @@ fun SearchRoute(
                 uiState.cities
             )
         }, title = "City Search",
-        navigateToTopLevelDestination = navigateToTopLevelDestination,
-        selectedBottomBarDestination = AppDestinations.SEARCH_ROUTE,
         allowScroll = false
     )
 }

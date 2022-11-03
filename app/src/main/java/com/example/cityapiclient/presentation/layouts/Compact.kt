@@ -61,8 +61,6 @@ fun CompactLayoutWithScaffold(
     mainContent: @Composable () -> Unit,
     title: String,
     snackbarHostState: @Composable () -> Unit,
-    navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
-    selectedBottomBarDestination: String,
     allowScroll: Boolean = true
 ) {
     Scaffold(
@@ -90,12 +88,6 @@ fun CompactLayoutWithScaffold(
                         )
                     }
                 }
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                selectedDestination = selectedBottomBarDestination,
-                navigateToTopLevelDestination = navigateToTopLevelDestination
             )
         }
     )

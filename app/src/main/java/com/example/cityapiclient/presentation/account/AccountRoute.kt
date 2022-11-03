@@ -31,8 +31,7 @@ import kotlinx.coroutines.launch
 fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
     appLayoutMode: AppLayoutMode,
-    signInObserver: SignInObserver,
-    navigateToTopLevelDestination: (TopLevelDestination) -> Unit
+    signInObserver: SignInObserver
 ) {
 
     /** [SignInObserver] updates the preferences datastore, but the viewmodel observes changes
@@ -66,9 +65,7 @@ fun AccountRoute(
                 )
             }
 
-        }, title = "Account",
-        navigateToTopLevelDestination = navigateToTopLevelDestination,
-        selectedBottomBarDestination = AppDestinations.ACCOUNT_ROUTE
+        }, title = "Account"
     )
 
 }

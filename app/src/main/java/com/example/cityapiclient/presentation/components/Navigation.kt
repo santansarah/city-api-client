@@ -26,11 +26,12 @@ fun BottomNavigationBar(
     NavigationBar(
         containerColor = Color(0xFF171c1c),
         //tonalElevation = 20.dp,
-        modifier = Modifier.fillMaxWidth()
-            .height(60.dp)
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
         TOP_LEVEL_DESTINATIONS.forEach { destination ->
             NavigationBarItem(
+                label = { Text(text = destination.iconText) },
                 selected = selectedDestination == destination.route,
                 onClick = { navigateToTopLevelDestination(destination) },
                 icon = {

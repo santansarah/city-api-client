@@ -1,32 +1,28 @@
 package com.example.cityapiclient.presentation
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.domain.SignInObserver
-import com.example.cityapiclient.presentation.AppDestinations.ACCOUNT_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.ONBOARDING_ROUTE
 import com.example.cityapiclient.presentation.components.BottomNavigationBar
 import com.example.cityapiclient.presentation.components.backgroundGradient
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.getWindowLayoutType
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
 data class AppUiState(
@@ -34,7 +30,7 @@ data class AppUiState(
     val startDestination: String
 )
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalLifecycleComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AppRoot(
     windowSize: WindowSizeClass,
@@ -82,19 +78,41 @@ fun AppRoot(
                     initialValue = AppUiState(true, ONBOARDING_ROUTE)
                 ).value
 
-
-
-                if (!appUiState.isLoading) {
-                    AppNavGraph(
-                        appLayoutMode = appLayoutMode,
-                        startDestination = appUiState.startDestination,
-                        signInObserver = signInObserver
-                    )
+                val appSnackBarHostState = remember { SnackbarHostState() }
+                val navController = rememberNavController()
+                val navActions: AppNavigationActions = remember(navController) {
+                    AppNavigationActions(navController)
+                }
+                val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = currentNavBackStackEntry?.destination?.route
+                val currentTopLevel = currentRoute.let {
+                    TOP_LEVEL_DESTINATIONS.find {
+                        it.route == currentRoute
+                    }
                 }
 
+                Scaffold(
+                    snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
+                    containerColor = Color.Transparent,
+                    bottomBar = {
+                        BottomNavigationBar(
+                            selectedDestination = currentTopLevel?.route ?: HOME_ROUTE,
+                            navigateToTopLevelDestination = navActions::navigateTo
+                        )
+                    }
+                )
+                { padding ->
 
-
-
+                    if (!appUiState.isLoading) {
+                        AppNavGraph(
+                            appLayoutMode = appLayoutMode,
+                            navController = navController,
+                            navActions = navActions,
+                            startDestination = appUiState.startDestination,
+                            signInObserver = signInObserver
+                        )
+                    }
+                }
             }
         }
     }

@@ -27,7 +27,7 @@ val md_theme_dark_secondary = Color(0xFFc2caab)
 val md_theme_dark_onSecondary = yellowText
 
 val md_theme_dark_secondaryContainer = navHoverAndSecContainer
-val md_theme_dark_onSecondaryContainer = Color(0xFF0ffff0)  //active icon color on bottom nav
+val md_theme_dark_onSecondaryContainer = primaryTextColor  //active icon color on bottom nav
 
 val md_theme_dark_tertiary = Color(0xFFa0d0c8)
 val md_theme_dark_onTertiary = Color(0xFF003732)
@@ -43,7 +43,7 @@ val md_theme_dark_background = Color(0xFF0C0E0E)
 val md_theme_dark_onBackground = Color(0xFFe4e3db)
 
 val md_theme_dark_surface = mainBackground
-val md_theme_dark_onSurface = orangeText
+val md_theme_dark_onSurface = orangeText //this is the topappbar text color + bottom nav label color
 
 // this is my transparent card, textfield label text
 // textfield container color
