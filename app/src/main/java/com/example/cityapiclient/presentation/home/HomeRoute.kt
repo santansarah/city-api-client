@@ -42,12 +42,6 @@ fun HomeRoute(
 
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(true) {
-        snackbarHostState.showSnackbar("Message from home.")
-        // signInObserver.userMessageShown()
-    }
-
-
     // Check for user messages to display on the screen
     signInState.userMessage?.let { userMessage ->
         LaunchedEffect(signInState.userMessage, userMessage) {

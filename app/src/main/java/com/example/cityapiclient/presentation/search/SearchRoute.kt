@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -66,7 +67,8 @@ fun SearchRoute(
             CityNameSearch(
                 uiState.cityPrefix,
                 viewModel::onCityNameSearch,
-                uiState.cities
+                uiState.cities,
+                focusManager
             )
         }, title = "City Search",
         appScaffoldPaddingValues = appScaffoldPaddingValues,
@@ -78,22 +80,24 @@ fun SearchRoute(
 private fun CityNameSearch(
     prefix: String,
     onPrefixChanged: (String) -> Unit,
-    cities: List<CityDto>
+    cities: List<CityDto>,
+    focusManager: FocusManager
 ) {
     EnterCityName(
         prefix,
-        onPrefixChanged
+        onPrefixChanged,
+        focusManager
     )
     ShowCityNames(
         cities = cities
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EnterCityName(
     prefix: String,
-    onPrefixChanged: (String) -> Unit
+    onPrefixChanged: (String) -> Unit,
+    focusManager: FocusManager
 ) {
 
     Column(
@@ -109,7 +113,8 @@ fun EnterCityName(
             },
             fieldValue = prefix,
             onChanged = onPrefixChanged,
-            placeHolderValue = "Enter City Name..."
+            placeHolderValue = "Enter City Name...",
+            focusManager = focusManager
         )
         Spacer(modifier = Modifier.height(15.dp))
     }
@@ -188,32 +193,3 @@ fun ShowCityNames(
     }
 }
 
-
-@Preview(
-    showBackground = true,
-    showSystemUi = true
-)
-@Composable
-fun PreviewHome() {
-    CityAPIClientTheme {
-
-        lateinit var cities: List<CityDto>
-
-        runBlocking {
-            cities =
-                (CityApiMockService().getCitiesByName("pho") as ServiceResult.Success).data.cities
-        }
-
-        Surface() {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                EnterCityName(
-                    prefix = "pho",
-                    onPrefixChanged = { }
-                )
-                ShowCityNames(cities = cities)
-            }
-        }
-    }
-}

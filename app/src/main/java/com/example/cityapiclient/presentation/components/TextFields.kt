@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -13,13 +14,14 @@ fun TextFieldWithIconAndClear(
     leadingIcon: @Composable () -> Unit,
     fieldValue: String = "",
     onChanged: (String) -> Unit,
-    placeHolderValue: String
+    placeHolderValue: String,
+    focusManager: FocusManager
 ) {
     TextField(
         value = fieldValue,
         onValueChange = onChanged,
         leadingIcon = { leadingIcon() },
-        trailingIcon = { if (fieldValue.isNotBlank()) TrailingIcon(onChanged) },
+        trailingIcon = { if (fieldValue.isNotBlank()) TrailingIcon(onChanged, focusManager) },
         placeholder = {
             Text(
                 text = placeHolderValue,
@@ -36,10 +38,14 @@ fun TextFieldWithIconAndClear(
 
 @Composable
 fun TrailingIcon(
-    resetField: (String) -> Unit
+    resetField: (String) -> Unit,
+    focusManager: FocusManager
 ) {
     IconButton(
-        onClick = { resetField("") }
+        onClick = {
+            resetField("")
+            focusManager.clearFocus()
+        }
     ) {
         Icon(
             Icons.Default.Clear,
@@ -47,7 +53,6 @@ fun TrailingIcon(
         )
     }
 }
-
 
 
 @Composable
