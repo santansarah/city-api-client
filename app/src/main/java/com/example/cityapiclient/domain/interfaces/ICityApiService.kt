@@ -8,6 +8,7 @@ import com.example.cityapiclient.data.remote.UserWithAppResponse
 interface ICityApiService {
 
     suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse>
+    suspend fun getCityByZip(zipCode: Int): ServiceResult<CityApiResponse>
 
     //suspend fun insertUser(nonce: String, jwtToken: String): ServiceResult<UserResponse>
 

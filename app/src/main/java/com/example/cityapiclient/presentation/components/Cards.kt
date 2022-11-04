@@ -118,3 +118,28 @@ fun AppCard(
         }
     }
 }
+
+@Composable
+fun CityCard(
+    mainContent: @Composable () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+            .border(
+                border = BorderStroke(1.dp, brush = orangeYellowGradient),
+                shape = RoundedCornerShape(10.dp)
+            )
+
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize()
+        ) {
+            mainContent()
+        }
+    }
+}

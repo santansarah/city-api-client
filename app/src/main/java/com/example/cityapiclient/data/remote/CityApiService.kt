@@ -20,6 +20,7 @@ class CityApiService @Inject constructor(
 
         private const val BASE_URL = "http://${BuildConfig.KTOR_IP_ADDR}:8080"
         const val CITIES = "$BASE_URL/cities"
+        const val CITY_BY_ZIP = "$BASE_URL/cities/zip"
         const val USER_BY_JWT = "$BASE_URL/users/authenticate"
         const val USER_BY_ID = "$BASE_URL/users"
 
@@ -48,6 +49,25 @@ class CityApiService @Inject constructor(
             Log.d("debug", parsedError.toString())
             parsedError
 
+        }
+    }
+
+    override suspend fun getCityByZip(zipCode: Int): ServiceResult<CityApiResponse> {
+        return try {
+            val cityApiResponse: CityApiResponse = client.get(CITY_BY_ZIP) {
+                headers {
+                    append("x-api-key", API_KEY)
+                }
+                url {
+                    appendPathSegments(zipCode.toString())
+                }
+            }.body()
+
+            Success(cityApiResponse)
+
+        } catch (apiError: Exception) {
+            val parsedError = apiError.toCityApiError<CityApiResponse>()
+            parsedError
         }
     }
 

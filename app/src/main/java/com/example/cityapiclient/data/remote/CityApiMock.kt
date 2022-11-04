@@ -9,6 +9,10 @@ class CityApiMockService(
         return ServiceResult.Success(CityApiResponse(cities = cities))
     }
 
+    override suspend fun getCityByZip(zipCode: Int): ServiceResult<CityApiResponse> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getUser(
         nonce: String,
         jwtToken: String

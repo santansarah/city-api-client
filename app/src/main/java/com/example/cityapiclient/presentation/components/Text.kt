@@ -92,11 +92,37 @@ fun cardHeading(
 }
 
 @Composable
+fun cardHeading(
+    dynamicText: String
+) {
+    Text(
+        text = dynamicText,
+        style = MaterialTheme.typography.headlineLarge,
+        color = MaterialTheme.colorScheme.onSecondary,
+        modifier = Modifier
+            .padding(bottom = 16.dp)
+            .fillMaxWidth()
+        //color = Color(0xFFffff00) //0xFF3EDDF1
+    )
+}
+
+@Composable
 fun cardSubHeading(
     textContent: Int
 ) {
     Text(
         text = stringResource(id = textContent),
+        style = MaterialTheme.typography.titleLarge,
+        //color = MaterialTheme.colorScheme.onPrimaryContainer
+    )
+}
+
+@Composable
+fun cardSubHeading(
+    dynamicText: String
+) {
+    Text(
+        text = dynamicText,
         style = MaterialTheme.typography.titleLarge,
         //color = MaterialTheme.colorScheme.onPrimaryContainer
     )
@@ -109,6 +135,18 @@ fun cardText(
 ) {
     Text(
         text = stringResource(id = textContent),
+        style = MaterialTheme.typography.titleMedium,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun cardText(
+    modifier: Modifier = Modifier,
+    dynamicText: String
+) {
+    Text(
+        text = dynamicText,
         style = MaterialTheme.typography.titleMedium,
         modifier = modifier,
     )
