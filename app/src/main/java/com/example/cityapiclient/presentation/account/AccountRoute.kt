@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -62,6 +63,7 @@ fun AccountRoute(
                     appLayoutMode = appLayoutMode,
                     signOut = { scope.launch { signInObserver.signOut() } },
                     signIn = { scope.launch { signInObserver.signIn() } },
+                    signUp = { scope.launch { signInObserver.signUp() } },
                     currentUser = accountUiState.currentUser,
                     isProcessing = signInState.isSigningIn
                 )
@@ -78,6 +80,7 @@ private fun AccountContent(
     appLayoutMode: AppLayoutMode,
     signOut: () -> Unit,
     signIn: () -> Unit,
+    signUp: () -> Unit,
     currentUser: CurrentUser,
     isProcessing: Boolean
 ) {
@@ -94,7 +97,7 @@ private fun AccountContent(
                     GetGoogleButtonFromUserState(
                         signOut = signOut,
                         signIn = signIn,
-                        signUp = {},
+                        signUp = signUp,
                         currentUser = currentUser,
                         modifier = Modifier.weight(.45f),
                         isProcessing = isProcessing
@@ -105,19 +108,27 @@ private fun AccountContent(
                 GetGoogleButtonFromUserState(
                     signOut = signOut,
                     signIn = signIn,
-                    signUp = {},
+                    signUp = signUp,
                     currentUser = currentUser,
                     modifier = buttonModifier,
                     isProcessing = isProcessing
                 )
             }
             Spacer(modifier = Modifier.height(18.dp))
-            TextButton(modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ }) {
+            TextButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { /*TODO*/ },
+                enabled = (currentUser is CurrentUser.SignedInUser),
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor = Color.Transparent,
+                    disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    disabledContainerColor = Color.Transparent
+                )
+            ) {
                 Text(
                     text = "Delete Account",
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onPrimary,
                     textDecoration = TextDecoration.Underline,
                     textAlign = TextAlign.Center
                 )
@@ -126,7 +137,9 @@ private fun AccountContent(
                 text = "Delete your account and API keys. " +
                         "This can not be undone.",
                 style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                color = if (currentUser !is CurrentUser.SignedInUser) MaterialTheme.colorScheme.onPrimaryContainer else
+                    MaterialTheme.colorScheme.onPrimary
             )
         }
     }
@@ -154,9 +167,15 @@ private fun AccountHeading(
             )
 
         }
-        else -> {
+        is CurrentUser.SignedOutUser -> {
             SubHeading(
                 headingText = R.string.signed_out,
+                appLayoutMode = appLayoutMode
+            )
+        }
+        else -> {
+            SubHeading(
+                headingText = R.string.account_sign_up,
                 appLayoutMode = appLayoutMode
             )
         }

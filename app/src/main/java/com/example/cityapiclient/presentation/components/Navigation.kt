@@ -21,10 +21,11 @@ import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 @Composable
 fun BottomNavigationBar(
     selectedDestination: String,
-    navigateToTopLevelDestination: (TopLevelDestination) -> Unit
+    navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
+
 ) {
     NavigationBar(
-        containerColor = Color(0xFF171c1c),
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
         //tonalElevation = 20.dp,
         modifier = Modifier
             .fillMaxWidth()
