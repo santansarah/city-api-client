@@ -19,10 +19,7 @@ import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TopLevelDestination
-import com.example.cityapiclient.presentation.components.AppCard
-import com.example.cityapiclient.presentation.components.AppSnackbarHost
-import com.example.cityapiclient.presentation.components.GetGoogleButtonFromUserState
-import com.example.cityapiclient.presentation.components.SubHeading
+import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CardWithHeader
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
@@ -69,8 +66,13 @@ fun AccountRoute(
                 )
             }
 
-        }, title = "Account",
-        appScaffoldPaddingValues = appScaffoldPaddingValues
+        },
+        appScaffoldPaddingValues = appScaffoldPaddingValues,
+        topAppBar = {
+            TopLevelAppBar(
+                appLayoutMode = appLayoutMode,
+                title = "Account")
+        }
     )
 
 }
@@ -134,6 +136,7 @@ private fun AccountContent(
                 )
             }
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = "Delete your account and API keys. " +
                         "This can not be undone.",
                 style = MaterialTheme.typography.labelSmall,
@@ -154,15 +157,16 @@ private fun AccountHeading(
     when (currentUser) {
         is CurrentUser.SignedInUser -> {
             Text(
-                modifier = Modifier.padding(4.dp),
+                modifier = Modifier.padding(bottom = 4.dp)
+                    .fillMaxWidth(),
                 text = currentUser.name,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center
             )
             Text(
-                modifier = Modifier.padding(4.dp),
+                modifier = Modifier.fillMaxWidth(),
                 text = currentUser.email,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center
             )
 

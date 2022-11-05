@@ -22,6 +22,7 @@ import com.example.cityapiclient.R
 import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TopLevelDestination
 import com.example.cityapiclient.presentation.components.BottomNavigationBar
+import com.example.cityapiclient.presentation.components.TopLevelAppBar
 
 /**
  * This is the template for phones - Portrait and Landscape.
@@ -60,38 +61,15 @@ fun CompactLayout(
 @Composable
 fun CompactLayoutWithScaffold(
     mainContent: @Composable () -> Unit,
-    title: String,
     snackbarHostState: @Composable () -> Unit,
     allowScroll: Boolean = true,
-    appScaffoldPaddingValues: PaddingValues = PaddingValues()
+    appScaffoldPaddingValues: PaddingValues = PaddingValues(),
+    topAppBar: @Composable () -> Unit
 ) {
     Scaffold(
         snackbarHost = snackbarHostState,
         containerColor = Color.Transparent,
-        topBar = {
-            CenterAlignedTopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.Transparent
-                ),
-                title = {
-                    Text(
-                        text = title,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.cityneon),
-                            contentDescription = "Menu",
-                            tint = Color.Unspecified
-                        )
-                    }
-                }
-            )
-        }
+        topBar = topAppBar
     )
     { padding ->
 
@@ -129,7 +107,7 @@ fun CardWithHeader(
     Log.d("debug", "current lang: $languageCode")
 
     val headingHeight = if (appLayoutMode == AppLayoutMode.LANDSCAPE)
-        60.dp else 160.dp
+        100.dp else 160.dp
 
     Column(
         modifier = Modifier.height(headingHeight),

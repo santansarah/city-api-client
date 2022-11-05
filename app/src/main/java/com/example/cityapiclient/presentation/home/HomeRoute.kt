@@ -21,6 +21,7 @@ import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TopLevelDestination
 import com.example.cityapiclient.presentation.components.AppSnackbarHost
 import com.example.cityapiclient.presentation.components.GoogleButton
+import com.example.cityapiclient.presentation.components.TopLevelAppBar
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import kotlinx.coroutines.launch
@@ -115,8 +116,14 @@ fun HomeRoute(
                     }
                 }
 
-            }, title = HomeAppBarTitle(homeUiState.currentUser),
-            appScaffoldPaddingValues = appScaffoldPaddingValues
+            },
+            appScaffoldPaddingValues = appScaffoldPaddingValues,
+            topAppBar = {
+                TopLevelAppBar(
+                    appLayoutMode = appLayoutMode,
+                    title = HomeAppBarTitle(currentUser = homeUiState.currentUser))
+            }
+
         )
     }
 

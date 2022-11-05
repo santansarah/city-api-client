@@ -44,8 +44,11 @@ fun SearchDetailRoute(
                 SearchDetailContents(city = searchDetailUiState.city, appLayoutMode = appLayoutMode)
             }
 
-        }, title = "City Details",
-        appScaffoldPaddingValues = appScaffoldPaddingValues
+        },
+        appScaffoldPaddingValues = appScaffoldPaddingValues,
+        topAppBar = {
+            AppBarWithBackButton("City Details", onBack)
+        }
     )
 
 

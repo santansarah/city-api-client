@@ -19,8 +19,10 @@ import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.ONBOARDING_ROUTE
+import com.example.cityapiclient.presentation.components.AppNavRail
 import com.example.cityapiclient.presentation.components.BottomNavigationBar
 import com.example.cityapiclient.presentation.components.backgroundGradient
+import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.getWindowLayoutType
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 import kotlinx.coroutines.flow.map
@@ -95,25 +97,34 @@ fun AppRoot(
                     snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
                     containerColor = Color.Transparent,
                     bottomBar = {
-                        if (currentTopLevel != null)
+                        if (currentTopLevel != null && appLayoutMode != AppLayoutMode.LANDSCAPE)
                             BottomNavigationBar(
-                                selectedDestination = currentTopLevel?.route ?: HOME_ROUTE,
+                                selectedDestination = currentTopLevel.route,
                                 navigateToTopLevelDestination = navActions::navigateTo
                             )
                     }
                 )
                 { padding ->
 
-                    if (!appUiState.isLoading) {
-                        AppNavGraph(
-                            appLayoutMode = appLayoutMode,
-                            navController = navController,
-                            navActions = navActions,
-                            startDestination = appUiState.startDestination,
-                            signInObserver = signInObserver,
-                            snackbarHostState = appSnackBarHostState,
-                            appScaffoldPadding = padding
-                        )
+                    Row() {
+                        if (currentTopLevel != null && (appLayoutMode == AppLayoutMode.LANDSCAPE)) {
+                            AppNavRail(
+                                currentRoute = currentTopLevel.route,
+                                navigateToTopLevelDestination = navActions::navigateTo
+                            )
+                        }
+
+                        if (!appUiState.isLoading) {
+                            AppNavGraph(
+                                appLayoutMode = appLayoutMode,
+                                navController = navController,
+                                navActions = navActions,
+                                startDestination = appUiState.startDestination,
+                                signInObserver = signInObserver,
+                                snackbarHostState = appSnackBarHostState,
+                                appScaffoldPadding = padding
+                            )
+                        }
                     }
                 }
             }

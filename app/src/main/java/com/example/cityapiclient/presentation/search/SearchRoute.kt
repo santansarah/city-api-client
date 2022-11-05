@@ -28,10 +28,7 @@ import com.example.cityapiclient.data.remote.CityApiMockService
 import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TopLevelDestination
-import com.example.cityapiclient.presentation.components.ArrowIcon
-import com.example.cityapiclient.presentation.components.TextFieldWithIconAndClear
-import com.example.cityapiclient.presentation.components.LocationIcon
-import com.example.cityapiclient.presentation.components.orangeYellowGradient
+import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
@@ -72,9 +69,14 @@ fun SearchRoute(
                 focusManager,
                 onCityClicked
             )
-        }, title = "City Search",
+        },
         appScaffoldPaddingValues = appScaffoldPaddingValues,
-        allowScroll = false
+        allowScroll = false,
+        topAppBar = {
+            TopLevelAppBar(
+                appLayoutMode = appLayoutMode,
+                title = "City Search")
+        }
     )
 }
 
