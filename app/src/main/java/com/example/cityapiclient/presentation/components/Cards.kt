@@ -4,19 +4,15 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.util.Languages
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.R
 
 @Composable
 fun OnboardingCard(
@@ -77,7 +73,7 @@ fun OnboardingCard(
 }
 
 fun getOnboardingCardHeight(appLayoutMode: AppLayoutMode, language: String) =
-    if (appLayoutMode == AppLayoutMode.LANDSCAPE)
+    if (appLayoutMode == AppLayoutMode.ROTATED_SMALL)
         240.dp
     else {
         when (language) {

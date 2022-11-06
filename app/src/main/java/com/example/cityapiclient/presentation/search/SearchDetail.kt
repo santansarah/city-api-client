@@ -64,7 +64,7 @@ fun SearchDetailContents(
 
     CityCard {
         when (appLayoutMode) {
-            AppLayoutMode.LANDSCAPE -> {
+            AppLayoutMode.ROTATED_SMALL -> {
                 Row {
                     CityInfo(
                         modifier = Modifier

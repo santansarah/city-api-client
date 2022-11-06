@@ -33,7 +33,8 @@ fun OnboardingRoute(
         /**
          * If it's a bigger layout, show both screens side-by-side.
          */
-        if (appLayoutMode == AppLayoutMode.DOUBLE_SCREEN) {
+        if (appLayoutMode == AppLayoutMode.DOUBLE_MEDIUM
+            || appLayoutMode == AppLayoutMode.DOUBLE_BIG) {
             DoubleScreenLayout(leftContent = {
                 OnboardingScreen(
                     appLayoutMode = appLayoutMode,

@@ -72,7 +72,7 @@ fun ScreenCard(
 
     onboardingScreen.apply {
         when (appLayoutMode) {
-            AppLayoutMode.LANDSCAPE -> {
+            AppLayoutMode.ROTATED_SMALL -> {
                 /**
                  * In LANDSCAPE, create a row, so the card subheading and details
                  * display next to each other instead of top to bottom.

@@ -3,11 +3,8 @@ package com.example.cityapiclient.presentation.account
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -17,8 +14,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
-import com.example.cityapiclient.presentation.AppDestinations
-import com.example.cityapiclient.presentation.TopLevelDestination
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CardWithHeader
@@ -91,7 +86,7 @@ private fun AccountContent(
         AccountHeading(appLayoutMode, currentUser)
     }) {
         AppCard {
-            if (appLayoutMode == AppLayoutMode.LANDSCAPE) {
+            if (appLayoutMode == AppLayoutMode.ROTATED_SMALL) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxWidth()

@@ -1,18 +1,15 @@
 package com.example.cityapiclient.presentation.home
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.presentation.components.AppCard
 import com.example.cityapiclient.presentation.components.AppIconButton
-import com.example.cityapiclient.presentation.components.OnboardingSubHeading
 import com.example.cityapiclient.presentation.components.SubHeading
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CardWithHeader
@@ -30,7 +27,7 @@ fun HomeSignInOrSignUp(
         header = { SignUpHeading(appLayoutMode, currentUser) })
     {
         AppCard {
-            if (appLayoutMode == AppLayoutMode.LANDSCAPE) {
+            if (appLayoutMode == AppLayoutMode.ROTATED_SMALL) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier.fillMaxWidth()

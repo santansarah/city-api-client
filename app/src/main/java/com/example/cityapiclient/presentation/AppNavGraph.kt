@@ -31,7 +31,8 @@ fun AppNavGraph(
     startDestination: String,
     signInObserver: SignInObserver,
     snackbarHostState: SnackbarHostState,
-    appScaffoldPadding: PaddingValues
+    appScaffoldPadding: PaddingValues,
+    openDrawer: () -> Unit = {},
 ) {
 
     //val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
@@ -64,7 +65,8 @@ fun AppNavGraph(
                 appLayoutMode = appLayoutMode,
                 onSearchClicked = { navActions.navigateTo(TOP_LEVEL_DESTINATIONS[2]) },
                 snackbarHostState = snackbarHostState,
-                appScaffoldPaddingValues = appScaffoldPadding
+                appScaffoldPaddingValues = appScaffoldPadding,
+                openDrawer = openDrawer
             )
         }
         composable(SEARCH_ROUTE) {

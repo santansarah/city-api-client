@@ -13,6 +13,7 @@ class CityClientApp : Application()
     @Inject
     lateinit var httpClient: HttpClient
 
+
     /**
      * Close the ktor HttpClient if it's been initialized.
      * Things to note: once you call .close(), you can't make anymore requests.
