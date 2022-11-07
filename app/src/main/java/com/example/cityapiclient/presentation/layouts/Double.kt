@@ -1,10 +1,14 @@
 package com.example.cityapiclient.presentation.layouts
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 /**
@@ -30,6 +34,43 @@ fun DoubleScreenLayout(
                 .weight(.5f)
         ) {
             rightContent()
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DoubleLayoutWithScaffold(
+    leftContent: @Composable () -> Unit,
+    rightContent: @Composable () -> Unit,
+    snackbarHostState: @Composable () -> Unit,
+    topAppBar: @Composable () -> Unit
+) {
+    Scaffold(
+        snackbarHost = snackbarHostState,
+        containerColor = Color.Transparent,
+    )
+    { padding ->
+
+        Row() {
+            Column(
+                modifier = Modifier.weight(.5f)
+            ) {
+                topAppBar()
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
+                ) {
+                    leftContent()
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .weight(.5f)
+            ) {
+                rightContent()
+            }
         }
     }
 }

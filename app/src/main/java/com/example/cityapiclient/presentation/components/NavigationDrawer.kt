@@ -71,7 +71,10 @@ fun AppDrawer(
                 label = {
                     Text(text = destination.iconText)
                 }, selected = currentRoute == destination.route,
-                onClick = { navigateToTopLevelDestination(destination) })
+                onClick = {
+                    navigateToTopLevelDestination(destination)
+                    closeDrawer()
+                })
 
 
         }

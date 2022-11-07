@@ -106,9 +106,9 @@ fun AppRoot(
                     snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
                     containerColor = Color.Transparent,
                     bottomBar = {
-                        if (currentTopLevel != null && appLayoutMode == AppLayoutMode.SMALL)
+                        if (appLayoutMode.showBottomNav(currentTopLevel))
                             BottomNavigationBar(
-                                selectedDestination = currentTopLevel.route,
+                                selectedDestination = currentTopLevel!!.route,
                                 navigateToTopLevelDestination = navActions::navigateTo
                             )
                     }
@@ -128,9 +128,7 @@ fun AppRoot(
 
                         },
                         drawerState = sizeAwareDrawerState,
-                        gesturesEnabled =
-                        (appUiState.startDestination != ONBOARDING_ROUTE &&
-                                appLayoutMode == AppLayoutMode.DOUBLE_MEDIUM)
+                        gesturesEnabled = appLayoutMode.showNavDrawer(appUiState.startDestination)
                     ) {
 
                         Row(
@@ -143,11 +141,9 @@ fun AppRoot(
                                         .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                                 )
                         ) {
-                            if (currentTopLevel != null
-                                && (appLayoutMode == AppLayoutMode.ROTATED_SMALL)
-                            ) {
+                            if (appLayoutMode.showNavRail(currentTopLevel)) {
                                 AppNavRail(
-                                    currentRoute = currentTopLevel.route,
+                                    currentRoute = currentTopLevel!!.route,
                                     navigateToTopLevelDestination = navActions::navigateTo
                                 )
                             }

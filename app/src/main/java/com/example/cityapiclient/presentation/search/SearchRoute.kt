@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,21 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.remote.CityApiMockService
 import com.example.cityapiclient.data.remote.CityDto
-import com.example.cityapiclient.presentation.AppDestinations
-import com.example.cityapiclient.presentation.TopLevelDestination
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
-import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
-import kotlinx.coroutines.runBlocking
+import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
+import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -43,7 +37,8 @@ fun SearchRoute(
     appLayoutMode: AppLayoutMode,
     snackbarHostState: SnackbarHostState,
     appScaffoldPaddingValues: PaddingValues,
-    onCityClicked: (Int) -> Unit
+    onCityClicked: (Int) -> Unit,
+    openDrawer: () -> Unit = {}
 ) {
 
     val uiState = viewModel.searchUiState.collectAsStateWithLifecycle().value
@@ -58,26 +53,52 @@ fun SearchRoute(
         }
     }
 
-    CompactLayoutWithScaffold(
-        snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
-        mainContent = {
+    if (appLayoutMode == AppLayoutMode.DOUBLE_MEDIUM
+        || appLayoutMode == AppLayoutMode.DOUBLE_BIG
+    ) {
+        DoubleLayoutWithScaffold(
+            leftContent = {
+                CityNameSearch(
+                    uiState.cityPrefix,
+                    viewModel::onCityNameSearch,
+                    uiState.cities,
+                    focusManager,
+                    onCityClicked
+                )
+            },
+            rightContent = { /*TODO*/ },
+            snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
 
-            CityNameSearch(
-                uiState.cityPrefix,
-                viewModel::onCityNameSearch,
-                uiState.cities,
-                focusManager,
-                onCityClicked
-            )
-        },
-        appScaffoldPaddingValues = appScaffoldPaddingValues,
-        allowScroll = false,
-        topAppBar = {
             TopLevelAppBar(
                 appLayoutMode = appLayoutMode,
-                title = "City Search")
+                title = "City Search",
+                onIconClicked = openDrawer
+            )
         }
-    )
+    } else {
+
+        CompactLayoutWithScaffold(
+            snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
+            mainContent = {
+
+                CityNameSearch(
+                    uiState.cityPrefix,
+                    viewModel::onCityNameSearch,
+                    uiState.cities,
+                    focusManager,
+                    onCityClicked
+                )
+            },
+            appScaffoldPaddingValues = appScaffoldPaddingValues,
+            allowScroll = false,
+            topAppBar = {
+                TopLevelAppBar(
+                    appLayoutMode = appLayoutMode,
+                    title = "City Search"
+                )
+            }
+        )
+    }
 }
 
 @Composable
@@ -177,7 +198,7 @@ fun ShowCityNames(
                         ) {
                             LocationIcon(
                                 modifier = Modifier
-                                    .padding(end = 4.dp)
+                                    .padding(end = 6.dp)
                                     .size(26.dp),
                                 contentDesc = "City Icon"
                             )

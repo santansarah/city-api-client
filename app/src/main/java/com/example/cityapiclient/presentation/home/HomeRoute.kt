@@ -1,21 +1,31 @@
 package com.example.cityapiclient.presentation.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.domain.SignInState
+import com.example.cityapiclient.presentation.components.AppCard
 import com.example.cityapiclient.presentation.components.AppSnackbarHost
 import com.example.cityapiclient.presentation.components.GoogleButton
 import com.example.cityapiclient.presentation.components.TopLevelAppBar
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
+import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
 import kotlinx.coroutines.launch
 
@@ -55,26 +65,26 @@ fun HomeRoute(
 
     if (!homeUiState.isLoading) {
 
-        if (appLayoutMode == AppLayoutMode.DOUBLE_MEDIUM
-            || appLayoutMode == AppLayoutMode.DOUBLE_BIG) {
-            DoubleScreenLayout(leftContent = {
+        if (appLayoutMode.isSplitScreen()) {
+            DoubleLayoutWithScaffold(
+                leftContent = {
+                    HomeScreenContent(
+                        homeUiState,
+                        appLayoutMode,
+                        { scope.launch { signInObserver.signUp() } },
+                        { scope.launch { signInObserver.signIn() } },
+                        signInState,
+                        onSearchClicked
+                    )
+                },
+                rightContent = { HomeScreenInfo() },
+                snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
                 TopLevelAppBar(
                     appLayoutMode = appLayoutMode,
                     title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
                     onIconClicked = openDrawer
                 )
-                HomeScreenContent(
-                    homeUiState,
-                    appLayoutMode,
-                    { scope.launch { signInObserver.signUp() } },
-                    { scope.launch { signInObserver.signIn() } },
-                    signInState,
-                    onSearchClicked
-                )
-            },
-                rightContent = {
-                    Text("This is the right side.")
-                })
+            }
         } else {
 
             CompactLayoutWithScaffold(
@@ -160,6 +170,43 @@ private fun HomeScreenContent(
                     )
                 },
                 onSearchClicked = onSearchClicked
+            )
+        }
+    }
+}
+
+@Composable
+fun HomeScreenInfo() {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .padding(start = 40.dp, end = 40.dp)
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface.copy(.8f)),
+        horizontalAlignment = Alignment.End
+    ) {
+        Column(modifier = Modifier.padding(26.dp),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                modifier = Modifier.size(36.dp),
+                painter = painterResource(id = R.drawable.security),
+                contentDescription = "Info",
+                tint = Color(0xFF758a8a))
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Our sign up is safe and secure. We only save your " +
+                        "basic Google account information, including your name and email address.",
+                color = Color(0xFF758a8a),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Once you sign in, you can create API keys for " +
+                        "your development and production apps.",
+                color = Color(0xFF758a8a),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium
             )
         }
     }

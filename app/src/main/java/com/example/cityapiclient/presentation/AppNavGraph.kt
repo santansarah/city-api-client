@@ -75,6 +75,7 @@ fun AppNavGraph(
                 snackbarHostState = snackbarHostState,
                 appScaffoldPaddingValues = appScaffoldPadding,
                 onCityClicked = { zipCode -> navActions.navigateToSearchDetail(zipCode) },
+                openDrawer = openDrawer,
             )
         }
         composable(SEARCH_DETAIL_ROUTE,

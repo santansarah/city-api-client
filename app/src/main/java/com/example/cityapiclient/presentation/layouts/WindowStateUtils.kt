@@ -4,10 +4,25 @@ import android.util.Log
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import com.example.cityapiclient.presentation.AppDestinations
+import com.example.cityapiclient.presentation.TopLevelDestination
 
 enum class AppLayoutMode {
     ROTATED_SMALL, SMALL, DOUBLE_MEDIUM,
-    DOUBLE_BIG
+    DOUBLE_BIG;
+
+    fun showNavDrawer(startDestination: String): Boolean =
+        (startDestination != AppDestinations.ONBOARDING_ROUTE
+            && this == DOUBLE_MEDIUM)
+
+    fun showNavRail(topLevelDestination: TopLevelDestination?): Boolean =
+        (topLevelDestination != null && this == ROTATED_SMALL)
+
+    fun showBottomNav(topLevelDestination: TopLevelDestination?): Boolean =
+        (topLevelDestination != null && this == SMALL)
+
+    fun isSplitScreen(): Boolean =
+        (this == DOUBLE_MEDIUM || this == DOUBLE_BIG)
 }
 
 /**
