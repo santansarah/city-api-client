@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
@@ -119,36 +120,53 @@ fun cardSubHeading(
 
 @Composable
 fun cardSubHeading(
-    dynamicText: String
+    dynamicText: String,
+    color: Color = MaterialTheme.colorScheme.onPrimary
 ) {
     Text(
         text = dynamicText,
         style = MaterialTheme.typography.titleLarge,
-        //color = MaterialTheme.colorScheme.onPrimaryContainer
+        color = color
+    )
+}
+
+@Composable
+fun BigHeading(
+    dynamicText: String,
+    color: Color = MaterialTheme.colorScheme.onPrimary
+) {
+    Text(
+        text = dynamicText,
+        style = MaterialTheme.typography.headlineSmall,
+        color = color
     )
 }
 
 @Composable
 fun cardText(
     textContent: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onPrimary
 ) {
     Text(
         text = stringResource(id = textContent),
         style = MaterialTheme.typography.titleMedium,
         modifier = modifier,
+        color = color
     )
 }
 
 @Composable
 fun cardText(
     modifier: Modifier = Modifier,
-    dynamicText: String
+    dynamicText: String,
+    color: Color = MaterialTheme.colorScheme.onPrimary
 ) {
     Text(
         text = dynamicText,
         style = MaterialTheme.typography.titleMedium,
         modifier = modifier,
+        color = color
     )
 }
 

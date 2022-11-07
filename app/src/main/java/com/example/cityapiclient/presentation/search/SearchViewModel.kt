@@ -8,6 +8,7 @@ import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.data.remote.CityDto
+import com.example.cityapiclient.data.remote.cities
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -18,7 +19,8 @@ data class SearchUiState(
     val isLoading: Boolean = true,
     val cityPrefix: String = "",
     val cities: List<CityDto> = emptyList(),
-    val userMessage: String? = null
+    val userMessage: String? = null,
+    val selectedCity: CityDto? = null
 )
 
 @HiltViewModel
@@ -69,12 +71,19 @@ class SearchViewModel @Inject constructor(
                         }
                     }
                 }
-            } else
-            {
+            } else {
                 _searchUiState.update {
-                    it.copy(cities = emptyList())
+                    it.copy(cities = emptyList(),
+                    selectedCity = null)
                 }
             }
+        }
+    }
+
+    fun onCitySelected(zipCode: Int) {
+        val city = _searchUiState.value.cities.find { it.zip == zipCode }
+        _searchUiState.update { uiState ->
+            uiState.copy(selectedCity = city)
         }
     }
 

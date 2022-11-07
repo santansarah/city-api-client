@@ -1,10 +1,24 @@
 package com.example.cityapiclient.presentation.search
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
@@ -23,7 +37,7 @@ fun SearchDetailRoute(
     appLayoutMode: AppLayoutMode,
     snackbarHostState: SnackbarHostState,
     appScaffoldPaddingValues: PaddingValues,
-    onBack: () -> Unit,
+    onBack: () -> Unit = {},
 ) {
 
     val searchDetailUiState = viewModel.searchDetailUiState.collectAsStateWithLifecycle().value
@@ -36,51 +50,63 @@ fun SearchDetailRoute(
         }
     }
 
-    CompactLayoutWithScaffold(
-        snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
-        mainContent = {
+    if (appLayoutMode.isSplitScreen()) {
+        SearchDetailContents(
+            city = searchDetailUiState.city,
+            appLayoutMode = appLayoutMode
+        )
+    } else {
+        CompactLayoutWithScaffold(
+            snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
+            mainContent = {
 
-            if (!searchDetailUiState.isLoading) {
-                SearchDetailContents(city = searchDetailUiState.city, appLayoutMode = appLayoutMode)
+                if (!searchDetailUiState.isLoading) {
+                    SearchDetailContents(
+                        city = searchDetailUiState.city,
+                        appLayoutMode = appLayoutMode
+                    )
+                }
+
+            },
+            appScaffoldPaddingValues = appScaffoldPaddingValues,
+            topAppBar = {
+                AppBarWithBackButton("City Details", onBack)
             }
-
-        },
-        appScaffoldPaddingValues = appScaffoldPaddingValues,
-        topAppBar = {
-            AppBarWithBackButton("City Details", onBack)
-        }
-    )
+        )
+    }
 
 
 }
 
 @Composable
 fun SearchDetailContents(
-    city: CityDto,
+    city: CityDto?,
     appLayoutMode: AppLayoutMode,
 ) {
 
     Spacer(modifier = Modifier.height(40.dp))
 
-    CityCard {
-        when (appLayoutMode) {
-            AppLayoutMode.ROTATED_SMALL -> {
-                Row {
-                    CityInfo(
-                        modifier = Modifier
-                            .padding(start = 24.dp, end = 46.dp),
-                        city
-                    )
+    city?.let {
+        Column(modifier = Modifier.padding(16.dp)) {
+            when (appLayoutMode) {
+                AppLayoutMode.ROTATED_SMALL -> {
+                    Row {
+                        CityInfo(
+                            modifier = Modifier
+                                .padding(start = 24.dp, end = 46.dp),
+                            city
+                        )
+                        CityStats(city = city)
+                    }
+                }
+                else -> {
+                    CityInfo(city = city)
+                    Spacer(modifier = Modifier.height(10.dp))
                     CityStats(city = city)
                 }
             }
-            else -> {
-                CityInfo(city = city)
-                Spacer(modifier = Modifier.height(10.dp))
-                CityStats(city = city)
-            }
         }
-    }
+    } ?: NoCitySelected()
 
 }
 
@@ -90,9 +116,29 @@ private fun CityInfo(
     city: CityDto
 ) {
     Column(modifier = modifier) {
-        cardSubHeading("${city.city}, ${city.state}")
+
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Box(
+                modifier = Modifier
+                    .border(1.dp, SolidColor(Color(0xFF758a8a)),
+                        shape = RoundedCornerShape(50.dp))
+            ) {
+                Icon(
+                    modifier = Modifier.size(42.dp)
+                        .padding(8.dp),
+                    painter = painterResource(id = R.drawable.push_pin),
+                    contentDescription = "Info",
+                    tint = Color(0xFF758a8a)
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        BigHeading("${city.city}, ${city.state} ${city.zip}")
         cardSubHeading("${city.county} County")
-        cardSubHeading(dynamicText = city.zip.toString())
 
         Spacer(modifier = Modifier.height(8.dp))
     }
@@ -122,5 +168,27 @@ fun CityStats(
             cardText(textContent = R.string.onboarding_city_long, modifier = rowMod)
             cardText(dynamicText = city.lng.toString())
         }
+    }
+}
+
+@Composable
+fun NoCitySelected() {
+    Column(
+        modifier = Modifier.padding(26.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            modifier = Modifier.size(36.dp),
+            imageVector = Icons.Default.LocationOn,
+            contentDescription = "Info",
+            tint = Color(0xFF758a8a)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "No city selected. Start typing to get a list of zip codes.",
+            color = Color(0xFF758a8a),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }

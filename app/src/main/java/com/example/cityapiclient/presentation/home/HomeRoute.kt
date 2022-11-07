@@ -178,37 +178,31 @@ private fun HomeScreenContent(
 @Composable
 fun HomeScreenInfo() {
     Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .padding(start = 40.dp, end = 40.dp)
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface.copy(.8f)),
-        horizontalAlignment = Alignment.End
+        modifier = Modifier.padding(26.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(modifier = Modifier.padding(26.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-            Icon(
-                modifier = Modifier.size(36.dp),
-                painter = painterResource(id = R.drawable.security),
-                contentDescription = "Info",
-                tint = Color(0xFF758a8a))
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Our sign up is safe and secure. We only save your " +
-                        "basic Google account information, including your name and email address.",
-                color = Color(0xFF758a8a),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Once you sign in, you can create API keys for " +
-                        "your development and production apps.",
-                color = Color(0xFF758a8a),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
+        Icon(
+            modifier = Modifier.size(36.dp),
+            painter = painterResource(id = R.drawable.security),
+            contentDescription = "Info",
+            tint = Color(0xFF758a8a)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Our sign up is safe and secure. We only save your " +
+                    "basic Google account information, including your name and email address.",
+            color = Color(0xFF758a8a),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Once you sign in, you can create API keys for " +
+                    "your development and production apps.",
+            color = Color(0xFF758a8a),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 

@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 data class SearchDetailUiState(
     val isLoading: Boolean = true,
-    val city: CityDto = CityDto(),
+    val city: CityDto? = null,
     val userMessage: String? = null
 )
 
@@ -25,7 +25,7 @@ class SearchDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val zipCode: Int = savedStateHandle[AppDestinationsArgs.ZIP_CODE]!!
+    private val zipCode: Int? = savedStateHandle[AppDestinationsArgs.ZIP_CODE]
 
     private val _searchDetailUiState = MutableStateFlow(
         SearchDetailUiState()
@@ -41,9 +41,9 @@ class SearchDetailViewModel @Inject constructor(
         getCityByZipCode(zipCode)
     }
 
-    fun getCityByZipCode(zipCode: Int) {
+    fun getCityByZipCode(zipCode: Int?) {
 
-        if (zipCode > 0) {
+        zipCode?.let {
             viewModelScope.launch {
                 when (val cityApiResult = cityApiService.getCityByZip(zipCode)) {
                     is ServiceResult.Success -> {

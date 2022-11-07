@@ -52,7 +52,7 @@ val AppTypography = Typography(
         letterSpacing = 0.sp,
     ),
     headlineSmall = TextStyle(
-        fontFamily = titleFamily,
+        fontFamily = fontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 24.sp,
         lineHeight = 32.sp,

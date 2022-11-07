@@ -2,6 +2,7 @@ package com.example.cityapiclient.presentation.search
 
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,10 +13,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,7 +29,6 @@ import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
-import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -37,7 +39,7 @@ fun SearchRoute(
     appLayoutMode: AppLayoutMode,
     snackbarHostState: SnackbarHostState,
     appScaffoldPaddingValues: PaddingValues,
-    onCityClicked: (Int) -> Unit,
+    onCityNavigate: (Int) -> Unit,
     openDrawer: () -> Unit = {}
 ) {
 
@@ -53,9 +55,7 @@ fun SearchRoute(
         }
     }
 
-    if (appLayoutMode == AppLayoutMode.DOUBLE_MEDIUM
-        || appLayoutMode == AppLayoutMode.DOUBLE_BIG
-    ) {
+    if (appLayoutMode.isSplitScreen()) {
         DoubleLayoutWithScaffold(
             leftContent = {
                 CityNameSearch(
@@ -63,12 +63,13 @@ fun SearchRoute(
                     viewModel::onCityNameSearch,
                     uiState.cities,
                     focusManager,
-                    onCityClicked
+                    onCitySelected = viewModel::onCitySelected
                 )
             },
-            rightContent = { /*TODO*/ },
+            rightContent = {
+                SearchDetailContents(city = uiState.selectedCity, appLayoutMode = appLayoutMode)
+            },
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
-
             TopLevelAppBar(
                 appLayoutMode = appLayoutMode,
                 title = "City Search",
@@ -76,7 +77,6 @@ fun SearchRoute(
             )
         }
     } else {
-
         CompactLayoutWithScaffold(
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
             mainContent = {
@@ -86,7 +86,7 @@ fun SearchRoute(
                     viewModel::onCityNameSearch,
                     uiState.cities,
                     focusManager,
-                    onCityClicked
+                    onCitySelected = onCityNavigate
                 )
             },
             appScaffoldPaddingValues = appScaffoldPaddingValues,
@@ -107,7 +107,7 @@ private fun CityNameSearch(
     onPrefixChanged: (String) -> Unit,
     cities: List<CityDto>,
     focusManager: FocusManager,
-    onCityClicked: (Int) -> Unit
+    onCitySelected: (Int) -> Unit
 ) {
     EnterCityName(
         prefix,
@@ -116,7 +116,7 @@ private fun CityNameSearch(
     )
     ShowCityNames(
         cities = cities,
-        onCityClicked = onCityClicked
+        onCitySelected = onCitySelected
     )
 }
 
@@ -130,7 +130,7 @@ fun EnterCityName(
     Column(
     ) {
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         TextFieldWithIconAndClear(
             leadingIcon = {
                 Icon(
@@ -152,11 +152,10 @@ fun EnterCityName(
 fun ShowCityNames(
     modifier: Modifier = Modifier,
     cities: List<CityDto>,
-    onCityClicked: (Int) -> Unit
+    onCitySelected: (Int) -> Unit
 ) {
-    //val (selectedOption,) = remember { mutableStateOf("") }
-    var isClicked by remember {
-        mutableStateOf(false)
+    var selectedItem by rememberSaveable {
+        mutableStateOf(-1)
     }
 
     LazyColumn(modifier = modifier) {
@@ -168,8 +167,8 @@ fun ShowCityNames(
                     .clickable(
                         onClick = {
                             Log.d("debug", "Clicked column...")
-                            isClicked = true
-                            onCityClicked(city.zip)
+                            selectedItem = index
+                            onCitySelected(city.zip)
                         }
                     ),
                 verticalArrangement = Arrangement.Center
@@ -185,6 +184,11 @@ fun ShowCityNames(
                             shape = RoundedCornerShape(10.dp)
                         )
                         .fillMaxSize()
+                        .background(
+                            color = if (index == selectedItem)
+                                MaterialTheme.colorScheme.onPrimaryContainer else
+                                MaterialTheme.colorScheme.surfaceVariant
+                        )
 
                 ) {
                     Box(
@@ -193,8 +197,9 @@ fun ShowCityNames(
                             .padding(top = 15.dp, bottom = 15.dp, start = 5.dp, end = 5.dp),
                     ) {
                         Row(
+                            modifier = Modifier.fillMaxWidth(.85f),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            //horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
                             LocationIcon(
                                 modifier = Modifier
@@ -206,6 +211,9 @@ fun ShowCityNames(
                                 text = city.city + ", " + city.state + " ${city.zip}",
                                 modifier = Modifier,
                                 style = MaterialTheme.typography.titleLarge,
+                                color = if (index == selectedItem)
+                                    MaterialTheme.colorScheme.onSecondary else
+                                        MaterialTheme.colorScheme.onPrimary
                             )
                         }
                         ArrowIcon(

@@ -2,7 +2,10 @@ package com.example.cityapiclient.presentation.account
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -15,9 +18,11 @@ import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.*
+import com.example.cityapiclient.presentation.home.HomeScreenInfo
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CardWithHeader
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
+import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -27,7 +32,8 @@ fun AccountRoute(
     appLayoutMode: AppLayoutMode,
     signInObserver: SignInObserver,
     snackbarHostState: SnackbarHostState,
-    appScaffoldPaddingValues: PaddingValues
+    appScaffoldPaddingValues: PaddingValues,
+    openDrawer: () -> Unit = {}
 ) {
 
     /** [SignInObserver] updates the preferences datastore, but the viewmodel observes changes
@@ -46,11 +52,9 @@ fun AccountRoute(
         }
     }
 
-    CompactLayoutWithScaffold(
-        snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
-        mainContent = {
-
-            if (!accountUiState.isLoading) {
+    if (appLayoutMode.isSplitScreen()) {
+        DoubleLayoutWithScaffold(
+            leftContent = {
                 AccountContent(
                     appLayoutMode = appLayoutMode,
                     signOut = { scope.launch { signInObserver.signOut() } },
@@ -59,16 +63,42 @@ fun AccountRoute(
                     currentUser = accountUiState.currentUser,
                     isProcessing = signInState.isSigningIn
                 )
-            }
-
-        },
-        appScaffoldPaddingValues = appScaffoldPaddingValues,
-        topAppBar = {
+            },
+            rightContent = { HomeScreenInfo() },
+            snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
             TopLevelAppBar(
                 appLayoutMode = appLayoutMode,
-                title = "Account")
+                title = "Account",
+                onIconClicked = openDrawer
+            )
         }
-    )
+    } else {
+
+        CompactLayoutWithScaffold(
+            snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
+            mainContent = {
+
+                if (!accountUiState.isLoading) {
+                    AccountContent(
+                        appLayoutMode = appLayoutMode,
+                        signOut = { scope.launch { signInObserver.signOut() } },
+                        signIn = { scope.launch { signInObserver.signIn() } },
+                        signUp = { scope.launch { signInObserver.signUp() } },
+                        currentUser = accountUiState.currentUser,
+                        isProcessing = signInState.isSigningIn
+                    )
+                }
+
+            },
+            appScaffoldPaddingValues = appScaffoldPaddingValues,
+            topAppBar = {
+                TopLevelAppBar(
+                    appLayoutMode = appLayoutMode,
+                    title = "Account"
+                )
+            }
+        )
+    }
 
 }
 
