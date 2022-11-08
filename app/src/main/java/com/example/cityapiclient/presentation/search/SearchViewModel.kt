@@ -80,12 +80,47 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun onCitySelected(zipCode: Int) {
-        val city = _searchUiState.value.cities.find { it.zip == zipCode }
+    fun onCitySelected(city: CityDto) {
         _searchUiState.update { uiState ->
             uiState.copy(selectedCity = city)
         }
     }
+
+    fun goBack() {
+        _searchUiState.update {
+            it.copy(selectedCity = null)
+        }
+    }
+
+/*
+    fun getCityByZipCode(zipCode: Int?) {
+
+        zipCode?.let {
+            viewModelScope.launch {
+                when (val cityApiResult = cityApiService.getCityByZip(zipCode)) {
+                    is ServiceResult.Success -> {
+                        _searchDetailUiState.update {
+                            it.copy(city = cityApiResult.data.cities[0])
+                        }
+                    }
+                    is ServiceResult.Error -> {
+                        Log.d("debug", "api error: ${cityApiResult.message}")
+                        _searchDetailUiState.update {
+                            it.copy(
+                                userMessage = cityApiResult.message
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        _searchDetailUiState.update {
+            it.copy(isLoading = false)
+        }
+
+    }
+*/
 
     fun userMessageShown() {
         Log.d("debug", "user message set to null.")

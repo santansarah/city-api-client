@@ -5,21 +5,17 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations.ACCOUNT_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.ONBOARDING_ROUTE
-import com.example.cityapiclient.presentation.AppDestinations.SEARCH_DETAIL_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.SEARCH_ROUTE
 import com.example.cityapiclient.presentation.account.AccountRoute
 import com.example.cityapiclient.presentation.home.HomeRoute
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.onboarding.OnboardingRoute
-import com.example.cityapiclient.presentation.search.SearchDetailRoute
 import com.example.cityapiclient.presentation.search.SearchRoute
 
 @Composable
@@ -75,11 +71,10 @@ fun AppNavGraph(
                 appLayoutMode = appLayoutMode,
                 snackbarHostState = snackbarHostState,
                 appScaffoldPaddingValues = appScaffoldPadding,
-                onCityNavigate = { zipCode -> navActions.navigateToSearchDetail(zipCode) },
                 openDrawer = openDrawer,
             )
         }
-        composable(SEARCH_DETAIL_ROUTE,
+        /*composable(SEARCH_DETAIL_ROUTE,
             arguments = listOf(
                 navArgument(AppDestinationsArgs.ZIP_CODE) { type = NavType.IntType },
             )) {
@@ -89,6 +84,6 @@ fun AppNavGraph(
                 appScaffoldPaddingValues = appScaffoldPadding,
                 onBack = { navController.popBackStack() }
             )
-        }
+        }*/
     }
 }

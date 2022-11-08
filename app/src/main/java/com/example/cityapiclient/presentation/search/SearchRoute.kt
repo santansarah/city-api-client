@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,7 +38,6 @@ fun SearchRoute(
     appLayoutMode: AppLayoutMode,
     snackbarHostState: SnackbarHostState,
     appScaffoldPaddingValues: PaddingValues,
-    onCityNavigate: (Int) -> Unit,
     openDrawer: () -> Unit = {}
 ) {
 
@@ -81,21 +79,33 @@ fun SearchRoute(
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
             mainContent = {
 
-                CityNameSearch(
-                    uiState.cityPrefix,
-                    viewModel::onCityNameSearch,
-                    uiState.cities,
-                    focusManager,
-                    onCitySelected = onCityNavigate
-                )
+                if (uiState.selectedCity == null) {
+                    CityNameSearch(
+                        uiState.cityPrefix,
+                        viewModel::onCityNameSearch,
+                        uiState.cities,
+                        focusManager,
+                        onCitySelected = viewModel::onCitySelected
+                    )
+                }
+                else
+                {
+                    SearchDetailContents(city = uiState.selectedCity, appLayoutMode = appLayoutMode)
+                }
             },
             appScaffoldPaddingValues = appScaffoldPaddingValues,
             allowScroll = false,
             topAppBar = {
-                TopLevelAppBar(
-                    appLayoutMode = appLayoutMode,
-                    title = "City Search"
-                )
+                if (uiState.selectedCity == null) {
+                    TopLevelAppBar(
+                        appLayoutMode = appLayoutMode,
+                        title = "City Search"
+                    )
+                }
+                else {
+                    AppBarWithBackButton(title = "City Detail",
+                        onBackClicked = viewModel::goBack)
+                }
             }
         )
     }
@@ -107,7 +117,7 @@ private fun CityNameSearch(
     onPrefixChanged: (String) -> Unit,
     cities: List<CityDto>,
     focusManager: FocusManager,
-    onCitySelected: (Int) -> Unit
+    onCitySelected: (CityDto) -> Unit
 ) {
     EnterCityName(
         prefix,
@@ -152,9 +162,9 @@ fun EnterCityName(
 fun ShowCityNames(
     modifier: Modifier = Modifier,
     cities: List<CityDto>,
-    onCitySelected: (Int) -> Unit
+    onCitySelected: (CityDto) -> Unit
 ) {
-    var selectedItem by rememberSaveable {
+    var selectedZip by rememberSaveable {
         mutableStateOf(-1)
     }
 
@@ -167,8 +177,8 @@ fun ShowCityNames(
                     .clickable(
                         onClick = {
                             Log.d("debug", "Clicked column...")
-                            selectedItem = index
-                            onCitySelected(city.zip)
+                            selectedZip = city.zip
+                            onCitySelected(city)
                         }
                     ),
                 verticalArrangement = Arrangement.Center
@@ -185,7 +195,7 @@ fun ShowCityNames(
                         )
                         .fillMaxSize()
                         .background(
-                            color = if (index == selectedItem)
+                            color = if (city.zip == selectedZip)
                                 MaterialTheme.colorScheme.onPrimaryContainer else
                                 MaterialTheme.colorScheme.surfaceVariant
                         )
@@ -211,7 +221,7 @@ fun ShowCityNames(
                                 text = city.city + ", " + city.state + " ${city.zip}",
                                 modifier = Modifier,
                                 style = MaterialTheme.typography.titleLarge,
-                                color = if (index == selectedItem)
+                                color = if (city.zip == selectedZip)
                                     MaterialTheme.colorScheme.onSecondary else
                                         MaterialTheme.colorScheme.onPrimary
                             )
