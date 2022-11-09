@@ -52,7 +52,8 @@ fun CompactLayoutWithScaffold(
     snackbarHostState: @Composable () -> Unit,
     allowScroll: Boolean = true,
     appScaffoldPaddingValues: PaddingValues = PaddingValues(),
-    topAppBar: @Composable () -> Unit
+    topAppBar: @Composable () -> Unit,
+    appLayoutMode: AppLayoutMode
 ) {
     Scaffold(
         snackbarHost = snackbarHostState,
@@ -61,22 +62,28 @@ fun CompactLayoutWithScaffold(
     )
     { padding ->
 
-        val nestedPaddingValues = PaddingValues(
+        val sidePadding = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+            40.dp
+        else
+            16.dp
+
+        val columnPadding = PaddingValues(
             top = padding.calculateTopPadding(),
-            bottom = appScaffoldPaddingValues.calculateBottomPadding()
+            bottom = appScaffoldPaddingValues.calculateBottomPadding(),
+            start = sidePadding,
+            end = sidePadding
         )
 
-        val scrollableLayout: Modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 16.dp, end = 16.dp)
+        var columnModifier: Modifier = Modifier
+            .fillMaxWidth()
+            .padding(columnPadding)
 
         if (allowScroll) {
-            scrollableLayout.verticalScroll(rememberScrollState())
+            columnModifier = columnModifier.verticalScroll(rememberScrollState())
         }
 
         Column(
-            modifier = scrollableLayout
-                .padding(nestedPaddingValues),
+            modifier = columnModifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             mainContent()
@@ -84,25 +91,3 @@ fun CompactLayoutWithScaffold(
     }
 }
 
-@Composable
-fun CardWithHeader(
-    appLayoutMode: AppLayoutMode,
-    header: @Composable () -> Unit,
-    card: @Composable () -> Unit
-) {
-
-    val languageCode = Locale.current.language
-    Log.d("debug", "current lang: $languageCode")
-
-    val headingHeight = if (appLayoutMode == AppLayoutMode.ROTATED_SMALL)
-        100.dp else 160.dp
-
-    Column(
-        modifier = Modifier.height(headingHeight),
-    ) {
-        Spacer(modifier = Modifier.height(20.dp))
-        header()
-    }
-    card()
-
-}

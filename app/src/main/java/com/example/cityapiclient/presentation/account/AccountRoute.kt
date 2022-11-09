@@ -20,7 +20,6 @@ import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.home.HomeScreenInfo
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.presentation.layouts.CardWithHeader
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
 import kotlinx.coroutines.launch
@@ -54,6 +53,7 @@ fun AccountRoute(
 
     if (appLayoutMode.isSplitScreen()) {
         DoubleLayoutWithScaffold(
+            appLayoutMode = appLayoutMode,
             leftContent = {
                 AccountContent(
                     appLayoutMode = appLayoutMode,
@@ -75,6 +75,7 @@ fun AccountRoute(
     } else {
 
         CompactLayoutWithScaffold(
+            appLayoutMode = appLayoutMode,
             snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
             mainContent = {
 
@@ -94,7 +95,8 @@ fun AccountRoute(
             topAppBar = {
                 TopLevelAppBar(
                     appLayoutMode = appLayoutMode,
-                    title = "Account"
+                    title = "Account",
+                    onIconClicked = openDrawer
                 )
             }
         )
@@ -115,63 +117,54 @@ private fun AccountContent(
     CardWithHeader(appLayoutMode = appLayoutMode, header = {
         AccountHeading(appLayoutMode, currentUser)
     }) {
-        AppCard {
-            if (appLayoutMode == AppLayoutMode.ROTATED_SMALL) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    GetGoogleButtonFromUserState(
-                        signOut = signOut,
-                        signIn = signIn,
-                        signUp = signUp,
-                        currentUser = currentUser,
-                        modifier = Modifier.weight(.45f),
-                        isProcessing = isProcessing
-                    )
-                }
-            } else {
-                val buttonModifier = Modifier.fillMaxWidth()
-                GetGoogleButtonFromUserState(
-                    signOut = signOut,
-                    signIn = signIn,
-                    signUp = signUp,
-                    currentUser = currentUser,
-                    modifier = buttonModifier,
-                    isProcessing = isProcessing
-                )
-            }
-            Spacer(modifier = Modifier.height(18.dp))
-            TextButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = { /*TODO*/ },
-                enabled = (currentUser is CurrentUser.SignedInUser),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    containerColor = Color.Transparent,
-                    disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                    disabledContainerColor = Color.Transparent
-                )
-            ) {
-                Text(
-                    text = "Delete Account",
-                    style = MaterialTheme.typography.titleSmall,
-                    textDecoration = TextDecoration.Underline,
-                    textAlign = TextAlign.Center
-                )
-            }
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = "Delete your account and API keys. " +
-                        "This can not be undone.",
-                style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center,
-                color = if (currentUser !is CurrentUser.SignedInUser) MaterialTheme.colorScheme.onPrimaryContainer else
-                    MaterialTheme.colorScheme.onPrimary
-            )
-        }
+        Spacer(modifier = Modifier.height(32.dp))
+        val buttonModifier = Modifier.fillMaxWidth()
+        GetGoogleButtonFromUserState(
+            signOut = signOut,
+            signIn = signIn,
+            signUp = signUp,
+            currentUser = currentUser,
+            modifier = buttonModifier,
+            isProcessing = isProcessing
+        )
+        Spacer(modifier = Modifier.height(18.dp))
+        DeleteAccount(currentUser)
     }
 
+
+}
+
+@Composable
+private fun DeleteAccount(currentUser: CurrentUser) {
+    Column() {
+        TextButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { /*TODO*/ },
+            enabled = (currentUser is CurrentUser.SignedInUser),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                containerColor = Color.Transparent,
+                disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                disabledContainerColor = Color.Transparent
+            )
+        ) {
+            Text(
+                text = "Delete Account",
+                style = MaterialTheme.typography.titleSmall,
+                textDecoration = TextDecoration.Underline,
+                textAlign = TextAlign.Center
+            )
+        }
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "Delete your account and API keys. " +
+                    "This can not be undone.",
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center,
+            color = if (currentUser !is CurrentUser.SignedInUser) MaterialTheme.colorScheme.onPrimaryContainer else
+                MaterialTheme.colorScheme.onPrimary
+        )
+    }
 }
 
 @Composable
@@ -181,8 +174,13 @@ private fun AccountHeading(
 ) {
     when (currentUser) {
         is CurrentUser.SignedInUser -> {
+
+            val headingHeight = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+                80.dp else 160.dp
+
             Text(
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
                     .fillMaxWidth(),
                 text = currentUser.name,
                 style = MaterialTheme.typography.titleLarge,

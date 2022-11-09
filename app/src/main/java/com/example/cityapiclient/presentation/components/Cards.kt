@@ -1,5 +1,6 @@
 package com.example.cityapiclient.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -73,7 +74,7 @@ fun OnboardingCard(
 }
 
 fun getOnboardingCardHeight(appLayoutMode: AppLayoutMode, language: String) =
-    if (appLayoutMode == AppLayoutMode.ROTATED_SMALL)
+    if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
         240.dp
     else {
         when (language) {
@@ -86,12 +87,69 @@ fun getOnboardingCardHeight(appLayoutMode: AppLayoutMode, language: String) =
 
 @Composable
 fun AppCard(
+    appLayoutMode: AppLayoutMode,
     mainContent: @Composable () -> Unit
 ) {
+
+    val cardPadding = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+        PaddingValues(start = 70.dp, end = 70.dp)
+    else
+        PaddingValues(start = 0.dp, end = 0.dp)
+
     Card(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .padding(cardPadding)
+            .height(250.dp)
+            .border(
+                border = BorderStroke(1.dp, brush = orangeYellowGradient),
+                shape = RoundedCornerShape(10.dp)
+            )
+
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                mainContent()
+            }
+        }
+    }
+}
+
+@Composable
+fun CardWithHeader(
+    appLayoutMode: AppLayoutMode,
+    header: @Composable () -> Unit,
+    cardContent: @Composable () -> Unit
+) {
+
+    val languageCode = Locale.current.language
+
+    val headingHeight = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+        100.dp else 160.dp
+
+    val cardPadding = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+        PaddingValues(start = 100.dp, end = 100.dp)
+    else
+        PaddingValues(start = 0.dp, end = 0.dp)
+
+    Column(
+        modifier = Modifier.height(headingHeight),
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        header()
+    }
+    Card(
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(cardPadding)
             .height(250.dp)
             .border(
                 border = BorderStroke(1.dp, brush = orangeYellowGradient),
@@ -104,38 +162,9 @@ fun AppCard(
                 .padding(16.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
-            Column(
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                mainContent()
-            }
+            cardContent()
         }
     }
-}
 
-@Composable
-fun CityCard(
-    mainContent: @Composable () -> Unit
-) {
-    Card(
-        shape = RoundedCornerShape(10.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(250.dp)
-            .border(
-                border = BorderStroke(1.dp, brush = orangeYellowGradient),
-                shape = RoundedCornerShape(10.dp)
-            )
-
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxSize()
-        ) {
-            mainContent()
-        }
-    }
 }

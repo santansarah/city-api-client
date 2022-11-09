@@ -8,26 +8,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 
 @Composable
 fun SearchDetailContents(
@@ -39,25 +32,35 @@ fun SearchDetailContents(
 
     city?.let {
         if (appLayoutMode.isSplitScreen()) {
+            if (appLayoutMode.isSplitScreen()) {
+                CityDetailIcon()
+            }
             Column(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier
+                    //.padding(start = sidePadding, end = sidePadding)
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CityInfo(appLayoutMode = appLayoutMode, city = city)
-                Spacer(modifier = Modifier.height(10.dp))
-                CityStats(city = city)
+                Column() {
+                    CityInfo(appLayoutMode = appLayoutMode, city = city)
+                    Spacer(modifier = Modifier.height(10.dp))
+                    CityStats(city = city)
+                }
             }
         } else {
             Spacer(modifier = Modifier.height(40.dp))
-            AppCard {
+            AppCard(
+                appLayoutMode = appLayoutMode
+            ) {
                 when (appLayoutMode) {
-                    AppLayoutMode.ROTATED_SMALL -> {
-                        Row {
+                    AppLayoutMode.SMALL_LANDSCAPE -> {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
                             CityInfo(
                                 appLayoutMode = appLayoutMode,
-                                modifier = Modifier
-                                    .padding(start = 24.dp, end = 46.dp),
-                                city
+                                city = city
                             )
                             CityStats(city = city)
                         }
@@ -80,11 +83,7 @@ private fun CityInfo(
     modifier: Modifier = Modifier,
     city: CityDto
 ) {
-    Column(modifier = modifier) {
-
-        if (appLayoutMode.isSplitScreen()) {
-            CityDetailIcon()
-        }
+    Column() {
 
         BigHeading("${city.city}, ${city.state} ${city.zip}")
         cardSubHeading("${city.county} County")
@@ -128,10 +127,8 @@ fun CityStats(
 
     val rowMod = Modifier.width(120.dp)
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(horizontalArrangement = Arrangement.End) {
+    Column() {
+        Row() {
             cardText(textContent = R.string.onboarding_city_population, modifier = rowMod)
             cardText(dynamicText = city.population.toString())
         }

@@ -16,20 +16,28 @@ import com.example.cityapiclient.R
 import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TOP_LEVEL_DESTINATIONS
 import com.example.cityapiclient.presentation.TopLevelDestination
+import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 
 @Composable
 fun AppNavRail(
+    appLayoutMode: AppLayoutMode,
     currentRoute: String,
     navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
+    val railWidth = if (appLayoutMode == AppLayoutMode.DOUBLE_BIG)
+        120.dp
+    else
+        80.dp
+
     NavigationRail(
         //containerColor = MaterialTheme.colorScheme.primaryContainer,
         header = {
             CityIcon(Modifier.size(52.dp))
         },
-        modifier = modifier.width(80.dp)
+        modifier = modifier.width(railWidth)
     ) {
         TOP_LEVEL_DESTINATIONS.forEach { destination ->
             NavigationRailItem(
@@ -56,6 +64,7 @@ fun AppNavRail(
 fun PreviewAppNavRail() {
     CityAPIClientTheme() {
         AppNavRail(
+            appLayoutMode = AppLayoutMode.DOUBLE_BIG,
             currentRoute = AppDestinations.HOME_ROUTE,
             navigateToTopLevelDestination = {},
         )

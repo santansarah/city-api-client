@@ -44,6 +44,7 @@ fun DoubleScreenLayout(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoubleLayoutWithScaffold(
+    appLayoutMode: AppLayoutMode,
     leftContent: @Composable () -> Unit,
     rightContent: @Composable () -> Unit,
     snackbarHostState: @Composable () -> Unit,
@@ -55,6 +56,11 @@ fun DoubleLayoutWithScaffold(
     )
     { padding ->
 
+        val sidePadding = if (appLayoutMode == AppLayoutMode.DOUBLE_BIG)
+            62.dp
+        else
+            16.dp
+
         Row() {
             Column(
                 modifier = Modifier.weight(.5f)
@@ -62,7 +68,7 @@ fun DoubleLayoutWithScaffold(
                 topAppBar()
                 Column(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(start = sidePadding, end = sidePadding)
                 ) {
                     leftContent()
                 }
@@ -70,7 +76,7 @@ fun DoubleLayoutWithScaffold(
             Column(
                 modifier = Modifier
                     .weight(.5f)
-                    .padding(start = 36.dp, end = 36.dp)
+                    .padding(start = sidePadding, end = sidePadding)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surface.copy(.8f)),
                 verticalArrangement = Arrangement.Center,

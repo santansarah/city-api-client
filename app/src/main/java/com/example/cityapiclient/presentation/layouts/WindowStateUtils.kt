@@ -8,15 +8,15 @@ import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TopLevelDestination
 
 enum class AppLayoutMode {
-    ROTATED_SMALL, SMALL, DOUBLE_MEDIUM,
+    SMALL_LANDSCAPE, SMALL_PORTRAIT, SMALL, DOUBLE_MEDIUM,
     DOUBLE_BIG;
 
     fun showNavDrawer(startDestination: String): Boolean =
         (startDestination != AppDestinations.ONBOARDING_ROUTE
-            && this == DOUBLE_MEDIUM)
+            && (this == DOUBLE_MEDIUM || this == SMALL_PORTRAIT))
 
-    fun showNavRail(topLevelDestination: TopLevelDestination?): Boolean =
-        (topLevelDestination != null && this == ROTATED_SMALL)
+    fun showNavRail(): Boolean =
+        (this == SMALL_LANDSCAPE || this == DOUBLE_BIG)
 
     fun showBottomNav(topLevelDestination: TopLevelDestination?): Boolean =
         (topLevelDestination != null && this == SMALL)
@@ -37,7 +37,11 @@ fun getWindowLayoutType(
     Log.d("debug", "windowHeight: $heightSizeClass")
 
     if (heightSizeClass == WindowHeightSizeClass.Compact)
-        AppLayoutMode.ROTATED_SMALL
+        if (widthSizeClass == WindowWidthSizeClass.Compact) {
+            AppLayoutMode.SMALL_PORTRAIT
+        } else {
+            AppLayoutMode.SMALL_LANDSCAPE
+        }
     else {
         when (widthSizeClass) {
             WindowWidthSizeClass.Compact -> AppLayoutMode.SMALL

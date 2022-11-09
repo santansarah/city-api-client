@@ -10,9 +10,9 @@ import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.presentation.components.AppCard
 import com.example.cityapiclient.presentation.components.AppIconButton
+import com.example.cityapiclient.presentation.components.CardWithHeader
 import com.example.cityapiclient.presentation.components.SubHeading
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.presentation.layouts.CardWithHeader
 import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
 
 @Composable
@@ -22,26 +22,13 @@ fun HomeSignInOrSignUp(
     googleButton: @Composable () -> Unit,
     onSearchClicked: () -> Unit
 ) {
-
     CardWithHeader(appLayoutMode = appLayoutMode,
         header = { SignUpHeading(appLayoutMode, currentUser) })
     {
-        AppCard {
-            if (appLayoutMode == AppLayoutMode.ROTATED_SMALL) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    DoubleScreenLayout(
-                        leftContent = { googleButton() },
-                        rightContent = { SearchButton(onSearchClicked) })
-                }
-            } else {
-                googleButton()
-                Spacer(modifier = Modifier.height(38.dp))
-                SearchButton(onSearchClicked)
-            }
-        }
+        Spacer(modifier = Modifier.height(32.dp))
+        googleButton()
+        Spacer(modifier = Modifier.height(38.dp))
+        SearchButton(onSearchClicked)
     }
 }
 

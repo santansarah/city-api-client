@@ -66,7 +66,7 @@ fun OnboardingSubHeading(
 }
 
 fun getOnboardingSubHeadingHeight(appLayoutMode: AppLayoutMode, language: String) =
-    if (appLayoutMode == AppLayoutMode.ROTATED_SMALL)
+    if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
         40.dp
     else {
         when(language) {

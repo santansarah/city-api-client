@@ -100,6 +100,7 @@ fun AppRoot(
                     appLayoutMode = appLayoutMode
                 )
                 Log.d("debug", "drawerstate: ${sizeAwareDrawerState.currentValue}")
+                Log.d("debug", "appLayoutMode: $appLayoutMode")
                 val coroutineScope = rememberCoroutineScope()
 
                 Scaffold(
@@ -141,9 +142,10 @@ fun AppRoot(
                                         .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                                 )
                         ) {
-                            if (appLayoutMode.showNavRail(currentTopLevel)) {
+                            if (appLayoutMode.showNavRail()) {
                                 AppNavRail(
-                                    currentRoute = currentTopLevel!!.route,
+                                    appLayoutMode,
+                                    currentRoute = currentTopLevel?.route ?: HOME_ROUTE,
                                     navigateToTopLevelDestination = navActions::navigateTo
                                 )
                             }
@@ -158,7 +160,7 @@ fun AppRoot(
                                     snackbarHostState = appSnackBarHostState,
                                     appScaffoldPadding = padding,
                                     openDrawer = {
-                                        if (appLayoutMode == AppLayoutMode.DOUBLE_MEDIUM) {
+                                        if (appLayoutMode.showNavDrawer(appUiState.startDestination)) {
                                             coroutineScope.launch { sizeAwareDrawerState.open() }
                                         }
                                     }
@@ -180,9 +182,7 @@ private fun rememberSizeAwareDrawerState(
 ): DrawerState {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
-    return if (startDestination != ONBOARDING_ROUTE &&
-        appLayoutMode == AppLayoutMode.DOUBLE_MEDIUM
-    ) {
+    return if (appLayoutMode.showNavDrawer(startDestination)) {
         // If we want to allow showing the drawer, we use a real, remembered drawer
         // state defined above
         drawerState

@@ -19,10 +19,7 @@ import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.domain.SignInState
-import com.example.cityapiclient.presentation.components.AppCard
-import com.example.cityapiclient.presentation.components.AppSnackbarHost
-import com.example.cityapiclient.presentation.components.GoogleButton
-import com.example.cityapiclient.presentation.components.TopLevelAppBar
+import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
@@ -64,9 +61,9 @@ fun HomeRoute(
     }
 
     if (!homeUiState.isLoading) {
-
         if (appLayoutMode.isSplitScreen()) {
             DoubleLayoutWithScaffold(
+                appLayoutMode = appLayoutMode,
                 leftContent = {
                     HomeScreenContent(
                         homeUiState,
@@ -88,6 +85,7 @@ fun HomeRoute(
         } else {
 
             CompactLayoutWithScaffold(
+                appLayoutMode = appLayoutMode,
                 snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
                 mainContent = {
 
@@ -105,7 +103,8 @@ fun HomeRoute(
                 topAppBar = {
                     TopLevelAppBar(
                         appLayoutMode = appLayoutMode,
-                        title = HomeAppBarTitle(currentUser = homeUiState.currentUser)
+                        title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
+                        onIconClicked = openDrawer
                     )
                 }
 

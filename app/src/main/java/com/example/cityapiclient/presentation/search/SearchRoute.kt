@@ -55,6 +55,7 @@ fun SearchRoute(
 
     if (appLayoutMode.isSplitScreen()) {
         DoubleLayoutWithScaffold(
+            appLayoutMode = appLayoutMode,
             leftContent = {
                 CityNameSearch(
                     uiState.cityPrefix,
@@ -76,6 +77,7 @@ fun SearchRoute(
         }
     } else {
         CompactLayoutWithScaffold(
+            appLayoutMode = appLayoutMode,
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
             mainContent = {
 
@@ -99,7 +101,8 @@ fun SearchRoute(
                 if (uiState.selectedCity == null) {
                     TopLevelAppBar(
                         appLayoutMode = appLayoutMode,
-                        title = "City Search"
+                        title = "City Search",
+                        onIconClicked = openDrawer
                     )
                 }
                 else {
