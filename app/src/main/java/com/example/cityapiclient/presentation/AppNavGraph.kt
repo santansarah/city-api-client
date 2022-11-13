@@ -14,7 +14,7 @@ import com.example.cityapiclient.presentation.AppDestinations.ONBOARDING_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.SEARCH_ROUTE
 import com.example.cityapiclient.presentation.account.AccountRoute
 import com.example.cityapiclient.presentation.home.HomeRoute
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.util.AppLayoutMode
 import com.example.cityapiclient.presentation.onboarding.OnboardingRoute
 import com.example.cityapiclient.presentation.search.SearchRoute
 

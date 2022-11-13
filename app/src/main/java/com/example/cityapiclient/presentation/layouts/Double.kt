@@ -2,8 +2,6 @@ package com.example.cityapiclient.presentation.layouts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -12,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.util.AppLayoutMode
 
 /**
  * This is the template for bigger layouts that can fit a list/detail
@@ -56,10 +55,12 @@ fun DoubleLayoutWithScaffold(
     )
     { padding ->
 
-        val sidePadding = if (appLayoutMode == AppLayoutMode.DOUBLE_BIG)
-            62.dp
-        else
-            16.dp
+        val sidePadding = when(appLayoutMode)
+        {
+            AppLayoutMode.DOUBLE_BIG -> 52.dp
+            AppLayoutMode.FOLDED_PORTRAIT -> 16.dp
+            else -> 16.dp
+        }
 
         Row() {
             Column(

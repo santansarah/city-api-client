@@ -1,6 +1,5 @@
 package com.example.cityapiclient.presentation.layouts
 
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.util.AppLayoutMode
 
 /**
  * This is the template for phones - Portrait and Landscape.
@@ -62,10 +61,11 @@ fun CompactLayoutWithScaffold(
     )
     { padding ->
 
-        val sidePadding = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
-            40.dp
-        else
-            16.dp
+        val sidePadding = when(appLayoutMode) {
+            AppLayoutMode.PHONE_LANDSCAPE -> 40.dp
+            AppLayoutMode.NARROW_TABLET -> 40.dp
+            else -> 16.dp
+        }
 
         val columnPadding = PaddingValues(
             top = padding.calculateTopPadding(),

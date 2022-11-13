@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,9 +23,11 @@ import com.example.cityapiclient.presentation.components.AppDrawer
 import com.example.cityapiclient.presentation.components.AppNavRail
 import com.example.cityapiclient.presentation.components.BottomNavigationBar
 import com.example.cityapiclient.presentation.components.backgroundGradient
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.presentation.layouts.getWindowLayoutType
+import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.getWindowLayoutType
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
+import com.example.cityapiclient.util.FoldableInfo
+import com.example.cityapiclient.util.WindowClassWithSize
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -38,7 +39,8 @@ data class AppUiState(
 @OptIn(ExperimentalLifecycleComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AppRoot(
-    windowSize: WindowSizeClass,
+    windowSize: WindowClassWithSize,
+    foldableInfo: FoldableInfo?,
     userRepository: UserRepository,
     signInObserver: SignInObserver
 ) {
@@ -52,7 +54,7 @@ fun AppRoot(
              * Get updates for rotations and collect UserPreferences. None of these
              * values are preserved during config changes, but that's OK here.
              */
-            val appLayoutMode = getWindowLayoutType(windowSize = windowSize)
+            val appLayoutMode = getWindowLayoutType(windowSize, foldableInfo)
             val appUiState = userRepository.userPreferencesFlow.map {
                 AppUiState(
                     isLoading = false,

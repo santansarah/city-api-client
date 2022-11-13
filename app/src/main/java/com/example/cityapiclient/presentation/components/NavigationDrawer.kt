@@ -2,6 +2,7 @@ package com.example.cityapiclient.presentation.components
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -43,6 +44,9 @@ fun AppDrawer(
                     modifier = Modifier
                         .size(58.dp)
                         .padding(start = 4.dp, top = 4.dp, end = 6.dp)
+                        .clickable(
+                            onClick = closeDrawer
+                        )
                 )
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -52,7 +56,8 @@ fun AppDrawer(
                 )
             }
             IconButton(onClick = closeDrawer) {
-                Icon(imageVector = Icons.Default.Close,
+                Icon(
+                    imageVector = Icons.Default.Close,
                     contentDescription = "Close Navigation",
                 )
             }

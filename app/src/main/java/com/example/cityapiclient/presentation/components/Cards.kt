@@ -1,6 +1,5 @@
 package com.example.cityapiclient.presentation.components
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -12,8 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.util.AppLayoutMode
 import com.example.cityapiclient.util.Languages
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
 
 @Composable
 fun OnboardingCard(
@@ -74,7 +73,7 @@ fun OnboardingCard(
 }
 
 fun getOnboardingCardHeight(appLayoutMode: AppLayoutMode, language: String) =
-    if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+    if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
         240.dp
     else {
         when (language) {
@@ -91,7 +90,7 @@ fun AppCard(
     mainContent: @Composable () -> Unit
 ) {
 
-    val cardPadding = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+    val cardPadding = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
         PaddingValues(start = 70.dp, end = 70.dp)
     else
         PaddingValues(start = 0.dp, end = 0.dp)
@@ -131,10 +130,10 @@ fun CardWithHeader(
 
     val languageCode = Locale.current.language
 
-    val headingHeight = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+    val headingHeight = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
         100.dp else 160.dp
 
-    val cardPadding = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+    val cardPadding = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
         PaddingValues(start = 100.dp, end = 100.dp)
     else
         PaddingValues(start = 0.dp, end = 0.dp)

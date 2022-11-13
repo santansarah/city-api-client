@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.util.Languages
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.util.AppLayoutMode
 
 @Composable
 fun OnboardingHeading(
@@ -66,7 +66,7 @@ fun OnboardingSubHeading(
 }
 
 fun getOnboardingSubHeadingHeight(appLayoutMode: AppLayoutMode, language: String) =
-    if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+    if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
         40.dp
     else {
         when(language) {

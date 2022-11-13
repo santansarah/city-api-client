@@ -19,7 +19,7 @@ import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.home.HomeScreenInfo
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.util.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
 import kotlinx.coroutines.launch
@@ -175,7 +175,7 @@ private fun AccountHeading(
     when (currentUser) {
         is CurrentUser.SignedInUser -> {
 
-            val headingHeight = if (appLayoutMode == AppLayoutMode.SMALL_LANDSCAPE)
+            val headingHeight = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
                 80.dp else 160.dp
 
             Text(

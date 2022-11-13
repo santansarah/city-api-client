@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.util.AppLayoutMode
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 
 @Composable

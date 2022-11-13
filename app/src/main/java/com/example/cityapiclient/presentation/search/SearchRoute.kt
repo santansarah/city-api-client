@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.presentation.components.*
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.util.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
 

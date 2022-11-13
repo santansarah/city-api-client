@@ -18,3 +18,4 @@ local.properties
 /.idea/deploymentTargetDropDown.xml
 /app.properties
 /app/src/main/res/values/secrets.xml
+/.idea/other.xml

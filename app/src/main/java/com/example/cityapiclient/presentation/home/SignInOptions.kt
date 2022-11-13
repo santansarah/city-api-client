@@ -8,12 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
-import com.example.cityapiclient.presentation.components.AppCard
 import com.example.cityapiclient.presentation.components.AppIconButton
 import com.example.cityapiclient.presentation.components.CardWithHeader
 import com.example.cityapiclient.presentation.components.SubHeading
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
-import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
+import com.example.cityapiclient.util.AppLayoutMode
 
 @Composable
 fun HomeSignInOrSignUp(

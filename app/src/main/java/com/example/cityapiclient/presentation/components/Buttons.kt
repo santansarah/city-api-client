@@ -26,8 +26,8 @@ fun AnimatedButton(
 ) {
 
     Button(
-        modifier = modifier
-            .height(48.dp),
+        /*modifier = modifier
+            .height(48.dp),*/
         border = BorderStroke(1.dp, blueYellowGradient),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -37,12 +37,14 @@ fun AnimatedButton(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth()
+                .padding(6.dp)
         ) {
             Icon(
                 painter = painterResource(id = imageRes),
                 contentDescription = buttonText,
                 modifier = Modifier
-                    .align(Alignment.CenterStart),
+                    .align(Alignment.CenterStart)
+                    .height(20.dp),
                 tint = MaterialTheme.colorScheme.outline
             )
 
@@ -97,8 +99,8 @@ fun AppIconButton(
     modifier: Modifier = Modifier
 ) {
     Button(
-        modifier = modifier
-            .height(48.dp),
+        /*modifier = modifier
+            .height(48.dp),*/
         border = BorderStroke(1.dp, blueYellowGradient),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
@@ -108,6 +110,7 @@ fun AppIconButton(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxWidth()
+                .padding(6.dp)
         ) {
             Icon(
                 imageVector = imageRes,

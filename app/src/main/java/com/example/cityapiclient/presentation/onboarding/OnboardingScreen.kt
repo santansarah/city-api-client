@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.data.local.CardDetailsOption
 import com.example.cityapiclient.data.local.OnboardingScreen
 import com.example.cityapiclient.presentation.components.*
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.util.AppLayoutMode
 
 @Composable
 fun OnboardingScreen(
@@ -72,7 +72,7 @@ fun ScreenCard(
 
     onboardingScreen.apply {
         when (appLayoutMode) {
-            AppLayoutMode.SMALL_LANDSCAPE -> {
+            AppLayoutMode.PHONE_LANDSCAPE -> {
                 /**
                  * In LANDSCAPE, create a row, so the card subheading and details
                  * display next to each other instead of top to bottom.

@@ -1,6 +1,5 @@
 package com.example.cityapiclient.presentation.search
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,14 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.presentation.components.*
-import com.example.cityapiclient.presentation.layouts.AppLayoutMode
+import com.example.cityapiclient.util.AppLayoutMode
 
 @Composable
 fun SearchDetailContents(
@@ -53,7 +51,7 @@ fun SearchDetailContents(
                 appLayoutMode = appLayoutMode
             ) {
                 when (appLayoutMode) {
-                    AppLayoutMode.SMALL_LANDSCAPE -> {
+                    AppLayoutMode.PHONE_LANDSCAPE -> {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
