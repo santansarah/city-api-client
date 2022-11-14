@@ -18,15 +18,18 @@ import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.presentation.components.*
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 @Composable
 fun SearchDetailContents(
     city: CityDto?,
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
 ) {
 
     //Spacer(modifier = Modifier.height(40.dp))
+
+    val appLayoutMode = appLayoutInfo.appLayoutMode
 
     city?.let {
         if (appLayoutMode.isSplitScreen()) {
@@ -40,7 +43,7 @@ fun SearchDetailContents(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column() {
-                    CityInfo(appLayoutMode = appLayoutMode, city = city)
+                    CityInfo(appLayoutInfo =  appLayoutInfo, city = city)
                     Spacer(modifier = Modifier.height(10.dp))
                     CityStats(city = city)
                 }
@@ -48,7 +51,7 @@ fun SearchDetailContents(
         } else {
             Spacer(modifier = Modifier.height(40.dp))
             AppCard(
-                appLayoutMode = appLayoutMode
+                appLayoutInfo =  appLayoutInfo
             ) {
                 when (appLayoutMode) {
                     AppLayoutMode.PHONE_LANDSCAPE -> {
@@ -57,14 +60,14 @@ fun SearchDetailContents(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             CityInfo(
-                                appLayoutMode = appLayoutMode,
+                                appLayoutInfo =  appLayoutInfo,
                                 city = city
                             )
                             CityStats(city = city)
                         }
                     }
                     else -> {
-                        CityInfo(appLayoutMode = appLayoutMode, city = city)
+                        CityInfo(appLayoutInfo =  appLayoutInfo, city = city)
                         Spacer(modifier = Modifier.height(10.dp))
                         CityStats(city = city)
                     }
@@ -77,7 +80,7 @@ fun SearchDetailContents(
 
 @Composable
 private fun CityInfo(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     modifier: Modifier = Modifier,
     city: CityDto
 ) {

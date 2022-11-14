@@ -10,18 +10,20 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.presentation.layouts.CompactLayoutScrollable
 import com.example.cityapiclient.presentation.layouts.DoubleScreenLayout
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalLifecycleComposeApi::class)
 @Composable
 fun OnboardingRoute(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val appLayoutMode = appLayoutInfo.appLayoutMode
 
     Log.d("debug", "current screen from route: ${uiState.currentScreen}")
 
@@ -37,7 +39,7 @@ fun OnboardingRoute(
             || appLayoutMode == AppLayoutMode.DOUBLE_BIG) {
             DoubleScreenLayout(leftContent = {
                 OnboardingScreen(
-                    appLayoutMode = appLayoutMode,
+                    appLayoutInfo =  appLayoutInfo,
                     onButtonClicked = { },
                     showButton = false,
                     onboardingScreen = uiState.screens[0]
@@ -45,7 +47,7 @@ fun OnboardingRoute(
             },
                 rightContent = {
                     OnboardingScreen(
-                        appLayoutMode = appLayoutMode,
+                        appLayoutInfo =  appLayoutInfo,
                         onButtonClicked = { viewModel.updateLastViewedScreen(it) },
                         showButton = true,
                         onboardingScreen = uiState.screens[1]
@@ -80,7 +82,7 @@ fun OnboardingRoute(
                 CompactLayoutScrollable(
                     mainContent = {
                         OnboardingScreen(
-                            appLayoutMode = appLayoutMode,
+                            appLayoutInfo =  appLayoutInfo,
                             onButtonClicked = { viewModel.updateLastViewedScreen(it) },
                             showButton = true,
                             onboardingScreen = uiState.screens[targetState]

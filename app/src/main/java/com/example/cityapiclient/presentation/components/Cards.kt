@@ -11,8 +11,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.Languages
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 @Composable
 fun OnboardingCard(
@@ -20,11 +21,11 @@ fun OnboardingCard(
     showButton: Boolean,
     onButtonClicked: (Int) -> Unit,
     currentScreen: Int,
-    appLayoutMode: AppLayoutMode
+    appLayoutInfo: AppLayoutInfo
 ) {
 
     val cardHeight = getOnboardingCardHeight(
-        appLayoutMode,
+        appLayoutInfo,
         Locale.current.language
     )
 
@@ -72,8 +73,8 @@ fun OnboardingCard(
 
 }
 
-fun getOnboardingCardHeight(appLayoutMode: AppLayoutMode, language: String) =
-    if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
+fun getOnboardingCardHeight(appLayoutInfo: AppLayoutInfo, language: String) =
+    if (appLayoutInfo.appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
         240.dp
     else {
         when (language) {
@@ -86,11 +87,11 @@ fun getOnboardingCardHeight(appLayoutMode: AppLayoutMode, language: String) =
 
 @Composable
 fun AppCard(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     mainContent: @Composable () -> Unit
 ) {
 
-    val cardPadding = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
+    val cardPadding = if (appLayoutInfo.appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
         PaddingValues(start = 70.dp, end = 70.dp)
     else
         PaddingValues(start = 0.dp, end = 0.dp)
@@ -123,14 +124,17 @@ fun AppCard(
 
 @Composable
 fun CardWithHeader(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     header: @Composable () -> Unit,
     cardContent: @Composable () -> Unit
 ) {
 
+    val appLayoutMode = appLayoutInfo.appLayoutMode
+
     val languageCode = Locale.current.language
 
-    val headingHeight = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
+    val headingHeight = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE ||
+           appLayoutMode == AppLayoutMode.FOLDED_SPLIT_TABLETOP)
         100.dp else 160.dp
 
     val cardPadding = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)

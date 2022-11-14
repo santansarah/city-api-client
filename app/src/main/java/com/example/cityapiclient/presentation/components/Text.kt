@@ -16,7 +16,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.util.Languages
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 @Composable
 fun OnboardingHeading(
@@ -46,13 +47,13 @@ fun OnboardingHeading(
 @Composable
 fun OnboardingSubHeading(
     headingText: Int,
-    appLayoutMode: AppLayoutMode
+    appLayoutInfo: AppLayoutInfo
 ) {
 
     val languageCode = Locale.current.language
     Log.d("debug", "current lang: $languageCode")
 
-    val headingHeight = getOnboardingSubHeadingHeight(appLayoutMode,
+    val headingHeight = getOnboardingSubHeadingHeight(appLayoutInfo,
         Locale.current.language)
 
     Text(
@@ -65,8 +66,8 @@ fun OnboardingSubHeading(
 
 }
 
-fun getOnboardingSubHeadingHeight(appLayoutMode: AppLayoutMode, language: String) =
-    if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
+fun getOnboardingSubHeadingHeight(appLayoutInfo: AppLayoutInfo, language: String) =
+    if (appLayoutInfo.appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
         40.dp
     else {
         when(language) {
@@ -173,7 +174,7 @@ fun cardText(
 @Composable
 fun SubHeading(
     headingText: Int,
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     dynamicText: String? = null
 ) {
 

@@ -11,18 +11,19 @@ import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TOP_LEVEL_DESTINATIONS
 import com.example.cityapiclient.presentation.TopLevelDestination
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 @Composable
 fun AppNavRail(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     currentRoute: String,
     navigateToTopLevelDestination: (TopLevelDestination) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
-    val railWidth = if (appLayoutMode == AppLayoutMode.DOUBLE_BIG)
+    val railWidth = if (appLayoutInfo.appLayoutMode == AppLayoutMode.DOUBLE_BIG)
         120.dp
     else
         80.dp
@@ -54,7 +55,7 @@ fun AppNavRail(
     }
 }
 
-@Preview("Drawer contents (dark)", uiMode = Configuration.UI_MODE_NIGHT_YES)
+/*@Preview("Drawer contents (dark)", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewAppNavRail() {
     CityAPIClientTheme() {
@@ -64,6 +65,6 @@ fun PreviewAppNavRail() {
             navigateToTopLevelDestination = {},
         )
     }
-}
+}*/
 
 

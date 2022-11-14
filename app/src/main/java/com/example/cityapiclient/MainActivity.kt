@@ -2,28 +2,22 @@ package com.example.cityapiclient
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoTracker
 import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.domain.SignInState
 import com.example.cityapiclient.presentation.AppRoot
-import com.example.cityapiclient.util.FoldableInfo
-import com.example.cityapiclient.util.getWindowSizeClasses
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
+import com.example.cityapiclient.util.windowinfo.getFoldableInfoFlow
+import com.example.cityapiclient.util.windowinfo.getWindowLayoutType
+import com.example.cityapiclient.util.windowinfo.getWindowSizeClasses
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.*
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,11 +50,16 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val devicePostureFlow = getFoldableInfoFlow()
+        val devicePostureFlow = getFoldableInfoFlow(this)
 
         setContent {
             val windowSize = getWindowSizeClasses(this)
             val devicePosture by devicePostureFlow.collectAsStateWithLifecycle()
+
+            val appLayoutInfo = getWindowLayoutType(
+                windowInfo = windowSize,
+                foldableInfo = devicePosture
+            )
 
             // uncomment this to test onboarding screens.
 
@@ -75,8 +74,7 @@ class MainActivity : ComponentActivity() {
              * and serves the content, depending on the current screen size.
              */
             AppRoot(
-                windowSize = windowSize,
-                foldableInfo = devicePosture,
+                appLayoutInfo = appLayoutInfo,
                 userRepository = userRepository,
                 signInObserver = signInObserver
             )
@@ -89,30 +87,4 @@ class MainActivity : ComponentActivity() {
         outState.putParcelable("signInState", signInObserver.signInState.value)
     }
 
-    private fun getFoldableInfoFlow() = WindowInfoTracker.getOrCreate(this)
-        .windowLayoutInfo(this)
-        .flowWithLifecycle(this.lifecycle)
-                    .map { layoutInfo ->
-                        val foldingFeature =
-                            layoutInfo.displayFeatures
-                                .filterIsInstance<FoldingFeature>()
-                                .firstOrNull()
-
-                        Log.d("debug", "foldingFeature: $foldingFeature")
-                        Log.d("debug", "foldingOcclusion: ${foldingFeature?.occlusionType}")
-                        Log.d("debug", "foldingOrientation: ${foldingFeature?.orientation}")
-
-                        foldingFeature?.let {
-                            FoldableInfo(
-                                foldableType = foldingFeature.occlusionType,
-                                foldableOrientation = foldingFeature.orientation,
-                                bounds = foldingFeature.bounds
-                            )
-                        }
-                    }
-                    .stateIn(
-                        scope = lifecycleScope,
-                        started = SharingStarted.Eagerly,
-                        initialValue = null
-                    )
 }

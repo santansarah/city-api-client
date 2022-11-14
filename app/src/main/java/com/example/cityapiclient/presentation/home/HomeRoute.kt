@@ -1,25 +1,23 @@
 package com.example.cityapiclient.presentation.home
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import android.util.Log
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
-import com.example.cityapiclient.domain.SignInState
-import com.example.cityapiclient.presentation.components.*
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.presentation.components.AppSnackbarHost
+import com.example.cityapiclient.presentation.components.TopLevelAppBar
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
+import com.example.cityapiclient.presentation.layouts.DoubleFoldedLayout
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLifecycleComposeApi::class, ExperimentalMaterial3Api::class)
@@ -28,7 +26,7 @@ fun HomeRoute(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
     signInObserver: SignInObserver,
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     onSearchClicked: () -> Unit,
     snackbarHostState: SnackbarHostState,
     appScaffoldPaddingValues: PaddingValues,
@@ -56,148 +54,83 @@ fun HomeRoute(
         }
     }
 
+    val appLayoutMode = appLayoutInfo.appLayoutMode
+
     if (!homeUiState.isLoading) {
-        if (appLayoutMode.isSplitScreen()) {
-            DoubleLayoutWithScaffold(
-                appLayoutMode = appLayoutMode,
-                leftContent = {
-                    HomeScreenContent(
-                        homeUiState,
-                        appLayoutMode,
-                        { scope.launch { signInObserver.signUp() } },
-                        { scope.launch { signInObserver.signIn() } },
-                        signInState,
-                        onSearchClicked
-                    )
-                },
-                rightContent = { HomeScreenInfo() },
-                snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
-                TopLevelAppBar(
-                    appLayoutMode = appLayoutMode,
-                    title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
-                    onIconClicked = openDrawer
-                )
-            }
-        } else {
-
-            CompactLayoutWithScaffold(
-                appLayoutMode = appLayoutMode,
-                snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
-                mainContent = {
-
-                    HomeScreenContent(
-                        homeUiState,
-                        appLayoutMode,
-                        { scope.launch { signInObserver.signUp() } },
-                        { scope.launch { signInObserver.signIn() } },
-                        signInState,
-                        onSearchClicked
-                    )
-
-                },
-                appScaffoldPaddingValues = appScaffoldPaddingValues,
-                topAppBar = {
-                    TopLevelAppBar(
-                        appLayoutMode = appLayoutMode,
-                        title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
-                        onIconClicked = openDrawer
+        with(appLayoutMode) {
+            when {
+                isSplitFoldable() -> {
+                    Log.d("debug", "isFoldable")
+                    DoubleFoldedLayout(appLayoutInfo = appLayoutInfo, mainPanel = {
+                        HomeScreenContent(
+                            homeUiState,
+                            appLayoutInfo,
+                            { scope.launch { signInObserver.signUp() } },
+                            { scope.launch { signInObserver.signIn() } },
+                            signInState,
+                            onSearchClicked
+                        )
+                    }, detailsPanel = { HomeScreenInfo() },
+                        topAppBar = {
+                            TopLevelAppBar(
+                                appLayoutInfo = appLayoutInfo,
+                                title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
+                                onIconClicked = openDrawer
+                            )
+                        },
+                        snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }
                     )
                 }
+                isSplitScreen() -> {
+                    DoubleLayoutWithScaffold(
+                        appLayoutInfo = appLayoutInfo,
+                        leftContent = {
+                            HomeScreenContent(
+                                homeUiState,
+                                appLayoutInfo,
+                                { scope.launch { signInObserver.signUp() } },
+                                { scope.launch { signInObserver.signIn() } },
+                                signInState,
+                                onSearchClicked
+                            )
+                        },
+                        rightContent = { HomeScreenInfo() },
+                        snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
+                        TopLevelAppBar(
+                            appLayoutInfo = appLayoutInfo,
+                            title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
+                            onIconClicked = openDrawer
+                        )
+                    }
+                }
+                else -> {
+                    CompactLayoutWithScaffold(
+                        appLayoutInfo = appLayoutInfo,
+                        snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
+                        mainContent = {
 
-            )
-        }
-    }
+                            HomeScreenContent(
+                                homeUiState,
+                                appLayoutInfo,
+                                { scope.launch { signInObserver.signUp() } },
+                                { scope.launch { signInObserver.signIn() } },
+                                signInState,
+                                onSearchClicked
+                            )
 
-}
-
-@Composable
-private fun HomeScreenContent(
-    homeUiState: HomeUiState,
-    appLayoutMode: AppLayoutMode,
-    signUp: () -> Unit,
-    signIn: () -> Unit,
-    signInState: SignInState,
-    onSearchClicked: () -> Unit
-) {
-    when (homeUiState.currentUser) {
-        is CurrentUser.UnknownSignIn -> {
-            HomeSignInOrSignUp(
-                appLayoutMode = appLayoutMode,
-                currentUser = homeUiState.currentUser,
-                googleButton = {
-                    GoogleButton(
-                        onClick = signUp,
-                        buttonText = "Sign up with Google",
-                        isProcessing = signInState.isSigningIn
+                        },
+                        appScaffoldPaddingValues = appScaffoldPaddingValues,
+                        topAppBar = {
+                            TopLevelAppBar(
+                                appLayoutInfo = appLayoutInfo,
+                                title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
+                                onIconClicked = openDrawer
+                            )
+                        }
                     )
-                },
-                onSearchClicked = onSearchClicked
-            )
-        }
-        is CurrentUser.SignedInUser -> {
-            Column(Modifier.padding(16.dp)) {
-
-                Spacer(modifier = Modifier.height(14.dp))
-
-                Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = (homeUiState.currentUser as CurrentUser.SignedInUser).name,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = (homeUiState.currentUser as CurrentUser.SignedInUser).email,
-                    style = MaterialTheme.typography.titleMedium
-                )
-
+                }
             }
-
         }
-        is CurrentUser.SignedOutUser, is CurrentUser.NotAuthenticated -> {
-            HomeSignInOrSignUp(
-                appLayoutMode = appLayoutMode,
-                currentUser = homeUiState.currentUser,
-                googleButton = {
-                    GoogleButton(
-                        onClick = signIn,
-                        buttonText = "Sign in with Google",
-                        isProcessing = signInState.isSigningIn
-                    )
-                },
-                onSearchClicked = onSearchClicked
-            )
-        }
-    }
-}
-
-@Composable
-fun HomeScreenInfo() {
-    Column(
-        modifier = Modifier.padding(26.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            modifier = Modifier.size(36.dp),
-            painter = painterResource(id = R.drawable.security),
-            contentDescription = "Info",
-            tint = Color(0xFF758a8a)
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Our sign up is safe and secure. We only save your " +
-                    "basic Google account information, including your name and email address.",
-            color = Color(0xFF758a8a),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Once you sign in, you can create API keys for " +
-                    "your development and production apps.",
-            color = Color(0xFF758a8a),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium
-        )
     }
 }
 

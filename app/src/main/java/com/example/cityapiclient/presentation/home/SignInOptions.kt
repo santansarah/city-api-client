@@ -1,32 +1,57 @@
 package com.example.cityapiclient.presentation.home
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.presentation.components.AppIconButton
 import com.example.cityapiclient.presentation.components.CardWithHeader
 import com.example.cityapiclient.presentation.components.SubHeading
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 @Composable
 fun HomeSignInOrSignUp(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     currentUser: CurrentUser,
     googleButton: @Composable () -> Unit,
     onSearchClicked: () -> Unit
 ) {
-    CardWithHeader(appLayoutMode = appLayoutMode,
-        header = { SignUpHeading(appLayoutMode, currentUser) })
-    {
-        Spacer(modifier = Modifier.height(32.dp))
-        googleButton()
-        Spacer(modifier = Modifier.height(38.dp))
-        SearchButton(onSearchClicked)
+    if (appLayoutInfo.appLayoutMode != AppLayoutMode.FOLDED_SPLIT_TABLETOP &&
+        appLayoutInfo.appLayoutMode != AppLayoutMode.PHONE_LANDSCAPE
+    ) {
+        CardWithHeader(appLayoutInfo = appLayoutInfo,
+            header = { SignUpHeading(appLayoutInfo = appLayoutInfo, currentUser) })
+        {
+            Spacer(modifier = Modifier.height(32.dp))
+            googleButton()
+            Spacer(modifier = Modifier.height(38.dp))
+            SearchButton(onSearchClicked)
+        }
+    } else {
+        SignUpHeading(appLayoutInfo = appLayoutInfo, currentUser)
+        Spacer(modifier = Modifier.height(28.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier.width(280.dp)
+            ) {
+                googleButton()
+            }
+            Column(
+                modifier = Modifier.width(280.dp)
+            ) {
+                SearchButton(onSearchClicked)
+            }
+        }
     }
 }
 
@@ -44,16 +69,20 @@ private fun SearchButton(
 
 @Composable
 private fun SignUpHeading(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     currentUser: CurrentUser
 ) {
     when (currentUser) {
         is CurrentUser.SignedOutUser -> SubHeading(
             headingText = R.string.signed_out,
-            appLayoutMode = appLayoutMode
+            appLayoutInfo = appLayoutInfo
         )
-        else -> SubHeading(headingText = R.string.sign_up, appLayoutMode = appLayoutMode)
+        else -> SubHeading(
+            headingText = R.string.sign_up,
+            appLayoutInfo = appLayoutInfo
+        )
     }
+
 
 }
 

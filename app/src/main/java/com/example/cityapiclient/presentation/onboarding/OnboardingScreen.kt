@@ -13,11 +13,12 @@ import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.data.local.CardDetailsOption
 import com.example.cityapiclient.data.local.OnboardingScreen
 import com.example.cityapiclient.presentation.components.*
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 @Composable
 fun OnboardingScreen(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     onButtonClicked: (Int) -> Unit,
     showButton: Boolean,
     onboardingScreen: OnboardingScreen
@@ -27,20 +28,20 @@ fun OnboardingScreen(
             headingIcon,
             headingText,
             subHeadingText,
-            appLayoutMode
+            appLayoutInfo
         )
     }
     OnboardingCard(
         cardBody = {
             ScreenCard(
-                appLayoutMode = appLayoutMode,
+                appLayoutInfo =  appLayoutInfo,
                 onboardingScreen = onboardingScreen
             )
         },
         showButton = showButton,
         onButtonClicked = onButtonClicked,
         currentScreen = onboardingScreen.currentScreen,
-        appLayoutMode = appLayoutMode
+        appLayoutInfo =  appLayoutInfo
     )
 }
 
@@ -49,7 +50,7 @@ fun ScreenHeading(
     icon: Int,
     heading: Int,
     subHeading: Int,
-    appLayoutMode: AppLayoutMode
+    appLayoutInfo: AppLayoutInfo
 ) {
     OnboardingHeading(
         icon = {
@@ -57,14 +58,17 @@ fun ScreenHeading(
         },
         headingText = heading
     )
-    OnboardingSubHeading(headingText = subHeading, appLayoutMode)
+    OnboardingSubHeading(headingText = subHeading, appLayoutInfo =  appLayoutInfo)
 }
 
 @Composable
 fun ScreenCard(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     onboardingScreen: OnboardingScreen
 ) {
+
+    val appLayoutMode = appLayoutInfo.appLayoutMode
+
     Log.d("debug", "applayout from card: $appLayoutMode")
 
     // card heading

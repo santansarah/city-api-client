@@ -9,7 +9,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 /**
  * This is the template for phones - Portrait and Landscape.
@@ -52,7 +53,7 @@ fun CompactLayoutWithScaffold(
     allowScroll: Boolean = true,
     appScaffoldPaddingValues: PaddingValues = PaddingValues(),
     topAppBar: @Composable () -> Unit,
-    appLayoutMode: AppLayoutMode
+    appLayoutInfo: AppLayoutInfo
 ) {
     Scaffold(
         snackbarHost = snackbarHostState,
@@ -60,6 +61,8 @@ fun CompactLayoutWithScaffold(
         topBar = topAppBar
     )
     { padding ->
+
+        val appLayoutMode = appLayoutInfo.appLayoutMode
 
         val sidePadding = when(appLayoutMode) {
             AppLayoutMode.PHONE_LANDSCAPE -> 40.dp

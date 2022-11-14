@@ -10,7 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 /**
  * This is the template for bigger layouts that can fit a list/detail
@@ -43,7 +44,7 @@ fun DoubleScreenLayout(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoubleLayoutWithScaffold(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     leftContent: @Composable () -> Unit,
     rightContent: @Composable () -> Unit,
     snackbarHostState: @Composable () -> Unit,
@@ -55,10 +56,10 @@ fun DoubleLayoutWithScaffold(
     )
     { padding ->
 
-        val sidePadding = when(appLayoutMode)
+        val sidePadding = when(appLayoutInfo.appLayoutMode)
         {
             AppLayoutMode.DOUBLE_BIG -> 52.dp
-            AppLayoutMode.FOLDED_PORTRAIT -> 16.dp
+            AppLayoutMode.FOLDED_SPLIT_BOOK -> 16.dp
             else -> 16.dp
         }
 

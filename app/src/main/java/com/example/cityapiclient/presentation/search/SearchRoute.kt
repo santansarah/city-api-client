@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.presentation.components.*
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
 
@@ -35,7 +35,7 @@ import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
 fun SearchRoute(
     modifier: Modifier = Modifier,
     viewModel: SearchViewModel = hiltViewModel(),
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     snackbarHostState: SnackbarHostState,
     appScaffoldPaddingValues: PaddingValues,
     openDrawer: () -> Unit = {}
@@ -53,9 +53,11 @@ fun SearchRoute(
         }
     }
 
+    val appLayoutMode = appLayoutInfo.appLayoutMode
+
     if (appLayoutMode.isSplitScreen()) {
         DoubleLayoutWithScaffold(
-            appLayoutMode = appLayoutMode,
+            appLayoutInfo =  appLayoutInfo,
             leftContent = {
                 CityNameSearch(
                     uiState.cityPrefix,
@@ -66,18 +68,18 @@ fun SearchRoute(
                 )
             },
             rightContent = {
-                SearchDetailContents(city = uiState.selectedCity, appLayoutMode = appLayoutMode)
+                SearchDetailContents(city = uiState.selectedCity, appLayoutInfo =  appLayoutInfo)
             },
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
             TopLevelAppBar(
-                appLayoutMode = appLayoutMode,
+                appLayoutInfo =  appLayoutInfo,
                 title = "City Search",
                 onIconClicked = openDrawer
             )
         }
     } else {
         CompactLayoutWithScaffold(
-            appLayoutMode = appLayoutMode,
+            appLayoutInfo =  appLayoutInfo,
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
             mainContent = {
 
@@ -92,7 +94,7 @@ fun SearchRoute(
                 }
                 else
                 {
-                    SearchDetailContents(city = uiState.selectedCity, appLayoutMode = appLayoutMode)
+                    SearchDetailContents(city = uiState.selectedCity, appLayoutInfo =  appLayoutInfo)
                 }
             },
             appScaffoldPaddingValues = appScaffoldPaddingValues,
@@ -100,7 +102,7 @@ fun SearchRoute(
             topAppBar = {
                 if (uiState.selectedCity == null) {
                     TopLevelAppBar(
-                        appLayoutMode = appLayoutMode,
+                        appLayoutInfo =  appLayoutInfo,
                         title = "City Search",
                         onIconClicked = openDrawer
                     )

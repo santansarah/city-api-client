@@ -1,9 +1,14 @@
-package com.example.cityapiclient.util
+package com.example.cityapiclient.util.windowinfo
 
-import android.graphics.Rect
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.unit.DpSize
+
+data class AppLayoutInfo(
+    val appLayoutMode: AppLayoutMode,
+    val windowDpSize: DpSize,
+    val foldableInfo: FoldableInfo? = null
+)
 
 enum class CurrentRotation() {
     ROTATION_0,

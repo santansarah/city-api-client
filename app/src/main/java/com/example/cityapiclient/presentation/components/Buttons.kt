@@ -31,7 +31,7 @@ fun AnimatedButton(
         border = BorderStroke(1.dp, blueYellowGradient),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary.copy(.6f)
+            //containerColor = MaterialTheme.colorScheme.primary.copy(.6f)
         )
     ) {
         Box(
@@ -104,7 +104,7 @@ fun AppIconButton(
         border = BorderStroke(1.dp, blueYellowGradient),
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary.copy(.6f)
+            //containerColor = MaterialTheme.colorScheme.primary.copy(.6f)
         )
     ) {
         Box(

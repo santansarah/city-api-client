@@ -19,16 +19,17 @@ import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.home.HomeScreenInfo
-import com.example.cityapiclient.util.AppLayoutMode
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
+import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun AccountRoute(
     viewModel: AccountViewModel = hiltViewModel(),
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     signInObserver: SignInObserver,
     snackbarHostState: SnackbarHostState,
     appScaffoldPaddingValues: PaddingValues,
@@ -51,12 +52,14 @@ fun AccountRoute(
         }
     }
 
+    val appLayoutMode = appLayoutInfo.appLayoutMode
+
     if (appLayoutMode.isSplitScreen()) {
         DoubleLayoutWithScaffold(
-            appLayoutMode = appLayoutMode,
+            appLayoutInfo = appLayoutInfo,
             leftContent = {
                 AccountContent(
-                    appLayoutMode = appLayoutMode,
+                    appLayoutInfo =  appLayoutInfo,
                     signOut = { scope.launch { signInObserver.signOut() } },
                     signIn = { scope.launch { signInObserver.signIn() } },
                     signUp = { scope.launch { signInObserver.signUp() } },
@@ -67,7 +70,7 @@ fun AccountRoute(
             rightContent = { HomeScreenInfo() },
             snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
             TopLevelAppBar(
-                appLayoutMode = appLayoutMode,
+                appLayoutInfo =  appLayoutInfo,
                 title = "Account",
                 onIconClicked = openDrawer
             )
@@ -75,13 +78,13 @@ fun AccountRoute(
     } else {
 
         CompactLayoutWithScaffold(
-            appLayoutMode = appLayoutMode,
+            appLayoutInfo =  appLayoutInfo,
             snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
             mainContent = {
 
                 if (!accountUiState.isLoading) {
                     AccountContent(
-                        appLayoutMode = appLayoutMode,
+                        appLayoutInfo =  appLayoutInfo,
                         signOut = { scope.launch { signInObserver.signOut() } },
                         signIn = { scope.launch { signInObserver.signIn() } },
                         signUp = { scope.launch { signInObserver.signUp() } },
@@ -94,7 +97,7 @@ fun AccountRoute(
             appScaffoldPaddingValues = appScaffoldPaddingValues,
             topAppBar = {
                 TopLevelAppBar(
-                    appLayoutMode = appLayoutMode,
+                    appLayoutInfo =  appLayoutInfo,
                     title = "Account",
                     onIconClicked = openDrawer
                 )
@@ -106,7 +109,7 @@ fun AccountRoute(
 
 @Composable
 private fun AccountContent(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     signOut: () -> Unit,
     signIn: () -> Unit,
     signUp: () -> Unit,
@@ -114,8 +117,8 @@ private fun AccountContent(
     isProcessing: Boolean
 ) {
 
-    CardWithHeader(appLayoutMode = appLayoutMode, header = {
-        AccountHeading(appLayoutMode, currentUser)
+    CardWithHeader(appLayoutInfo =  appLayoutInfo, header = {
+        AccountHeading(appLayoutInfo, currentUser)
     }) {
         Spacer(modifier = Modifier.height(32.dp))
         val buttonModifier = Modifier.fillMaxWidth()
@@ -169,13 +172,13 @@ private fun DeleteAccount(currentUser: CurrentUser) {
 
 @Composable
 private fun AccountHeading(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     currentUser: CurrentUser
 ) {
     when (currentUser) {
         is CurrentUser.SignedInUser -> {
 
-            val headingHeight = if (appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
+            val headingHeight = if (appLayoutInfo.appLayoutMode == AppLayoutMode.PHONE_LANDSCAPE)
                 80.dp else 160.dp
 
             Text(
@@ -197,13 +200,13 @@ private fun AccountHeading(
         is CurrentUser.SignedOutUser -> {
             SubHeading(
                 headingText = R.string.signed_out,
-                appLayoutMode = appLayoutMode
+                appLayoutInfo =  appLayoutInfo
             )
         }
         else -> {
             SubHeading(
                 headingText = R.string.account_sign_up,
-                appLayoutMode = appLayoutMode
+                appLayoutInfo =  appLayoutInfo
             )
         }
     }

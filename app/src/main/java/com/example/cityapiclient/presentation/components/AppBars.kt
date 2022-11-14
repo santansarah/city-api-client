@@ -9,13 +9,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cityapiclient.util.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TopLevelAppBar(
-    appLayoutMode: AppLayoutMode,
+    appLayoutInfo: AppLayoutInfo,
     title: String,
     onIconClicked: () -> Unit = {}
 ) {
@@ -32,7 +32,7 @@ fun TopLevelAppBar(
             )
         },
         navigationIcon = {
-            if (!appLayoutMode.showNavRail()) {
+            if (!appLayoutInfo.appLayoutMode.showNavRail()) {
                 IconButton(
                    //modifier = Modifier.border(2.dp, Color.Magenta),
                     onClick = onIconClicked) {
@@ -69,6 +69,7 @@ fun AppBarWithBackButton(
         }
     )
 }
+/*
 
 @Preview(showSystemUi = true)
 @Composable
@@ -77,4 +78,5 @@ fun TopBarPreview() {
         TopLevelAppBar(appLayoutMode = AppLayoutMode.DOUBLE_MEDIUM, title = "Test Me")
     }
 }
+*/
 
