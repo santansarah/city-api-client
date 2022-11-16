@@ -23,8 +23,7 @@ fun HomeSignInOrSignUp(
     googleButton: @Composable () -> Unit,
     onSearchClicked: () -> Unit
 ) {
-    if (appLayoutInfo.appLayoutMode != AppLayoutMode.FOLDED_SPLIT_TABLETOP &&
-        appLayoutInfo.appLayoutMode != AppLayoutMode.PHONE_LANDSCAPE
+    if (appLayoutInfo.appLayoutMode != AppLayoutMode.FOLDED_SPLIT_TABLETOP
     ) {
         CardWithHeader(appLayoutInfo = appLayoutInfo,
             header = { SignUpHeading(appLayoutInfo = appLayoutInfo, currentUser) })

@@ -12,6 +12,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cityapiclient.R
@@ -19,11 +20,9 @@ import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.AppDestinations.HOME_ROUTE
 import com.example.cityapiclient.presentation.AppDestinations.ONBOARDING_ROUTE
-import com.example.cityapiclient.presentation.components.AppDrawer
-import com.example.cityapiclient.presentation.components.AppNavRail
-import com.example.cityapiclient.presentation.components.BottomNavigationBar
-import com.example.cityapiclient.presentation.components.backgroundGradient
+import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
+import com.example.cityapiclient.presentation.theme.backgroundGradient
 import com.example.cityapiclient.util.windowinfo.*
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -69,6 +68,9 @@ fun AppRoot(
              */
 
             val appSnackBarHostState = remember { SnackbarHostState() }
+            val appLayoutMode = appLayoutInfo.appLayoutMode
+            Log.d("debug", "appLayout: $appLayoutMode")
+
             val navController = rememberNavController()
             val navActions: AppNavigationActions = remember(navController) {
                 AppNavigationActions(navController)
@@ -81,147 +83,120 @@ fun AppRoot(
                 }
             }
 
-            val appLayoutMode = appLayoutInfo.appLayoutMode
+            Log.d("debug", "currentRoute: $currentRoute")
+            Log.d("debug", "currentTopLevel: ${currentTopLevel?.route}")
 
-            val sizeAwareDrawerState = rememberSizeAwareDrawerState(
-                startDestination = appUiState.startDestination,
-                appLayoutMode = appLayoutInfo.appLayoutMode
-            )
-            Log.d("debug", "drawerstate: ${sizeAwareDrawerState.currentValue}")
-            Log.d("debug", "appLayoutMode: ${appLayoutInfo.appLayoutMode}")
-            val coroutineScope = rememberCoroutineScope()
-
-            if (appLayoutMode.isSplitFoldable()) {
-
-                ModalNavigationDrawer(
-                    //scrimColor = Color.Transparent,
-                    drawerContent = {
-                        ModalDrawerSheet {
-                            AppDrawer(
-                                currentRoute = currentTopLevel?.route ?: HOME_ROUTE,
-                                navigateToTopLevelDestination = navActions::navigateTo,
-                                closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
-                            )
-                        }
-
-                    },
-                    drawerState = sizeAwareDrawerState,
-                    gesturesEnabled = appLayoutMode.showNavDrawer(appUiState.startDestination)
-                ) {
-
-                    Row(
-                        Modifier
-                            .fillMaxSize()
-                            .statusBarsPadding()
-                            .windowInsetsPadding(
-                                WindowInsets
-                                    .navigationBars
-                                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-                            )
-                    ) {
-                        if (appLayoutMode.showNavRail()) {
-                            AppNavRail(
-                                appLayoutInfo,
-                                currentRoute = currentTopLevel?.route ?: HOME_ROUTE,
-                                navigateToTopLevelDestination = navActions::navigateTo
-                            )
-                        }
-
-                        if (!appUiState.isLoading) {
-                            AppNavGraph(
-                                appLayoutInfo = appLayoutInfo,
-                                navController = navController,
-                                navActions = navActions,
-                                startDestination = appUiState.startDestination,
-                                signInObserver = signInObserver,
-                                snackbarHostState = appSnackBarHostState,
-                                appScaffoldPadding = PaddingValues(),
-                                openDrawer = {
-                                    if (appLayoutMode.showNavDrawer(appUiState.startDestination)) {
-                                        coroutineScope.launch { sizeAwareDrawerState.open() }
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-
-
-            if (!appLayoutMode.isSplitFoldable()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(brush = backgroundGradient) // gradient behind buildings
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.buildings), // buildings
-                        contentDescription = "",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.FillBounds,
-                    )
-                    Scaffold(
-                        snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
-                        containerColor = Color.Transparent,
-                        bottomBar = {
-                            if (appLayoutMode.showBottomNav(currentTopLevel))
-                                BottomNavigationBar(
-                                    selectedDestination = currentTopLevel!!.route,
-                                    navigateToTopLevelDestination = navActions::navigateTo
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(brush = backgroundGradient) // gradient behind buildings
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.buildings), // buildings
+                    contentDescription = "",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillBounds,
+                )
+                with(appLayoutMode) {
+                    when {
+                        isSplitFoldable() -> {
+                            Log.d("debug", "using foldable layout...")
+                            if (appLayoutMode == AppLayoutMode.FOLDED_SPLIT_BOOK) {
+                                UseDoubleLayout(
+                                    navController,
+                                    navActions,
+                                    currentTopLevel?.route,
+                                    appUiState,
+                                    appLayoutInfo,
+                                    signInObserver,
+                                    appSnackBarHostState
                                 )
+                            } else {
+                                UseLandscapeLayout(
+                                    appLayoutInfo = appLayoutInfo,
+                                    appUiState = appUiState,
+                                    signInObserver = signInObserver,
+                                    navActions = navActions,
+                                    currentRoute = currentTopLevel?.route,
+                                    navController = navController,
+                                    startDestination = appUiState.startDestination,
+                                    snackbarHostState = appSnackBarHostState
+                                )
+                            }
                         }
-                    )
-                    { padding ->
-
-                        ModalNavigationDrawer(
-                            //scrimColor = Color.Transparent,
-                            drawerContent = {
-                                ModalDrawerSheet {
-                                    AppDrawer(
-                                        currentRoute = currentTopLevel?.route ?: HOME_ROUTE,
-                                        navigateToTopLevelDestination = navActions::navigateTo,
-                                        closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
-                                    )
-                                }
-
-                            },
-                            drawerState = sizeAwareDrawerState,
-                            gesturesEnabled = appLayoutMode.showNavDrawer(appUiState.startDestination)
-                        ) {
-
-                            Row(
-                                Modifier
-                                    .fillMaxSize()
-                                    .statusBarsPadding()
-                                    .windowInsetsPadding(
-                                        WindowInsets
-                                            .navigationBars
-                                            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-                                    )
-                            ) {
-                                if (appLayoutMode.showNavRail()) {
-                                    AppNavRail(
+                        isSplitScreen() -> {
+                            Scaffold(
+                                snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
+                                containerColor = Color.Transparent,
+                            )
+                            { padding ->
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(padding)
+                                ) {
+                                    UseDoubleLayout(
+                                        navController,
+                                        navActions,
+                                        currentTopLevel?.route,
+                                        appUiState,
                                         appLayoutInfo,
-                                        currentRoute = currentTopLevel?.route ?: HOME_ROUTE,
-                                        navigateToTopLevelDestination = navActions::navigateTo
+                                        signInObserver,
+                                        appSnackBarHostState
                                     )
                                 }
-
-                                if (!appUiState.isLoading) {
-                                    AppNavGraph(
-                                        appLayoutInfo = appLayoutInfo,
-                                        navController = navController,
-                                        navActions = navActions,
-                                        startDestination = appUiState.startDestination,
-                                        signInObserver = signInObserver,
-                                        snackbarHostState = appSnackBarHostState,
-                                        appScaffoldPadding = padding,
-                                        openDrawer = {
-                                            if (appLayoutMode.showNavDrawer(appUiState.startDestination)) {
-                                                coroutineScope.launch { sizeAwareDrawerState.open() }
-                                            }
-                                        }
+                            }
+                        }
+                        else -> {
+                            Scaffold(
+                                snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
+                                containerColor = Color.Transparent,
+                                bottomBar = {
+                                    if (appUiState.startDestination != ONBOARDING_ROUTE
+                                        && appLayoutMode.showBottomNav(currentTopLevel)
                                     )
+                                        BottomNavigationBar(
+                                            selectedDestination = currentTopLevel?.route
+                                                ?: HOME_ROUTE,
+                                            navigateToTopLevelDestination = navActions::navigateTo
+                                        )
+                                }
+                            )
+                            { padding ->
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(padding)
+                                ) {
+                                    Row(
+                                        Modifier
+                                            .fillMaxSize()
+                                            .statusBarsPadding()
+                                            .windowInsetsPadding(
+                                                WindowInsets
+                                                    .navigationBars
+                                                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                                            )
+                                    ) {
+                                        if (appLayoutInfo.appLayoutMode.showNavRail()) {
+                                            AppNavRail(
+                                                appLayoutInfo,
+                                                currentRoute = currentTopLevel?.route ?: HOME_ROUTE,
+                                                navigateToTopLevelDestination = navActions::navigateTo
+                                            )
+                                        }
+                                        if (!appUiState.isLoading) {
+                                            AppNavGraph(
+                                                appLayoutInfo = appLayoutInfo,
+                                                navController = navController,
+                                                navActions = navActions,
+                                                startDestination = appUiState.startDestination,
+                                                signInObserver = signInObserver,
+                                                snackbarHostState = appSnackBarHostState,
+                                                openDrawer = {}
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -232,22 +207,110 @@ fun AppRoot(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun rememberSizeAwareDrawerState(
+private fun UseLandscapeLayout(
+    appLayoutInfo: AppLayoutInfo,
+    appUiState: AppUiState,
+    signInObserver: SignInObserver,
+    navActions: AppNavigationActions,
+    currentRoute: String?,
+    navController: NavHostController,
     startDestination: String,
-    appLayoutMode: AppLayoutMode
-): DrawerState {
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    snackbarHostState: SnackbarHostState,
+) {
+    Row(
+        Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .windowInsetsPadding(
+                WindowInsets
+                    .navigationBars
+                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+            )
+    ) {
+        AppNavRail(
+            appLayoutInfo,
+            currentRoute = currentRoute ?: HOME_ROUTE,
+            navigateToTopLevelDestination = navActions::navigateTo
+        )
 
-    return if (appLayoutMode.showNavDrawer(startDestination)) {
-        // If we want to allow showing the drawer, we use a real, remembered drawer
-        // state defined above
-        drawerState
-    } else {
-        // If we don't want to allow the drawer to be shown, we provide a drawer state
-        // that is locked closed. This is intentionally not remembered, because we
-        // don't want to keep track of any changes and always keep it closed
-        DrawerState(DrawerValue.Closed)
+        if (!appUiState.isLoading) {
+            AppNavGraph(
+                navController = navController,
+                navActions = navActions,
+                startDestination = startDestination,
+                signInObserver = signInObserver,
+                snackbarHostState = snackbarHostState,
+                appLayoutInfo = appLayoutInfo,
+                openDrawer = {}
+            )
+        }
     }
 }
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun UseDoubleLayout(
+    navController: NavHostController,
+    navActions: AppNavigationActions,
+    currentRoute: String?,
+    appUiState: AppUiState,
+    appLayoutInfo: AppLayoutInfo,
+    signInObserver: SignInObserver,
+    appSnackBarHostState: SnackbarHostState
+) {
+
+    val sizeAwareDrawerState = rememberDrawerState(DrawerValue.Closed)
+    val doubleCoroutineScope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet {
+                AppDrawer(
+                    currentRoute = currentRoute ?: HOME_ROUTE,
+                    navigateToTopLevelDestination = navActions::navigateTo,
+                    closeDrawer = {
+                        doubleCoroutineScope.launch { sizeAwareDrawerState.close() }
+                    },
+                )
+            }
+
+        },
+        drawerState = sizeAwareDrawerState,
+        gesturesEnabled = appLayoutInfo.appLayoutMode.showNavDrawer(appUiState.startDestination)
+    ) {
+        Row(
+            Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .windowInsetsPadding(
+                    WindowInsets
+                        .navigationBars
+                        .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                )
+        ) {
+            if (appLayoutInfo.appLayoutMode.showNavRail()) {
+                AppNavRail(
+                    appLayoutInfo,
+                    currentRoute = currentRoute ?: HOME_ROUTE,
+                    navigateToTopLevelDestination = navActions::navigateTo
+                )
+            }
+            if (!appUiState.isLoading) {
+                AppNavGraph(
+                    navController = navController,
+                    navActions = navActions,
+                    startDestination = appUiState.startDestination,
+                    signInObserver = signInObserver,
+                    snackbarHostState = appSnackBarHostState,
+                    appLayoutInfo = appLayoutInfo,
+                    openDrawer = {
+                        doubleCoroutineScope.launch { sizeAwareDrawerState.open() }
+                    }
+                )
+            }
+        }
+    }
+}
+
+

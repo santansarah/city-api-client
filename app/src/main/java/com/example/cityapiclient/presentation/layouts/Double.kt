@@ -47,45 +47,36 @@ fun DoubleLayoutWithScaffold(
     appLayoutInfo: AppLayoutInfo,
     leftContent: @Composable () -> Unit,
     rightContent: @Composable () -> Unit,
-    snackbarHostState: @Composable () -> Unit,
     topAppBar: @Composable () -> Unit
 ) {
-    Scaffold(
-        snackbarHost = snackbarHostState,
-        containerColor = Color.Transparent,
-    )
-    { padding ->
+    val sidePadding = when (appLayoutInfo.appLayoutMode) {
+        AppLayoutMode.DOUBLE_BIG -> 52.dp
+        AppLayoutMode.FOLDED_SPLIT_BOOK -> 16.dp
+        else -> 16.dp
+    }
 
-        val sidePadding = when(appLayoutInfo.appLayoutMode)
-        {
-            AppLayoutMode.DOUBLE_BIG -> 52.dp
-            AppLayoutMode.FOLDED_SPLIT_BOOK -> 16.dp
-            else -> 16.dp
-        }
-
-        Row() {
-            Column(
-                modifier = Modifier.weight(.5f)
-            ) {
-                topAppBar()
-                Column(
-                    modifier = Modifier
-                        .padding(start = sidePadding, end = sidePadding)
-                ) {
-                    leftContent()
-                }
-            }
+    Row() {
+        Column(
+            modifier = Modifier.weight(.5f)
+        ) {
+            topAppBar()
             Column(
                 modifier = Modifier
-                    .weight(.5f)
                     .padding(start = sidePadding, end = sidePadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface.copy(.8f)),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                rightContent()
+                leftContent()
             }
+        }
+        Column(
+            modifier = Modifier
+                .weight(.5f)
+                .padding(start = sidePadding, end = sidePadding)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface.copy(.8f)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            rightContent()
         }
     }
 }

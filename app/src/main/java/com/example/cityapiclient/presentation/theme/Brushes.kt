@@ -1,5 +1,7 @@
-package com.example.cityapiclient.presentation.components
+package com.example.cityapiclient.presentation.theme
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
@@ -9,6 +11,14 @@ val backgroundGradient = Brush.verticalGradient(
         Color(0xFF465353)
     )
 )
+
+val bottomGradient = Brush.verticalGradient(
+    colors = listOf(
+        Color.Transparent,
+        Color(0xB30C0E0E)
+    )
+)
+
 
 val orangeYellowGradient = Brush.verticalGradient(
     colors = listOf(

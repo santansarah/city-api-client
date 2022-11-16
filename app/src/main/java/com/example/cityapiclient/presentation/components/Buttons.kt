@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
+import com.example.cityapiclient.presentation.theme.blueYellowGradient
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

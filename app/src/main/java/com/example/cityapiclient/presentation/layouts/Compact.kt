@@ -49,19 +49,11 @@ fun CompactLayout(
 @Composable
 fun CompactLayoutWithScaffold(
     mainContent: @Composable () -> Unit,
-    snackbarHostState: @Composable () -> Unit,
     allowScroll: Boolean = true,
     appScaffoldPaddingValues: PaddingValues = PaddingValues(),
     topAppBar: @Composable () -> Unit,
     appLayoutInfo: AppLayoutInfo
 ) {
-    Scaffold(
-        snackbarHost = snackbarHostState,
-        containerColor = Color.Transparent,
-        topBar = topAppBar
-    )
-    { padding ->
-
         val appLayoutMode = appLayoutInfo.appLayoutMode
 
         val sidePadding = when(appLayoutMode) {
@@ -71,7 +63,6 @@ fun CompactLayoutWithScaffold(
         }
 
         val columnPadding = PaddingValues(
-            top = padding.calculateTopPadding(),
             bottom = appScaffoldPaddingValues.calculateBottomPadding(),
             start = sidePadding,
             end = sidePadding
@@ -89,8 +80,8 @@ fun CompactLayoutWithScaffold(
             modifier = columnModifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            topAppBar()
             mainContent()
         }
-    }
 }
 

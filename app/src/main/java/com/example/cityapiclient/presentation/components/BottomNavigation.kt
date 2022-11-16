@@ -16,6 +16,7 @@ import com.example.cityapiclient.presentation.AppDestinations
 import com.example.cityapiclient.presentation.TOP_LEVEL_DESTINATIONS
 import com.example.cityapiclient.presentation.TopLevelDestination
 import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
+import com.example.cityapiclient.presentation.theme.backgroundGradient
 
 @Composable
 fun BottomNavigationBar(

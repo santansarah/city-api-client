@@ -27,7 +27,9 @@ import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
+import com.example.cityapiclient.presentation.layouts.DoubleFoldedLayout
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
+import com.example.cityapiclient.presentation.theme.orangeYellowGradient
 
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -37,7 +39,6 @@ fun SearchRoute(
     viewModel: SearchViewModel = hiltViewModel(),
     appLayoutInfo: AppLayoutInfo,
     snackbarHostState: SnackbarHostState,
-    appScaffoldPaddingValues: PaddingValues,
     openDrawer: () -> Unit = {}
 ) {
 
@@ -55,64 +56,101 @@ fun SearchRoute(
 
     val appLayoutMode = appLayoutInfo.appLayoutMode
 
-    if (appLayoutMode.isSplitScreen()) {
-        DoubleLayoutWithScaffold(
-            appLayoutInfo =  appLayoutInfo,
-            leftContent = {
-                CityNameSearch(
-                    uiState.cityPrefix,
-                    viewModel::onCityNameSearch,
-                    uiState.cities,
-                    focusManager,
-                    onCitySelected = viewModel::onCitySelected
+    with(appLayoutMode) {
+        when {
+            isSplitFoldable() -> {
+                DoubleFoldedLayout(
+                    appLayoutInfo = appLayoutInfo,
+                    mainPanel = {
+                        CityNameSearch(
+                            uiState.cityPrefix,
+                            viewModel::onCityNameSearch,
+                            uiState.cities,
+                            focusManager,
+                            onCitySelected = viewModel::onCitySelected
+                        )
+                    },
+                    detailsPanel = {
+                        SearchDetailContents(
+                            city = uiState.selectedCity,
+                            appLayoutInfo = appLayoutInfo
+                        )
+                    },
+                    topAppBar = {
+                        TopLevelAppBar(
+                            appLayoutInfo = appLayoutInfo,
+                            title = "City Search",
+                            onIconClicked = openDrawer
+                        )
+                    },
+                    snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
+                    allowScroll = false
                 )
-            },
-            rightContent = {
-                SearchDetailContents(city = uiState.selectedCity, appLayoutInfo =  appLayoutInfo)
-            },
-            snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
-            TopLevelAppBar(
-                appLayoutInfo =  appLayoutInfo,
-                title = "City Search",
-                onIconClicked = openDrawer
-            )
-        }
-    } else {
-        CompactLayoutWithScaffold(
-            appLayoutInfo =  appLayoutInfo,
-            snackbarHostState = { SnackbarHost(hostState = snackbarHostState) },
-            mainContent = {
-
-                if (uiState.selectedCity == null) {
-                    CityNameSearch(
-                        uiState.cityPrefix,
-                        viewModel::onCityNameSearch,
-                        uiState.cities,
-                        focusManager,
-                        onCitySelected = viewModel::onCitySelected
-                    )
-                }
-                else
-                {
-                    SearchDetailContents(city = uiState.selectedCity, appLayoutInfo =  appLayoutInfo)
-                }
-            },
-            appScaffoldPaddingValues = appScaffoldPaddingValues,
-            allowScroll = false,
-            topAppBar = {
-                if (uiState.selectedCity == null) {
+            }
+            isSplitScreen() -> {
+                DoubleLayoutWithScaffold(
+                    appLayoutInfo = appLayoutInfo,
+                    leftContent = {
+                        CityNameSearch(
+                            uiState.cityPrefix,
+                            viewModel::onCityNameSearch,
+                            uiState.cities,
+                            focusManager,
+                            onCitySelected = viewModel::onCitySelected
+                        )
+                    },
+                    rightContent = {
+                        SearchDetailContents(
+                            city = uiState.selectedCity,
+                            appLayoutInfo = appLayoutInfo
+                        )
+                    }
+                ) {
                     TopLevelAppBar(
-                        appLayoutInfo =  appLayoutInfo,
+                        appLayoutInfo = appLayoutInfo,
                         title = "City Search",
                         onIconClicked = openDrawer
                     )
                 }
-                else {
-                    AppBarWithBackButton(title = "City Detail",
-                        onBackClicked = viewModel::goBack)
-                }
             }
-        )
+            else -> {
+                CompactLayoutWithScaffold(
+                    appLayoutInfo = appLayoutInfo,
+                    mainContent = {
+
+                        if (uiState.selectedCity == null) {
+                            CityNameSearch(
+                                uiState.cityPrefix,
+                                viewModel::onCityNameSearch,
+                                uiState.cities,
+                                focusManager,
+                                onCitySelected = viewModel::onCitySelected
+                            )
+                        } else {
+                            SearchDetailContents(
+                                city = uiState.selectedCity,
+                                appLayoutInfo = appLayoutInfo
+                            )
+                        }
+                    },
+                    allowScroll = false,
+                    topAppBar = {
+                        if (uiState.selectedCity == null) {
+                            TopLevelAppBar(
+                                appLayoutInfo = appLayoutInfo,
+                                title = "City Search",
+                                onIconClicked = openDrawer
+                            )
+                        } else {
+                            AppBarWithBackButton(
+                                title = "City Detail",
+                                onBackClicked = viewModel::goBack
+                            )
+                        }
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -228,7 +266,7 @@ fun ShowCityNames(
                                 style = MaterialTheme.typography.titleLarge,
                                 color = if (city.zip == selectedZip)
                                     MaterialTheme.colorScheme.onSecondary else
-                                        MaterialTheme.colorScheme.onPrimary
+                                    MaterialTheme.colorScheme.onPrimary
                             )
                         }
                         ArrowIcon(

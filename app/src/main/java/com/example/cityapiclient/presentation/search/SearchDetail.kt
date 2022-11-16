@@ -32,10 +32,9 @@ fun SearchDetailContents(
     val appLayoutMode = appLayoutInfo.appLayoutMode
 
     city?.let {
-        if (appLayoutMode.isSplitScreen()) {
-            if (appLayoutMode.isSplitScreen()) {
-                CityDetailIcon()
-            }
+        if (appLayoutMode.isSplitScreen() ||
+            appLayoutMode == AppLayoutMode.FOLDED_SPLIT_BOOK) {
+            CityDetailIcon()
             Column(
                 modifier = Modifier
                     //.padding(start = sidePadding, end = sidePadding)
@@ -43,31 +42,47 @@ fun SearchDetailContents(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Column() {
-                    CityInfo(appLayoutInfo =  appLayoutInfo, city = city)
+                    CityInfo(appLayoutInfo = appLayoutInfo, city = city)
                     Spacer(modifier = Modifier.height(10.dp))
                     CityStats(city = city)
                 }
             }
         } else {
             Spacer(modifier = Modifier.height(40.dp))
-            AppCard(
-                appLayoutInfo =  appLayoutInfo
-            ) {
-                when (appLayoutMode) {
-                    AppLayoutMode.PHONE_LANDSCAPE -> {
+            when (appLayoutMode) {
+                AppLayoutMode.PHONE_LANDSCAPE -> {
+                    AppCard(
+                        appLayoutInfo = appLayoutInfo
+                    ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             CityInfo(
-                                appLayoutInfo =  appLayoutInfo,
+                                appLayoutInfo = appLayoutInfo,
                                 city = city
                             )
                             CityStats(city = city)
                         }
                     }
-                    else -> {
-                        CityInfo(appLayoutInfo =  appLayoutInfo, city = city)
+                }
+                AppLayoutMode.FOLDED_SPLIT_TABLETOP -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        CityInfo(
+                            appLayoutInfo = appLayoutInfo,
+                            city = city
+                        )
+                        CityStats(city = city)
+                    }
+                }
+                else -> {
+                    AppCard(
+                        appLayoutInfo = appLayoutInfo
+                    ) {
+                        CityInfo(appLayoutInfo = appLayoutInfo, city = city)
                         Spacer(modifier = Modifier.height(10.dp))
                         CityStats(city = city)
                     }

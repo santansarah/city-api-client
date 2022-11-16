@@ -10,13 +10,16 @@ import androidx.compose.ui.graphics.toComposeRect
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
+import androidx.window.layout.WindowMetricsCalculator
 
 
 @ExperimentalMaterial3WindowSizeClassApi
 @Composable
 fun getWindowSizeClasses(activity: ComponentActivity): WindowClassWithSize {
 
-    val metrics = activity.windowManager.currentWindowMetrics
+    //the code below won't work on Android 10 (has to be API 30+)
+    //val metrics = activity.windowManager.currentWindowMetrics
+    val metrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(activity)
     val size = getWindowDpSizeFromRect(metrics.bounds)
 
     //val bounds = activity.windowManager.currentWindowMetrics.bounds

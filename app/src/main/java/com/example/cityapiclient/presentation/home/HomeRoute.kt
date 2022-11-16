@@ -29,7 +29,6 @@ fun HomeRoute(
     appLayoutInfo: AppLayoutInfo,
     onSearchClicked: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    appScaffoldPaddingValues: PaddingValues,
     openDrawer: () -> Unit = {},
 ) {
 
@@ -94,8 +93,8 @@ fun HomeRoute(
                                 onSearchClicked
                             )
                         },
-                        rightContent = { HomeScreenInfo() },
-                        snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
+                        rightContent = { HomeScreenInfo() }
+                    ) {
                         TopLevelAppBar(
                             appLayoutInfo = appLayoutInfo,
                             title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
@@ -106,7 +105,6 @@ fun HomeRoute(
                 else -> {
                     CompactLayoutWithScaffold(
                         appLayoutInfo = appLayoutInfo,
-                        snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
                         mainContent = {
 
                             HomeScreenContent(
@@ -119,7 +117,6 @@ fun HomeRoute(
                             )
 
                         },
-                        appScaffoldPaddingValues = appScaffoldPaddingValues,
                         topAppBar = {
                             TopLevelAppBar(
                                 appLayoutInfo = appLayoutInfo,

@@ -11,6 +11,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.presentation.theme.blueYellowGradient
+import com.example.cityapiclient.presentation.theme.orangeYellowGradient
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.Languages
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode

@@ -20,6 +20,7 @@ import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.home.HomeScreenInfo
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
+import com.example.cityapiclient.presentation.layouts.DoubleFoldedLayout
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode
@@ -32,7 +33,6 @@ fun AccountRoute(
     appLayoutInfo: AppLayoutInfo,
     signInObserver: SignInObserver,
     snackbarHostState: SnackbarHostState,
-    appScaffoldPaddingValues: PaddingValues,
     openDrawer: () -> Unit = {}
 ) {
 
@@ -54,57 +54,79 @@ fun AccountRoute(
 
     val appLayoutMode = appLayoutInfo.appLayoutMode
 
-    if (appLayoutMode.isSplitScreen()) {
-        DoubleLayoutWithScaffold(
-            appLayoutInfo = appLayoutInfo,
-            leftContent = {
-                AccountContent(
-                    appLayoutInfo =  appLayoutInfo,
-                    signOut = { scope.launch { signInObserver.signOut() } },
-                    signIn = { scope.launch { signInObserver.signIn() } },
-                    signUp = { scope.launch { signInObserver.signUp() } },
-                    currentUser = accountUiState.currentUser,
-                    isProcessing = signInState.isSigningIn
-                )
-            },
-            rightContent = { HomeScreenInfo() },
-            snackbarHostState = { SnackbarHost(hostState = snackbarHostState) }) {
-            TopLevelAppBar(
-                appLayoutInfo =  appLayoutInfo,
-                title = "Account",
-                onIconClicked = openDrawer
-            )
-        }
-    } else {
-
-        CompactLayoutWithScaffold(
-            appLayoutInfo =  appLayoutInfo,
-            snackbarHostState = { AppSnackbarHost(hostState = snackbarHostState) },
-            mainContent = {
-
-                if (!accountUiState.isLoading) {
-                    AccountContent(
-                        appLayoutInfo =  appLayoutInfo,
-                        signOut = { scope.launch { signInObserver.signOut() } },
-                        signIn = { scope.launch { signInObserver.signIn() } },
-                        signUp = { scope.launch { signInObserver.signUp() } },
-                        currentUser = accountUiState.currentUser,
-                        isProcessing = signInState.isSigningIn
+    if (!accountUiState.isLoading) {
+        with(appLayoutMode) {
+            when {
+                isSplitFoldable() -> {
+                    DoubleFoldedLayout(
+                        appLayoutInfo = appLayoutInfo,
+                        mainPanel = {
+                            AccountContent(
+                                appLayoutInfo = appLayoutInfo,
+                                signOut = { scope.launch { signInObserver.signOut() } },
+                                signIn = { scope.launch { signInObserver.signIn() } },
+                                signUp = { scope.launch { signInObserver.signUp() } },
+                                currentUser = accountUiState.currentUser,
+                                isProcessing = signInState.isSigningIn
+                            )
+                        },
+                        detailsPanel = { HomeScreenInfo() },
+                        topAppBar = {
+                            TopLevelAppBar(
+                                appLayoutInfo = appLayoutInfo,
+                                title = "Account",
+                                onIconClicked = openDrawer
+                            )
+                        },
+                    snackbarHostState = { SnackbarHost(hostState = snackbarHostState) })
+                }
+                isSplitScreen() -> {
+                    DoubleLayoutWithScaffold(
+                        appLayoutInfo = appLayoutInfo,
+                        leftContent = {
+                            AccountContent(
+                                appLayoutInfo = appLayoutInfo,
+                                signOut = { scope.launch { signInObserver.signOut() } },
+                                signIn = { scope.launch { signInObserver.signIn() } },
+                                signUp = { scope.launch { signInObserver.signUp() } },
+                                currentUser = accountUiState.currentUser,
+                                isProcessing = signInState.isSigningIn
+                            )
+                        },
+                        rightContent = { HomeScreenInfo() }
+                    ) {
+                        TopLevelAppBar(
+                            appLayoutInfo = appLayoutInfo,
+                            title = "Account",
+                            onIconClicked = openDrawer
+                        )
+                    }
+                }
+                else -> {
+                    CompactLayoutWithScaffold(
+                        appLayoutInfo = appLayoutInfo,
+                        mainContent = {
+                            AccountContent(
+                                appLayoutInfo = appLayoutInfo,
+                                signOut = { scope.launch { signInObserver.signOut() } },
+                                signIn = { scope.launch { signInObserver.signIn() } },
+                                signUp = { scope.launch { signInObserver.signUp() } },
+                                currentUser = accountUiState.currentUser,
+                                isProcessing = signInState.isSigningIn
+                            )
+                        },
+                        topAppBar = {
+                            TopLevelAppBar(
+                                appLayoutInfo = appLayoutInfo,
+                                title = "Account",
+                                onIconClicked = openDrawer
+                            )
+                        }
                     )
                 }
-
-            },
-            appScaffoldPaddingValues = appScaffoldPaddingValues,
-            topAppBar = {
-                TopLevelAppBar(
-                    appLayoutInfo =  appLayoutInfo,
-                    title = "Account",
-                    onIconClicked = openDrawer
-                )
             }
-        )
+        }
     }
-
 }
 
 @Composable
@@ -117,21 +139,50 @@ private fun AccountContent(
     isProcessing: Boolean
 ) {
 
-    CardWithHeader(appLayoutInfo =  appLayoutInfo, header = {
-        AccountHeading(appLayoutInfo, currentUser)
-    }) {
-        Spacer(modifier = Modifier.height(32.dp))
-        val buttonModifier = Modifier.fillMaxWidth()
-        GetGoogleButtonFromUserState(
-            signOut = signOut,
-            signIn = signIn,
-            signUp = signUp,
-            currentUser = currentUser,
-            modifier = buttonModifier,
-            isProcessing = isProcessing
-        )
-        Spacer(modifier = Modifier.height(18.dp))
-        DeleteAccount(currentUser)
+    if (appLayoutInfo.appLayoutMode != AppLayoutMode.FOLDED_SPLIT_TABLETOP
+    ) {
+        CardWithHeader(appLayoutInfo = appLayoutInfo, header = {
+            AccountHeading(appLayoutInfo, currentUser)
+        }) {
+            Spacer(modifier = Modifier.height(32.dp))
+            val buttonModifier = Modifier.fillMaxWidth()
+            GetGoogleButtonFromUserState(
+                signOut = signOut,
+                signIn = signIn,
+                signUp = signUp,
+                currentUser = currentUser,
+                modifier = buttonModifier,
+                isProcessing = isProcessing
+            )
+            Spacer(modifier = Modifier.height(18.dp))
+            DeleteAccount(currentUser)
+        }
+    } else {
+        AccountHeading(appLayoutInfo = appLayoutInfo, currentUser = currentUser)
+        Spacer(modifier = Modifier.height(28.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                modifier = Modifier.width(280.dp)
+            ) {
+                //val buttonModifier = Modifier.fillMaxWidth()
+                GetGoogleButtonFromUserState(
+                    signOut = signOut,
+                    signIn = signIn,
+                    signUp = signUp,
+                    currentUser = currentUser,
+                    modifier = Modifier,
+                    isProcessing = isProcessing
+                )
+            }
+            Column(
+                modifier = Modifier.width(280.dp)
+            ) {
+                DeleteAccount(currentUser)
+            }
+        }
     }
 
 
@@ -200,13 +251,13 @@ private fun AccountHeading(
         is CurrentUser.SignedOutUser -> {
             SubHeading(
                 headingText = R.string.signed_out,
-                appLayoutInfo =  appLayoutInfo
+                appLayoutInfo = appLayoutInfo
             )
         }
         else -> {
             SubHeading(
                 headingText = R.string.account_sign_up,
-                appLayoutInfo =  appLayoutInfo
+                appLayoutInfo = appLayoutInfo
             )
         }
     }

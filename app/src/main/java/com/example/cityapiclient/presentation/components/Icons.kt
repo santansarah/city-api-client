@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import com.example.cityapiclient.R
+import com.example.cityapiclient.presentation.theme.blueYellowGradient
 
 @Composable
 fun CityIcon(

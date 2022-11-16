@@ -40,6 +40,7 @@ fun AppNavRail(
                 modifier = Modifier.padding(10.dp),
                 selected = currentRoute == destination.route,
                 enabled = true,
+                label = { Text(text = destination.iconText) },
                 onClick = {
                     Log.d("debug", "side nav clicked...")
                     navigateToTopLevelDestination(destination)

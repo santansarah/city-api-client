@@ -27,7 +27,6 @@ fun AppNavGraph(
     startDestination: String,
     signInObserver: SignInObserver,
     snackbarHostState: SnackbarHostState,
-    appScaffoldPadding: PaddingValues,
     openDrawer: () -> Unit = {},
 ) {
 
@@ -52,7 +51,6 @@ fun AppNavGraph(
                 appLayoutInfo = appLayoutInfo,
                 signInObserver = signInObserver,
                 snackbarHostState = snackbarHostState,
-                appScaffoldPaddingValues = appScaffoldPadding,
                 openDrawer = openDrawer
             )
         }
@@ -62,7 +60,6 @@ fun AppNavGraph(
                 appLayoutInfo = appLayoutInfo,
                 onSearchClicked = { navActions.navigateTo(TOP_LEVEL_DESTINATIONS[2]) },
                 snackbarHostState = snackbarHostState,
-                appScaffoldPaddingValues = appScaffoldPadding,
                 openDrawer = openDrawer
             )
         }
@@ -70,7 +67,6 @@ fun AppNavGraph(
             SearchRoute(
                 appLayoutInfo = appLayoutInfo,
                 snackbarHostState = snackbarHostState,
-                appScaffoldPaddingValues = appScaffoldPadding,
                 openDrawer = openDrawer,
             )
         }
