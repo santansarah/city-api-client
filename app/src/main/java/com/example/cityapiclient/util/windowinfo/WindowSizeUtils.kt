@@ -17,8 +17,6 @@ import androidx.window.layout.WindowMetricsCalculator
 @Composable
 fun getWindowSizeClasses(activity: ComponentActivity): WindowClassWithSize {
 
-    //the code below won't work on Android 10 (has to be API 30+)
-    //val metrics = activity.windowManager.currentWindowMetrics
     val metrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(activity)
     val size = getWindowDpSizeFromRect(metrics.bounds)
 

@@ -148,57 +148,15 @@ fun AppRoot(
                             }
                         }
                         else -> {
-                            Scaffold(
-                                snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
-                                containerColor = Color.Transparent,
-                                bottomBar = {
-                                    if (appUiState.startDestination != ONBOARDING_ROUTE
-                                        && appLayoutMode.showBottomNav(currentTopLevel)
-                                    )
-                                        BottomNavigationBar(
-                                            selectedDestination = currentTopLevel?.route
-                                                ?: HOME_ROUTE,
-                                            navigateToTopLevelDestination = navActions::navigateTo
-                                        )
-                                }
+                            UseSingleLayout(
+                                navController = navController,
+                                navActions = navActions,
+                                currentRoute = currentTopLevel?.route,
+                                appUiState = appUiState,
+                                appLayoutInfo = appLayoutInfo,
+                                signInObserver = signInObserver,
+                                appSnackBarHostState = appSnackBarHostState
                             )
-                            { padding ->
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(padding)
-                                ) {
-                                    Row(
-                                        Modifier
-                                            .fillMaxSize()
-                                            .statusBarsPadding()
-                                            .windowInsetsPadding(
-                                                WindowInsets
-                                                    .navigationBars
-                                                    .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
-                                            )
-                                    ) {
-                                        if (appLayoutInfo.appLayoutMode.showNavRail()) {
-                                            AppNavRail(
-                                                appLayoutInfo,
-                                                currentRoute = currentTopLevel?.route ?: HOME_ROUTE,
-                                                navigateToTopLevelDestination = navActions::navigateTo
-                                            )
-                                        }
-                                        if (!appUiState.isLoading) {
-                                            AppNavGraph(
-                                                appLayoutInfo = appLayoutInfo,
-                                                navController = navController,
-                                                navActions = navActions,
-                                                startDestination = appUiState.startDestination,
-                                                signInObserver = signInObserver,
-                                                snackbarHostState = appSnackBarHostState,
-                                                openDrawer = {}
-                                            )
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -313,4 +271,91 @@ private fun UseDoubleLayout(
     }
 }
 
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun UseSingleLayout(
+    navController: NavHostController,
+    navActions: AppNavigationActions,
+    currentRoute: String?,
+    appUiState: AppUiState,
+    appLayoutInfo: AppLayoutInfo,
+    signInObserver: SignInObserver,
+    appSnackBarHostState: SnackbarHostState
+) {
+
+    val sizeAwareDrawerState = rememberDrawerState(DrawerValue.Closed)
+    val singleCoroutineScope = rememberCoroutineScope()
+
+    ModalNavigationDrawer(
+        drawerContent = {
+            ModalDrawerSheet {
+                AppDrawer(
+                    currentRoute = currentRoute ?: HOME_ROUTE,
+                    navigateToTopLevelDestination = navActions::navigateTo,
+                    closeDrawer = {
+                        singleCoroutineScope.launch { sizeAwareDrawerState.close() }
+                    },
+                )
+            }
+
+        },
+        drawerState = sizeAwareDrawerState,
+        gesturesEnabled = appLayoutInfo.appLayoutMode.showNavDrawer(
+            appUiState.startDestination
+        )
+    ) {
+        Scaffold(
+            snackbarHost = { SnackbarHost(hostState = appSnackBarHostState) },
+            containerColor = Color.Transparent,
+            bottomBar = {
+                if (appUiState.startDestination != ONBOARDING_ROUTE
+                    && appLayoutInfo.appLayoutMode.showBottomNav()
+                )
+                    BottomNavigationBar(
+                        selectedDestination = currentRoute ?: HOME_ROUTE,
+                        navigateToTopLevelDestination = navActions::navigateTo
+                    )
+            }
+        )
+        { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .windowInsetsPadding(
+                            WindowInsets
+                                .navigationBars
+                                .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
+                        )
+                ) {
+                    if (appLayoutInfo.appLayoutMode.showNavRail()) {
+                        AppNavRail(
+                            appLayoutInfo,
+                            currentRoute = currentRoute ?: HOME_ROUTE,
+                            navigateToTopLevelDestination = navActions::navigateTo
+                        )
+                    }
+                    if (!appUiState.isLoading) {
+                        AppNavGraph(
+                            appLayoutInfo = appLayoutInfo,
+                            navController = navController,
+                            navActions = navActions,
+                            startDestination = appUiState.startDestination,
+                            signInObserver = signInObserver,
+                            snackbarHostState = appSnackBarHostState,
+                            openDrawer = {
+                                singleCoroutineScope.launch { sizeAwareDrawerState.open() }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 

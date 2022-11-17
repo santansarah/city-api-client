@@ -44,8 +44,8 @@ enum class AppLayoutMode {
     /**
      * Bottom nav is perfect for a typical phone size, in portrait mode.
      */
-    fun showBottomNav(topLevelDestination: TopLevelDestination?): Boolean =
-        (topLevelDestination != null && this == PHONE_PORTRAIT)
+    fun showBottomNav(): Boolean =
+        (this == PHONE_PORTRAIT)
 
     /**
      * Only these layouts have a double | split screen.
