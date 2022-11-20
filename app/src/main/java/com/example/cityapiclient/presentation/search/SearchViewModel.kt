@@ -4,13 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.local.CurrentUser
-import com.example.cityapiclient.data.local.UserRepository
-import com.example.cityapiclient.data.remote.CityApiService
-import com.example.cityapiclient.data.remote.CityDto
-import com.example.cityapiclient.data.remote.cities
+import com.example.cityapiclient.data.remote.CityRepository
+import com.example.cityapiclient.domain.models.City
+import com.example.cityapiclient.domain.models.CityResults
+import com.example.cityapiclient.util.ErrorCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -18,15 +18,14 @@ import javax.inject.Inject
 data class SearchUiState(
     val isLoading: Boolean = true,
     val cityPrefix: String = "",
-    val cities: List<CityDto> = emptyList(),
+    val cities: List<CityResults> = emptyList(),
     val userMessage: String? = null,
-    val selectedCity: CityDto? = null
+    val selectedCity: City? = null
 )
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val cityApiService: CityApiService,
-    private val userRepository: UserRepository
+    private val cityRepository: CityRepository
 ) : ViewModel() {
 
     private val _searchUiState = MutableStateFlow(
@@ -39,6 +38,7 @@ class SearchViewModel @Inject constructor(
             _searchUiState.value
         )
 
+
     private var cityNameSearchJob: Job? = null
 
     fun onCityNameSearch(prefix: String) {
@@ -49,40 +49,63 @@ class SearchViewModel @Inject constructor(
             it.copy(cityPrefix = prefix)
         }
 
-        _searchUiState.value.cityPrefix.let { uiPrefix ->
-            if (uiPrefix.length > 2) {
+        with(prefix) {
+            when {
+                isBlank() -> clearSearch()
+                length > 1 -> {
 
-                cityNameSearchJob?.cancel()
-                cityNameSearchJob = viewModelScope.launch {
+                    cityNameSearchJob?.cancel()
+                    cityNameSearchJob = viewModelScope.launch {
 
-                    when (val cityApiResult = cityApiService.getCitiesByName(uiPrefix)) {
-                        is ServiceResult.Success -> {
-                            _searchUiState.update {
-                                it.copy(cities = cityApiResult.data.cities)
+                        when (val repoResult = cityRepository.getCitiesByName(prefix)) {
+                            is ServiceResult.Success -> {
+                                _searchUiState.update {
+                                    it.copy(cities = repoResult.data)
+                                }
+                            }
+                            is ServiceResult.Error -> {
+                                if (repoResult.code != ErrorCode.JOB_CANCELLED.name) {
+                                    showUserError(repoResult)
+                                }
                             }
                         }
-                        is ServiceResult.Error -> {
-                            Log.d("debug", "api error: ${cityApiResult.message}")
-                            _searchUiState.update {
-                                it.copy(
-                                    userMessage = cityApiResult.message
-                                )
-                            }
-                        }
+                        delay(300) //debounce
                     }
-                }
-            } else {
-                _searchUiState.update {
-                    it.copy(cities = emptyList(),
-                    selectedCity = null)
                 }
             }
         }
     }
 
-    fun onCitySelected(city: CityDto) {
-        _searchUiState.update { uiState ->
-            uiState.copy(selectedCity = city)
+    private fun clearSearch() {
+        _searchUiState.update {
+            it.copy(
+                cities = emptyList(),
+                selectedCity = null
+            )
+        }
+    }
+
+    fun onCitySelected(city: CityResults) {
+        viewModelScope.launch {
+            when (val repoResult = cityRepository.getCitiesByZip(city.zip)) {
+                is ServiceResult.Success -> {
+                    _searchUiState.update { uiState ->
+                        uiState.copy(selectedCity = repoResult.data)
+                    }
+                }
+                is ServiceResult.Error -> {
+                    showUserError(repoResult)
+                }
+            }
+        }
+    }
+
+    private fun showUserError(repoResult: ServiceResult.Error) {
+        Log.d("debug", "api error: ${repoResult.message}")
+        _searchUiState.update {
+            it.copy(
+                userMessage = repoResult.message
+            )
         }
     }
 
@@ -91,36 +114,6 @@ class SearchViewModel @Inject constructor(
             it.copy(selectedCity = null)
         }
     }
-
-/*
-    fun getCityByZipCode(zipCode: Int?) {
-
-        zipCode?.let {
-            viewModelScope.launch {
-                when (val cityApiResult = cityApiService.getCityByZip(zipCode)) {
-                    is ServiceResult.Success -> {
-                        _searchDetailUiState.update {
-                            it.copy(city = cityApiResult.data.cities[0])
-                        }
-                    }
-                    is ServiceResult.Error -> {
-                        Log.d("debug", "api error: ${cityApiResult.message}")
-                        _searchDetailUiState.update {
-                            it.copy(
-                                userMessage = cityApiResult.message
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        _searchDetailUiState.update {
-            it.copy(isLoading = false)
-        }
-
-    }
-*/
 
     fun userMessageShown() {
         Log.d("debug", "user message set to null.")

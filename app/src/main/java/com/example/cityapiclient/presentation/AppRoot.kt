@@ -186,11 +186,13 @@ private fun UseLandscapeLayout(
                     .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
             )
     ) {
-        AppNavRail(
-            appLayoutInfo,
-            currentRoute = currentRoute ?: HOME_ROUTE,
-            navigateToTopLevelDestination = navActions::navigateTo
-        )
+        if (appUiState.startDestination != ONBOARDING_ROUTE) {
+            AppNavRail(
+                appLayoutInfo,
+                currentRoute = currentRoute ?: HOME_ROUTE,
+                navigateToTopLevelDestination = navActions::navigateTo
+            )
+        }
 
         if (!appUiState.isLoading) {
             AppNavGraph(
@@ -333,7 +335,8 @@ private fun UseSingleLayout(
                                 .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
                         )
                 ) {
-                    if (appLayoutInfo.appLayoutMode.showNavRail()) {
+                    if (appUiState.startDestination != ONBOARDING_ROUTE &&
+                        appLayoutInfo.appLayoutMode.showNavRail()) {
                         AppNavRail(
                             appLayoutInfo,
                             currentRoute = currentRoute ?: HOME_ROUTE,

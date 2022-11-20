@@ -24,6 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.data.remote.CityDto
+import com.example.cityapiclient.domain.models.City
+import com.example.cityapiclient.domain.models.CityResults
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
@@ -67,7 +69,8 @@ fun SearchRoute(
                             viewModel::onCityNameSearch,
                             uiState.cities,
                             focusManager,
-                            onCitySelected = viewModel::onCitySelected
+                            onCitySelected = viewModel::onCitySelected,
+                            selectedCity = uiState.selectedCity
                         )
                     },
                     detailsPanel = {
@@ -96,7 +99,8 @@ fun SearchRoute(
                             viewModel::onCityNameSearch,
                             uiState.cities,
                             focusManager,
-                            onCitySelected = viewModel::onCitySelected
+                            onCitySelected = viewModel::onCitySelected,
+                            selectedCity = uiState.selectedCity
                         )
                     },
                     rightContent = {
@@ -124,7 +128,8 @@ fun SearchRoute(
                                 viewModel::onCityNameSearch,
                                 uiState.cities,
                                 focusManager,
-                                onCitySelected = viewModel::onCitySelected
+                                onCitySelected = viewModel::onCitySelected,
+                                selectedCity = uiState.selectedCity
                             )
                         } else {
                             SearchDetailContents(
@@ -158,9 +163,10 @@ fun SearchRoute(
 private fun CityNameSearch(
     prefix: String,
     onPrefixChanged: (String) -> Unit,
-    cities: List<CityDto>,
+    cities: List<CityResults>,
     focusManager: FocusManager,
-    onCitySelected: (CityDto) -> Unit
+    onCitySelected: (CityResults) -> Unit,
+    selectedCity: City?
 ) {
     EnterCityName(
         prefix,
@@ -169,7 +175,8 @@ private fun CityNameSearch(
     )
     ShowCityNames(
         cities = cities,
-        onCitySelected = onCitySelected
+        onCitySelected = onCitySelected,
+        selectedCity = selectedCity
     )
 }
 
@@ -204,12 +211,10 @@ fun EnterCityName(
 @Composable
 fun ShowCityNames(
     modifier: Modifier = Modifier,
-    cities: List<CityDto>,
-    onCitySelected: (CityDto) -> Unit
+    cities: List<CityResults>,
+    onCitySelected: (CityResults) -> Unit,
+    selectedCity: City?
 ) {
-    var selectedZip by rememberSaveable {
-        mutableStateOf(-1)
-    }
 
     LazyColumn(modifier = modifier) {
         itemsIndexed(items = cities) { index, city ->
@@ -219,8 +224,6 @@ fun ShowCityNames(
                     .fillMaxSize()
                     .clickable(
                         onClick = {
-                            Log.d("debug", "Clicked column...")
-                            selectedZip = city.zip
                             onCitySelected(city)
                         }
                     ),
@@ -238,7 +241,7 @@ fun ShowCityNames(
                         )
                         .fillMaxSize()
                         .background(
-                            color = if (city.zip == selectedZip)
+                            color = if (city.zip == selectedCity?.zip)
                                 MaterialTheme.colorScheme.onPrimaryContainer else
                                 MaterialTheme.colorScheme.surfaceVariant
                         )
@@ -264,7 +267,7 @@ fun ShowCityNames(
                                 text = city.city + ", " + city.state + " ${city.zip}",
                                 modifier = Modifier,
                                 style = MaterialTheme.typography.titleLarge,
-                                color = if (city.zip == selectedZip)
+                                color = if (city.zip == selectedCity?.zip)
                                     MaterialTheme.colorScheme.onSecondary else
                                     MaterialTheme.colorScheme.onPrimary
                             )

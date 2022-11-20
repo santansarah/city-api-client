@@ -17,13 +17,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.remote.CityDto
+import com.example.cityapiclient.domain.models.City
+import com.example.cityapiclient.domain.models.CityResults
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
 @Composable
 fun SearchDetailContents(
-    city: CityDto?,
+    city: City?,
     appLayoutInfo: AppLayoutInfo,
 ) {
 
@@ -97,7 +99,7 @@ fun SearchDetailContents(
 private fun CityInfo(
     appLayoutInfo: AppLayoutInfo,
     modifier: Modifier = Modifier,
-    city: CityDto
+    city: City
 ) {
     Column() {
 
@@ -138,7 +140,7 @@ private fun CityDetailIcon() {
 @Composable
 fun CityStats(
     modifier: Modifier = Modifier,
-    city: CityDto
+    city: City
 ) {
 
     val rowMod = Modifier.width(120.dp)

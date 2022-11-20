@@ -10,6 +10,9 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 class CityApiService @Inject constructor(
@@ -43,7 +46,8 @@ class CityApiService @Inject constructor(
 
             Success(cityApiResponse)
 
-        } catch (apiError: Exception) {
+        }
+        catch (apiError: Exception) {
 
             val parsedError = apiError.toCityApiError<CityApiResponse>()
             Log.d("debug", parsedError.toString())

@@ -10,6 +10,7 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import io.ktor.client.plugins.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.util.concurrent.CancellationException
 
 /**
  * This function takes the ktor Response Error: e.message value
@@ -33,6 +34,10 @@ inline fun <reified T> Exception.toCityApiError(): ServiceResult.Error {
 
     return try {
         when (this) {
+            is CancellationException -> ServiceResult.Error(
+                ErrorCode.JOB_CANCELLED.name,
+                ErrorCode.JOB_CANCELLED.message
+            )
             is ServerResponseException, is ClientRequestException -> {
                 val errors = when (val cityApiResponse: T = message.toErrorResponse()) {
                     is CityApiResponse -> {

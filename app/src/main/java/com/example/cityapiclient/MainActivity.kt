@@ -2,6 +2,7 @@ package com.example.cityapiclient
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -38,6 +39,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class, ExperimentalLifecycleComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        appendLog(this, "Starting app...")
 
         lifecycle.addObserver(signInObserver)
         if (Build.VERSION.SDK_INT >= 33) {
@@ -85,6 +88,33 @@ class MainActivity : ComponentActivity() {
         super.onSaveInstanceState(outState)
 
         outState.putParcelable("signInState", signInObserver.signInState.value)
+    }
+
+    // kotlinx.coroutines.JobCancellationException: Parent job is Completed;
+/*
+    override fun onStop() {
+        super.onStop()
+
+        appendLog(this, "Destroying app...")
+
+        if (this::httpClient.isInitialized) {
+            appendLog(this, "Closing ktor client...")
+            httpClient.close()
+        }
+    }
+*/
+
+    // https://ktor.io/docs/create-client.html#close-client
+    // resources will be destroyed anyway.
+    override fun onDestroy() {
+        super.onDestroy()
+
+        appendLog(this, "Destroying app...")
+
+        if (this::httpClient.isInitialized) {
+            appendLog(this, "Closing ktor client...")
+            httpClient.close()
+        }
     }
 
 }
