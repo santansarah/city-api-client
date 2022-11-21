@@ -7,91 +7,90 @@ import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityRepository
 import com.example.cityapiclient.domain.models.City
 import com.example.cityapiclient.domain.models.CityResults
-import com.example.cityapiclient.util.ErrorCode
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SearchUiState(
-    val isLoading: Boolean = true,
     val cityPrefix: String = "",
     val cities: List<CityResults> = emptyList(),
     val userMessage: String? = null,
     val selectedCity: City? = null
 )
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val cityRepository: CityRepository
 ) : ViewModel() {
 
-    private val _searchUiState = MutableStateFlow(
-        SearchUiState()
+    private val _searchText = MutableStateFlow("")
+    private val _cities = MutableStateFlow<List<CityResults>>(emptyList())
+    private val _userMessage: MutableStateFlow<String?> = MutableStateFlow(null)
+    private val _selectedCity: MutableStateFlow<City?> = MutableStateFlow(null)
+
+    val searchUiState = combine(_searchText, _cities, _userMessage, _selectedCity) {
+        searchText, cities, userMessage, selectedCity ->
+
+            if (searchText.isBlank())
+                clearSearch()
+
+            SearchUiState(
+                searchText,
+                cities,
+                userMessage,
+                selectedCity
+            )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = SearchUiState()
     )
-    val searchUiState = _searchUiState
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            _searchUiState.value
-        )
 
-
-    private var cityNameSearchJob: Job? = null
+    // https://stackoverflow.com/questions/62325870/how-to-minimize-the-number-of-webservice-calls-using-kotlin-coroutines
+    init {
+        _searchText
+            .debounce(300) // gets the latest; no need for delays!
+            .filter { cityPrefix -> (cityPrefix.isNotEmpty()
+                    && cityPrefix.length > 1) } // don't call if 1 or empty
+            .distinctUntilChanged() // to avoid duplicate network calls
+            .flowOn(Dispatchers.IO) // Changes the context where this flow is executed to Dispatchers.IO
+            .onEach { cityPrefix -> // just gets the prefix: 'ph', 'pho', 'phoe'
+                getCityNames(cityPrefix)
+            }
+            .launchIn(viewModelScope)
+    }
 
     fun onCityNameSearch(prefix: String) {
+        _searchText.value = prefix
+    }
 
-        //Log.d("debug", "searchCities prefix: $prefix")
-
-        _searchUiState.update {
-            it.copy(cityPrefix = prefix)
-        }
-
-        with(prefix) {
-            when {
-                isBlank() -> clearSearch()
-                length > 1 -> {
-
-                    cityNameSearchJob?.cancel()
-                    cityNameSearchJob = viewModelScope.launch {
-
-                        when (val repoResult = cityRepository.getCitiesByName(prefix)) {
-                            is ServiceResult.Success -> {
-                                _searchUiState.update {
-                                    it.copy(cities = repoResult.data)
-                                }
-                            }
-                            is ServiceResult.Error -> {
-                                if (repoResult.code != ErrorCode.JOB_CANCELLED.name) {
-                                    showUserError(repoResult)
-                                }
-                            }
-                        }
-                        delay(300) //debounce
-                    }
+    private fun getCityNames(prefix: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            when (val repoResult = cityRepository.getCitiesByName(prefix)) {
+                is ServiceResult.Success -> {
+                    _cities.value = repoResult.data
+                }
+                is ServiceResult.Error -> {
+                    showUserError(repoResult)
                 }
             }
         }
     }
 
     private fun clearSearch() {
-        _searchUiState.update {
-            it.copy(
-                cities = emptyList(),
-                selectedCity = null
-            )
-        }
+        _cities.value = emptyList()
+        _selectedCity.value = null
     }
 
     fun onCitySelected(city: CityResults) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             when (val repoResult = cityRepository.getCitiesByZip(city.zip)) {
                 is ServiceResult.Success -> {
-                    _searchUiState.update { uiState ->
-                        uiState.copy(selectedCity = repoResult.data)
-                    }
+                    _selectedCity.value = repoResult.data
                 }
                 is ServiceResult.Error -> {
                     showUserError(repoResult)
@@ -102,23 +101,14 @@ class SearchViewModel @Inject constructor(
 
     private fun showUserError(repoResult: ServiceResult.Error) {
         Log.d("debug", "api error: ${repoResult.message}")
-        _searchUiState.update {
-            it.copy(
-                userMessage = repoResult.message
-            )
-        }
+        _userMessage.value = repoResult.message
     }
 
-    fun goBack() {
-        _searchUiState.update {
-            it.copy(selectedCity = null)
-        }
+    fun navigateBackToSearch() {
+        _selectedCity.value = null
     }
 
     fun userMessageShown() {
-        Log.d("debug", "user message set to null.")
-        _searchUiState.update {
-            it.copy(userMessage = null)
-        }
+        _userMessage.value = null
     }
 }

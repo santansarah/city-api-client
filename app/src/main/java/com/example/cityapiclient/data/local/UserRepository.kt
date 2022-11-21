@@ -6,10 +6,8 @@ import androidx.datastore.preferences.core.*
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.util.ErrorCode
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import java.io.IOException
 import javax.inject.Inject
 
@@ -76,7 +74,7 @@ class UserRepository @Inject constructor(
                 else
                     getUser(it.userId)
             }
-        }
+        }.flowOn(Dispatchers.IO)
 
 
     /**

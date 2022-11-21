@@ -22,6 +22,7 @@ import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
 import io.ktor.util.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
@@ -138,7 +139,7 @@ class SignInObserver @Inject constructor(
                     Log.d("debug", "idToken: $idTokenWithNonce")
                     Log.d("debug", "nonce from result: $SERVER_NONCE")
 
-                    owner.lifecycleScope.launch {
+                    owner.lifecycleScope.launch(Dispatchers.IO) {
                         owner.lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
                             when (val getUserResult = userRepository.getUser(
                                 SERVER_NONCE,

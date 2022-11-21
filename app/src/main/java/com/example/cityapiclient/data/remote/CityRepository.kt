@@ -13,8 +13,9 @@ class CityRepository @Inject constructor(
     private val cityApiService: CityApiService
 ) : ICityRepository {
 
-    override suspend fun getCitiesByName(prefix: String): ServiceResult<List<CityResults>> =
-        when (val cityApiResult = cityApiService.getCitiesByName(prefix)) {
+    override suspend fun getCitiesByName(prefix: String): ServiceResult<List<CityResults>> {
+        Log.d("debug", "apiThread: ${Thread.currentThread()}")
+        return when (val cityApiResult = cityApiService.getCitiesByName(prefix)) {
             is ServiceResult.Success -> {
                 ServiceResult.Success(cityApiResult.data.cities.toCityResultsList())
             }
@@ -23,6 +24,7 @@ class CityRepository @Inject constructor(
                 cityApiResult
             }
         }
+    }
 
     override suspend fun getCitiesByZip(zipCode: Int): ServiceResult<City> =
         when (val cityApiResult = cityApiService.getCityByZip(zipCode)) {
