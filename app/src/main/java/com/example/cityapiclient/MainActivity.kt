@@ -19,6 +19,7 @@ import com.example.cityapiclient.util.windowinfo.getWindowLayoutType
 import com.example.cityapiclient.util.windowinfo.getWindowSizeClasses
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.*
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -68,8 +69,6 @@ class MainActivity : ComponentActivity() {
 
             /*runBlocking {
                 userRepository.clear()
-
-                //userPreferencesManager.setLastOnboardingScreen(0)
             }*/
 
             /**
@@ -90,29 +89,30 @@ class MainActivity : ComponentActivity() {
         outState.putParcelable("signInState", signInObserver.signInState.value)
     }
 
-    // kotlinx.coroutines.JobCancellationException: Parent job is Completed;
-/*
-    override fun onStop() {
-        super.onStop()
-
-        appendLog(this, "Destroying app...")
-
-        if (this::httpClient.isInitialized) {
-            appendLog(this, "Closing ktor client...")
-            httpClient.close()
-        }
-    }
-*/
-
-    // https://ktor.io/docs/create-client.html#close-client
-    // resources will be destroyed anyway.
+    /**
+     * https://ktor.io/docs/create-client.html#close-client
+     * Ktor recommends closing the HttpClient. When scoping the HttpClient as a Singleton
+     * to the app with Hilt, closing the client onDestroy will give us issues. Check out the
+     * following log:
+     * D/debug: httpclient: HttpClient[io.ktor.client.engine.android.AndroidClientEngine@9278fd4]
+     * D/debug: App Destroyed
+     * D/debug: Closing ktor client...
+     * ...[AFTER SCREEN ROTATION]
+     * D/debug: currentRoute: search
+     * D/debug: httpclient: HttpClient[io.ktor.client.engine.android.AndroidClientEngine@9278fd4]
+     * D/debug: REQUEST failed with exception: kotlinx.coroutines.JobCancellationException: Parent job is Completed;
+     * ---Here, our singleton is retained after a screen rotation, but the client is closed. You can't
+     * create new requests once the client is closed.
+     */
     override fun onDestroy() {
         super.onDestroy()
 
         appendLog(this, "Destroying app...")
+        Log.d("debug", "onDestroy...")
 
         if (this::httpClient.isInitialized) {
             appendLog(this, "Closing ktor client...")
+            Log.d("debug", "Closing ktor client...")
             httpClient.close()
         }
     }

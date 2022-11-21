@@ -38,12 +38,14 @@ class SearchViewModel @Inject constructor(
             _searchUiState.value
         )
 
-
+    /**
+     * First, declare a coroutine job. It gets initialized
+     * when a user starts typing.
+     */
     private var cityNameSearchJob: Job? = null
 
     fun onCityNameSearch(prefix: String) {
 
-        //Log.d("debug", "searchCities prefix: $prefix")
 
         _searchUiState.update {
             it.copy(cityPrefix = prefix)

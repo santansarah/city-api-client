@@ -18,10 +18,18 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object ApiModules {
+
+    /**
+     * https://ktor.io/docs/http-client-engines.html#jvm-android
+     */
     @Singleton
     @Provides
     fun provideKtorClient(): HttpClient {
         return HttpClient(Android) {
+            engine {
+                connectTimeout
+                //here you can set up connection timeout, socket timeout, proxy.
+            }
             expectSuccess = true
 
             install(Logging) {
