@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityRepository
+import com.example.cityapiclient.data.remote.ClosableRepository
+import com.example.cityapiclient.data.toCityResultsList
 import com.example.cityapiclient.domain.models.City
 import com.example.cityapiclient.domain.models.CityResults
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +26,7 @@ data class SearchUiState(
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val cityRepository: CityRepository
+    private val cityRepository: ClosableRepository
 ) : ViewModel() {
 
     private val _searchText = MutableStateFlow("")
@@ -72,7 +74,7 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             when (val repoResult = cityRepository.getCitiesByName(prefix)) {
                 is ServiceResult.Success -> {
-                    _cities.value = repoResult.data
+                    _cities.value = repoResult.data.cities.toCityResultsList()
                 }
                 is ServiceResult.Error -> {
                     showUserError(repoResult)
@@ -87,16 +89,18 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onCitySelected(city: CityResults) {
-        viewModelScope.launch(Dispatchers.IO) {
-            when (val repoResult = cityRepository.getCitiesByZip(city.zip)) {
-                is ServiceResult.Success -> {
-                    _selectedCity.value = repoResult.data
-                }
-                is ServiceResult.Error -> {
-                    showUserError(repoResult)
-                }
-            }
-        }
+
+    }
+
+    fun close() {
+        Log.d("close", "closing from VM")
+        cityRepository.close()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("close", "viewmodel clearing...")
+        close()
     }
 
     private fun showUserError(repoResult: ServiceResult.Error) {
