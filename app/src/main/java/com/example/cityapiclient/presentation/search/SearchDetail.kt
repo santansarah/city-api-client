@@ -16,9 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
-import com.example.cityapiclient.data.remote.CityDto
 import com.example.cityapiclient.domain.models.City
-import com.example.cityapiclient.domain.models.CityResults
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode

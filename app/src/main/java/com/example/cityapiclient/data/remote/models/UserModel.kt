@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data.remote
+package com.example.cityapiclient.data.remote.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

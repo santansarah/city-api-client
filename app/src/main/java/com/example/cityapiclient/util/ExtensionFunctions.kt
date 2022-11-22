@@ -2,9 +2,9 @@ package com.example.cityapiclient.util
 
 import android.util.Log
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.remote.CityApiResponse
-import com.example.cityapiclient.data.remote.ResponseErrors
-import com.example.cityapiclient.data.remote.UserResponse
+import com.example.cityapiclient.data.remote.models.CityApiResponse
+import com.example.cityapiclient.data.remote.models.ResponseErrors
+import com.example.cityapiclient.data.remote.models.UserResponse
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import io.ktor.client.plugins.*

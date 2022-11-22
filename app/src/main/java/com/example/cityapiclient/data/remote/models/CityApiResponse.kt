@@ -1,6 +1,5 @@
-package com.example.cityapiclient.data.remote
+package com.example.cityapiclient.data.remote.models
 
-import com.example.cityapiclient.util.ErrorCode
 import kotlinx.serialization.Serializable
 
 @Serializable

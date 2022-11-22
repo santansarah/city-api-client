@@ -1,9 +1,8 @@
 package com.example.cityapiclient.domain.interfaces
 
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.remote.CityApiResponse
-import com.example.cityapiclient.data.remote.UserResponse
-import com.example.cityapiclient.data.remote.UserWithAppResponse
+import com.example.cityapiclient.data.remote.models.CityApiResponse
+import com.example.cityapiclient.data.remote.models.UserResponse
 
 interface ICityApiService {
 

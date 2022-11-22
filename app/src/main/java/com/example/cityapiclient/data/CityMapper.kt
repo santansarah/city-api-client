@@ -1,6 +1,6 @@
 package com.example.cityapiclient.data
 
-import com.example.cityapiclient.data.remote.CityDto
+import com.example.cityapiclient.data.remote.models.CityDto
 import com.example.cityapiclient.domain.models.City
 import com.example.cityapiclient.domain.models.CityResults
 

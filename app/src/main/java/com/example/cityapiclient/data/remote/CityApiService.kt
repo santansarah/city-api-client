@@ -4,15 +4,14 @@ import android.util.Log
 import com.example.cityapiclient.BuildConfig
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.ServiceResult.Success
+import com.example.cityapiclient.data.remote.models.CityApiResponse
+import com.example.cityapiclient.data.remote.models.UserResponse
 import com.example.cityapiclient.domain.interfaces.ICityApiService
 import com.example.cityapiclient.util.toCityApiError
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 class CityApiService @Inject constructor(

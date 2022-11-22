@@ -1,6 +1,9 @@
 package com.example.cityapiclient.data.remote
 
 import com.example.cityapiclient.data.ServiceResult
+import com.example.cityapiclient.data.remote.models.CityApiResponse
+import com.example.cityapiclient.data.remote.models.CityDto
+import com.example.cityapiclient.data.remote.models.UserResponse
 import com.example.cityapiclient.domain.interfaces.ICityApiService
 
 class CityApiMockService(

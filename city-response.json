@@ -1,0 +1,33 @@
+{
+  "userWithApp": {
+    "userId": 2,
+    "email": "test1@mail.com",
+    "userCreateDate": "2022-07-23 02:20:41",
+    "userAppId": 1,
+    "appName": "City Android App",
+    "appType": "dev",
+    "apiKey": "Pr67HTHS4VIP1eN",
+    "appCreateDate": "2022-08-06 03:59:50"
+  },
+  "cities": [
+    {
+      "zip": 85083,
+      "lat": 33.74032,
+      "lng": -112.16308,
+      "city": "Phoenix",
+      "state": "AZ",
+      "population": 20343,
+      "county": "Maricopa"
+    },
+    {
+      "zip": 19460,
+      "lat": 40.12674,
+      "lng": -75.5294,
+      "city": "Phoenixville",
+      "state": "PA",
+      "population": 41615,
+      "county": "Chester"
+    }
+  ],
+  "errors": []
+}

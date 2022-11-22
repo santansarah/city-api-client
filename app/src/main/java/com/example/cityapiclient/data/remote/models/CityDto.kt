@@ -1,6 +1,8 @@
-package com.example.cityapiclient.data.remote
+package com.example.cityapiclient.data.remote.models
 
-@kotlinx.serialization.Serializable
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CityDto(
     val zip: Int = 0,
     val lat: Double = 0.0,

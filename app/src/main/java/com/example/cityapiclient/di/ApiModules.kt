@@ -18,12 +18,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 object ApiModules {
+
+    /**
+     * https://ktor.io/docs/http-client-engines.html#jvm-android
+     */
     @Singleton
     @Provides
     fun provideKtorClient(): HttpClient {
         return HttpClient(Android) {
             expectSuccess = true
-
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
@@ -39,14 +42,6 @@ object ApiModules {
                     isLenient = true
                 })
             }
-/*            HttpResponseValidator {
-                validateResponse { response ->
-                    val error: Error = response.body()
-                    if (error.code != 0) {
-                        throw CustomResponseException(response, "Code: ${error.code}, message: ${error.message}")
-                    }
-                }
-            }*/
         }
     }
 
