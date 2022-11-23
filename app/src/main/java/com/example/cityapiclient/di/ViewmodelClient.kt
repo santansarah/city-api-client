@@ -22,10 +22,6 @@ import javax.inject.Singleton
 @InstallIn(ViewModelComponent::class)
 @Module
 object ViewmodelClient {
-
-    /**
-     * https://ktor.io/docs/http-client-engines.html#jvm-android
-     */
     @ViewModelScoped
     @Provides
     @Named("ClosableClient")
@@ -52,8 +48,10 @@ object ViewmodelClient {
 
     @ViewModelScoped
     @Provides
-    fun provideViewmodelRepo(closableClient: HttpClient): ClosableRepository {
-        return ClosableRepository(closableClient)
+    fun provideViewmodelRepo(): ClosableRepository {
+        return ClosableRepository()
     }
 
 }
+
+

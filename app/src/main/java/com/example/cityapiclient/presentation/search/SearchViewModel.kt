@@ -93,13 +93,13 @@ class SearchViewModel @Inject constructor(
     }
 
     fun close() {
-        Log.d("close", "closing from VM")
+        Log.d("httpClient", "calling close from the viewmodel...")
         cityRepository.close()
     }
 
     override fun onCleared() {
         super.onCleared()
-        Log.d("close", "viewmodel clearing...")
+        Log.d("httpClient", "viewmodel onCleared called...")
         close()
     }
 

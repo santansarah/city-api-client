@@ -33,6 +33,8 @@ class CityApiService @Inject constructor(
 
         Log.d("debug", "httpclient: $client")
 
+        client
+
         return try {
             val cityApiResponse: CityApiResponse = client.get(CITIES) {
                 headers {
