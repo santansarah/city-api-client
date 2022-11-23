@@ -4,6 +4,7 @@ import com.example.cityapiclient.data.remote.CityApiService
 import com.example.cityapiclient.data.remote.CityRepository
 import com.example.cityapiclient.domain.interfaces.ICityApiService
 import com.example.cityapiclient.domain.interfaces.ICityRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

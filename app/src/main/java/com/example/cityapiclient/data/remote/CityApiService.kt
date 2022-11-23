@@ -10,15 +10,18 @@ import com.example.cityapiclient.domain.interfaces.ICityApiService
 import com.example.cityapiclient.util.toCityApiError
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
-class CityApiService @Inject constructor(
-    private val client: HttpClient
-) : ICityApiService {
+class CityApiService @Inject constructor(): ICityApiService {
 
-    companion object CityApiDefaults {
+    companion object {
 
         private const val BASE_URL = "http://${BuildConfig.KTOR_IP_ADDR}:8080"
         const val CITIES = "$BASE_URL/cities"
@@ -27,16 +30,48 @@ class CityApiService @Inject constructor(
         const val USER_BY_ID = "$BASE_URL/users"
 
         private const val API_KEY = "Pr67HTHS4VIP1eN"
+        private var closableClient: HttpClient? = null
+
+        fun client(): HttpClient {
+            if (closableClient == null) {
+                Log.d("httpClient", "creating httpClient...")
+                closableClient = HttpClient(Android) {
+                    expectSuccess = true
+                    install(Logging) {
+                        logger = object : Logger {
+                            override fun log(message: String) {
+                                Log.d("HTTP Client", message)
+                            }
+                        }
+                        level = LogLevel.ALL
+                    }
+                    install(ContentNegotiation) {
+                        json(Json {
+                            ignoreUnknownKeys = true
+                            prettyPrint = true
+                            isLenient = true
+                        })
+                    }
+                }
+
+            }
+            return closableClient as HttpClient
+        }
+
+    }
+
+    fun close() {
+        Log.d("httpClient", "closing the client...")
+        closableClient?.close()
+        closableClient = null
     }
 
     override suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse> {
 
-        Log.d("debug", "httpclient: $client")
-
-        client
+        Log.d("debug", "httpclient: ${client()}")
 
         return try {
-            val cityApiResponse: CityApiResponse = client.get(CITIES) {
+            val cityApiResponse: CityApiResponse = client().get(CITIES) {
                 headers {
                     append("x-api-key", API_KEY)
                 }
@@ -59,7 +94,7 @@ class CityApiService @Inject constructor(
 
     override suspend fun getCityByZip(zipCode: Int): ServiceResult<CityApiResponse> {
         return try {
-            val cityApiResponse: CityApiResponse = client.get(CITY_BY_ZIP) {
+            val cityApiResponse: CityApiResponse = client().get(CITY_BY_ZIP) {
                 headers {
                     append("x-api-key", API_KEY)
                 }
@@ -84,7 +119,7 @@ class CityApiService @Inject constructor(
         Log.d("debug", "Insert or get user from API...")
 
         return try {
-            val userResponse: UserResponse = client.get(USER_BY_JWT)
+            val userResponse: UserResponse = client().get(USER_BY_JWT)
             {
                 bearerAuth(jwtToken)
                 headers {
@@ -103,10 +138,10 @@ class CityApiService @Inject constructor(
 
     override suspend fun getUser(id: Int): ServiceResult<UserResponse> {
 
-        Log.d("debug", "httpclient: $client")
+        Log.d("debug", "httpclient: ${client()}")
 
         return try {
-            val userResponse: UserResponse = client.get(USER_BY_ID) {
+            val userResponse: UserResponse = client().get(USER_BY_ID) {
                 headers {
                     append("x-api-key", API_KEY)
                 }

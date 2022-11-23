@@ -13,6 +13,10 @@ class CityRepository @Inject constructor(
     private val cityApiService: CityApiService
 ) : ICityRepository {
 
+    fun close() {
+        cityApiService.close()
+    }
+
     override suspend fun getCitiesByName(prefix: String): ServiceResult<List<CityResults>> {
         Log.d("debug", "apiThread: ${Thread.currentThread()}")
         return when (val cityApiResult = cityApiService.getCitiesByName(prefix)) {
