@@ -59,6 +59,8 @@ class SearchViewModel @Inject constructor(
                     cityNameSearchJob?.cancel()
                     cityNameSearchJob = viewModelScope.launch {
 
+                        delay(300) //debounce
+
                         when (val repoResult = cityRepository.getCitiesByName(prefix)) {
                             is ServiceResult.Success -> {
                                 _searchUiState.update {
@@ -71,7 +73,6 @@ class SearchViewModel @Inject constructor(
                                 }
                             }
                         }
-                        delay(300) //debounce
                     }
                 }
             }
