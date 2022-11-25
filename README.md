@@ -1,11 +1,11 @@
-# Android Adaptive Navigation: Bottom Nav Bars, Nav Drawers, and Nav Rails with Jetpack Compose
+# Search As You Type/Autocomplete with Compose, Kotlin Coroutines and Kotlin Flows
 
-Use bottom nav bars for compact layouts, nav drawers for double panel layouts, and use nav rails for
-larger, landscape layouts. And don't forget to support table top and book postures for foldables!
-This branch includes navigation layout templates to render adaptive content in Jetpack Compose apps.
-It uses WindowSizeClass and WindowInfoTracker to get window sizes and folding features. This app
-supports phones, tablets, split screens, and foldable devices.
+Add search as you type functionality to your Android Compose apps using Kotlin coroutines or Kotlin
+flows. Either way works great for autocomplete searches!
+
+* Coroutines: https://github.com/santansarah/city-api-client/tree/search-type-co
+* Flows: https://github.com/santansarah/city-api-client/tree/search-type-flow
 
 ## YouTube Video
 
-[Android Adaptive Navigation: Bottom Nav Bars, Nav Drawers, and Nav Rails with Jetpack Compose](https://youtu.be/GXoxyUqYI08)
+https://youtu.be/nvevfht2s9c
