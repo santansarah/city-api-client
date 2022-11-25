@@ -1,11 +1,14 @@
-# Android Adaptive Navigation: Bottom Nav Bars, Nav Drawers, and Nav Rails with Jetpack Compose
+# Set up, Close, and Use Ktor Client in Your Android Apps
 
-Use bottom nav bars for compact layouts, nav drawers for double panel layouts, and use nav rails for
-larger, landscape layouts. And don't forget to support table top and book postures for foldables!
-This branch includes navigation layout templates to render adaptive content in Jetpack Compose apps.
-It uses WindowSizeClass and WindowInfoTracker to get window sizes and folding features. This app
-supports phones, tablets, split screens, and foldable devices.
+Ktor Client is great for multiplatform and standalone Android apps. Learn how to add the
+correct Ktor Client dependencies, add client plugins, make requests, and handle responses. I'll
+also go over how to properly close the client and clean up resources.
+
+* App Scoped Client: https://github.com/santansarah/city-api-client/tree/ktor-client-app-scoped
+* Closable Client: https://github.com/santansarah/city-api-client/tree/ktor-client-closable
+* Ktor API: https://github.com/santansarah/ktor-city-api/tree/city-search-details
 
 ## YouTube Video
 
-[Android Adaptive Navigation: Bottom Nav Bars, Nav Drawers, and Nav Rails with Jetpack Compose](https://youtu.be/GXoxyUqYI08)
+https://youtu.be/gyOdfRgNs2k
+
