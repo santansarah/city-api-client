@@ -111,4 +111,15 @@ class SearchViewModel @Inject constructor(
     fun userMessageShown() {
         _userMessage.value = null
     }
+
+    fun close() {
+        Log.d("httpClient", "calling close from the viewmodel...")
+        cityRepository.close()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("httpClient", "viewmodel onCleared called...")
+        close()
+    }
 }

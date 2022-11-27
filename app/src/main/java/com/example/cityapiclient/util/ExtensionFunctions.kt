@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.models.CityApiResponse
 import com.example.cityapiclient.data.remote.models.ResponseErrors
-import com.example.cityapiclient.data.remote.models.UserResponse
+import com.example.cityapiclient.data.remote.models.UserApiResponse
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import io.ktor.client.plugins.*
@@ -43,7 +43,7 @@ inline fun <reified T> Exception.toCityApiError(): ServiceResult.Error {
                     is CityApiResponse -> {
                         cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
                     }
-                    is UserResponse -> {
+                    is UserApiResponse -> {
                         cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
                     }
                     else -> {

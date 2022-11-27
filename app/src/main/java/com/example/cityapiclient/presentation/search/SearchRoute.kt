@@ -53,6 +53,10 @@ fun SearchRoute(
         }
     }
 
+    DisposableEffect(true) {
+        onDispose { viewModel.close() }
+    }
+
     val appLayoutMode = appLayoutInfo.appLayoutMode
 
     with(appLayoutMode) {

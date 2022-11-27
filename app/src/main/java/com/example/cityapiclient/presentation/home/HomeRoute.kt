@@ -53,6 +53,10 @@ fun HomeRoute(
         }
     }
 
+    DisposableEffect(true) {
+        onDispose { viewModel.close() }
+    }
+
     val appLayoutMode = appLayoutInfo.appLayoutMode
 
     if (!homeUiState.isLoading) {

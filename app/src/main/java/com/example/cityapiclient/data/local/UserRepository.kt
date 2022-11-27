@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityApiService
+import com.example.cityapiclient.data.remote.UserApiService
 import com.example.cityapiclient.util.ErrorCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -20,7 +21,7 @@ data class UserPreferences(
 
 class UserRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
-    private val cityApiService: CityApiService
+    private val userApiService: UserApiService
 ) {
     private val TAG: String = "UserPreferencesManager"
 
@@ -116,16 +117,16 @@ class UserRepository @Inject constructor(
     }
 
     suspend fun getUser(nonce: String, jwtToken: String): ServiceResult<CurrentUser> =
-        when (val insertResult = cityApiService.getUser(nonce,jwtToken)) {
+        when (val insertResult = userApiService.getUser(nonce,jwtToken)) {
             is ServiceResult.Success -> {
                 isSignedOut(false)
-                with(insertResult.data) {
-                    setUserId(user.userId)
+                with(insertResult.data.user) {
+                    setUserId(userId)
                     ServiceResult.Success(
                         CurrentUser.SignedInUser(
-                            userId = user.userId,
-                            name = user.name,
-                            email = user.email
+                            userId = userId,
+                            name = name,
+                            email = email
                         )
                     )
                 }
@@ -134,7 +135,7 @@ class UserRepository @Inject constructor(
         }
 
     suspend fun getUser(userId: Int): CurrentUser {
-        return when (val getUserResult = cityApiService.getUser(userId)) {
+        return when (val getUserResult = userApiService.getUser(userId)) {
             is ServiceResult.Success -> {
                 isSignedOut(false)
                 with(getUserResult.data.user) {

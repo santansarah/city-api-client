@@ -10,6 +10,8 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.data.local.UserRepository
+import com.example.cityapiclient.data.remote.models.UserApiModel
+import com.example.cityapiclient.data.remote.models.UserApiResponse
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.domain.SignInState
 import com.example.cityapiclient.presentation.AppRoot
@@ -19,6 +21,8 @@ import com.example.cityapiclient.util.windowinfo.getWindowLayoutType
 import com.example.cityapiclient.util.windowinfo.getWindowSizeClasses
 import dagger.hilt.android.AndroidEntryPoint
 import io.ktor.client.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,9 +33,6 @@ class MainActivity : ComponentActivity() {
      */
     @Inject
     lateinit var userRepository: UserRepository
-
-    @Inject
-    lateinit var httpClient: HttpClient
 
     @Inject
     lateinit var signInObserver: SignInObserver
@@ -88,33 +89,5 @@ class MainActivity : ComponentActivity() {
         super.onSaveInstanceState(outState)
 
         outState.putParcelable("signInState", signInObserver.signInState.value)
-    }
-
-    /**
-     * https://ktor.io/docs/create-client.html#close-client
-     * Ktor recommends closing the HttpClient. When scoping the HttpClient as a Singleton
-     * to the app with Hilt, closing the client onDestroy will give us issues. Check out the
-     * following log:
-     * D/debug: httpclient: HttpClient[io.ktor.client.engine.android.AndroidClientEngine@9278fd4]
-     * D/debug: App Destroyed
-     * D/debug: Closing ktor client...
-     * ...[AFTER SCREEN ROTATION]
-     * D/debug: currentRoute: search
-     * D/debug: httpclient: HttpClient[io.ktor.client.engine.android.AndroidClientEngine@9278fd4]
-     * D/debug: REQUEST failed with exception: kotlinx.coroutines.JobCancellationException: Parent job is Completed;
-     * ---Here, our singleton is retained after a screen rotation, but the client is closed. You can't
-     * create new requests once the client is closed.
-     */
-    override fun onDestroy() {
-        super.onDestroy()
-
-        appendLog(this, "Destroying app...")
-        Log.d("debug", "onDestroy...")
-
-        if (this::httpClient.isInitialized) {
-            appendLog(this, "Closing ktor client...")
-            Log.d("debug", "Closing ktor client...")
-            httpClient.close()
-        }
     }
 }

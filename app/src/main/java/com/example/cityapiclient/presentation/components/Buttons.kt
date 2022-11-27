@@ -63,7 +63,7 @@ fun AnimatedButton(
                     modifier = Modifier
                         .fillMaxWidth(),
                     text = buttonText,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleSmall,
                     textAlign = TextAlign.Center,
                     //color = MaterialTheme.colorScheme.outline
                 )
@@ -124,7 +124,7 @@ fun AppIconButton(
                 modifier = Modifier
                     .fillMaxWidth(),
                 text = buttonText,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleSmall,
                 textAlign = TextAlign.Center
             )
         }

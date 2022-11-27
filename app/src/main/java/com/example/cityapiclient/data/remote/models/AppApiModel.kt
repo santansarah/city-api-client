@@ -4,13 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NewUser(
-    val email: String = "",
-    val name: String = ""
-)
-
-@Serializable
-data class UserWithApp(
+data class AppApiModel(
     val userId: Int = 0,
     val email: String = "",
     val name: String = "",
@@ -23,16 +17,7 @@ data class UserWithApp(
 )
 
 @Serializable
-data class User(
-    val userId: Int = 0,
-    val email: String = "",
-    val name: String = "",
-    val userCreateDate: String = "",
-    val apps: List<UserApp> = emptyList()
-)
-
-@Serializable
-data class UserApp(
+data class UserAppApiModel(
     val userAppId: Int = 0,
     val userId: Int = 0,
     val appName: String = "",
@@ -40,8 +25,6 @@ data class UserApp(
     val apiKey: String = "",
     val appCreateDate: String = ""
 )
-
-
 
 @Serializable
 enum class AppType(val value: Int) {
@@ -49,3 +32,4 @@ enum class AppType(val value: Int) {
     @SerialName("dev") DEVELOPMENT(1),
     @SerialName("prod") PRODUCTION(2)
 }
+

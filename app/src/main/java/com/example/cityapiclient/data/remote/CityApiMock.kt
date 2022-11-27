@@ -2,8 +2,7 @@ package com.example.cityapiclient.data.remote
 
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.models.CityApiResponse
-import com.example.cityapiclient.data.remote.models.CityDto
-import com.example.cityapiclient.data.remote.models.UserResponse
+import com.example.cityapiclient.data.remote.models.CityApiModel
 import com.example.cityapiclient.domain.interfaces.ICityApiService
 
 class CityApiMockService(
@@ -16,20 +15,10 @@ class CityApiMockService(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getUser(
-        nonce: String,
-        jwtToken: String
-    ): ServiceResult<UserResponse> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getUser(id: Int): ServiceResult<UserResponse> {
-        TODO("Not yet implemented")
-    }
 }
 
-val cities = listOf<CityDto>(
-    CityDto(
+val cities = listOf<CityApiModel>(
+    CityApiModel(
         85083,
         33.74032,
         -112.16308,
@@ -37,7 +26,7 @@ val cities = listOf<CityDto>(
         "AZ",
         20343
     ),
-    CityDto(
+    CityApiModel(
         85013,
         33.51001,
         -112.08294,
@@ -45,7 +34,7 @@ val cities = listOf<CityDto>(
         "AZ",
         20912
     ),
-    CityDto(
+    CityApiModel(
         85085,
         33.75637,
         -112.07426,
