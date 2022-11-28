@@ -2,11 +2,18 @@ package com.example.cityapiclient.presentation.components
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -37,7 +44,8 @@ fun AnimatedButton(
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(6.dp)
         ) {
             Icon(
@@ -70,6 +78,34 @@ fun AnimatedButton(
             }
         }
     }
+}
+
+@Composable
+fun AddButton() {
+    FloatingActionButton(
+        modifier = Modifier
+            .padding(bottom= 16.dp)
+            .border(
+                1.dp, blueYellowGradient, RoundedCornerShape(16.dp)
+            ),
+        onClick = { /*TODO*/ },
+        //shape = CircleShape,
+        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        content = {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add App",
+                modifier = Modifier
+                    .graphicsLayer(alpha = 0.99f)
+                    .drawWithCache {
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
+                        }
+                    },
+            )
+        }
+    )
 }
 
 @Preview(
@@ -110,7 +146,8 @@ fun AppIconButton(
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(6.dp)
         ) {
             Icon(

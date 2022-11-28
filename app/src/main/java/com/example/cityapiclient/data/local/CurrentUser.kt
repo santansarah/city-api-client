@@ -16,6 +16,8 @@ sealed class CurrentUser {
     object SignedOutUser : CurrentUser()
     object UnknownSignIn : CurrentUser()
     data class NotAuthenticated(val userId: Int, val error: ErrorCode) : CurrentUser()
+
+    fun isSignedIn(): Boolean = this is SignedInUser
 }
 
 

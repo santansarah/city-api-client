@@ -1,14 +1,22 @@
 package com.example.cityapiclient.presentation.layouts
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
+import com.example.cityapiclient.presentation.theme.blueYellowGradient
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
@@ -54,34 +62,34 @@ fun CompactLayoutWithScaffold(
     topAppBar: @Composable () -> Unit,
     appLayoutInfo: AppLayoutInfo
 ) {
-        val appLayoutMode = appLayoutInfo.appLayoutMode
+    val appLayoutMode = appLayoutInfo.appLayoutMode
 
-        val sidePadding = when(appLayoutMode) {
-            AppLayoutMode.PHONE_LANDSCAPE -> 40.dp
-            AppLayoutMode.NARROW_TABLET -> 40.dp
-            else -> 16.dp
-        }
+    val sidePadding = when (appLayoutMode) {
+        AppLayoutMode.PHONE_LANDSCAPE -> 40.dp
+        AppLayoutMode.NARROW_TABLET -> 40.dp
+        else -> 16.dp
+    }
 
-        val columnPadding = PaddingValues(
-            bottom = appScaffoldPaddingValues.calculateBottomPadding(),
-            start = sidePadding,
-            end = sidePadding
-        )
+    val columnPadding = PaddingValues(
+        bottom = appScaffoldPaddingValues.calculateBottomPadding(),
+        start = sidePadding,
+        end = sidePadding
+    )
 
-        var columnModifier: Modifier = Modifier
-            .fillMaxWidth()
-            .padding(columnPadding)
+    var columnModifier: Modifier = Modifier
+        .fillMaxSize()
+        .padding(columnPadding)
 
-        if (allowScroll) {
-            columnModifier = columnModifier.verticalScroll(rememberScrollState())
-        }
+    if (allowScroll) {
+        columnModifier = columnModifier.verticalScroll(rememberScrollState())
+    }
 
-        Column(
-            modifier = columnModifier,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            topAppBar()
-            mainContent()
-        }
+    Column(
+        modifier = columnModifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        topAppBar()
+        mainContent()
+    }
 }
 

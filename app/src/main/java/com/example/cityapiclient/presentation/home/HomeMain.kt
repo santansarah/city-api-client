@@ -36,7 +36,8 @@ fun HomeScreenContent(
                 appLayoutInfo = appLayoutInfo,
                 currentUser = homeUiState.currentUser,
                 userApps = homeUiState.apps,
-                onAddAppClicked = {}
+                onAddAppClicked = {},
+                selectedApp = homeUiState.selectedApp
             )
         }
         is CurrentUser.SignedOutUser, is CurrentUser.NotAuthenticated -> {

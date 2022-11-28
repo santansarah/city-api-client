@@ -10,6 +10,34 @@ import androidx.compose.ui.focus.FocusManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun AppTextField(
+    fieldValue: String = "",
+    onChanged: (String) -> Unit,
+    placeHolderValue: String,
+) {
+    TextField(
+        value = fieldValue,
+        onValueChange = onChanged,
+        label = {
+                Text(text = "Test")
+        },
+        placeholder = {
+            Text(
+                text = placeHolderValue,
+                style = MaterialTheme.typography.bodyMedium,
+                //color = MaterialTheme.colorScheme.onPrimary.copy(.5f)
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth(),
+        textStyle = MaterialTheme.typography.bodyMedium,
+        colors = textFieldColors()
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun TextFieldWithIconAndClear(
     leadingIcon: @Composable () -> Unit,
     fieldValue: String = "",

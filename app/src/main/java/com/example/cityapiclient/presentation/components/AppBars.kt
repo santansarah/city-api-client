@@ -17,7 +17,8 @@ import com.example.cityapiclient.presentation.theme.CityAPIClientTheme
 fun TopLevelAppBar(
     appLayoutInfo: AppLayoutInfo,
     title: String,
-    onIconClicked: () -> Unit = {}
+    onIconClicked: () -> Unit = {},
+    actions: @Composable () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -34,13 +35,18 @@ fun TopLevelAppBar(
         navigationIcon = {
             if (!appLayoutInfo.appLayoutMode.showNavRail()) {
                 IconButton(
-                   //modifier = Modifier.border(2.dp, Color.Magenta),
-                    onClick = onIconClicked) {
-                    CityIcon(modifier = Modifier.size(34.dp)
-                        .padding(0.dp))
+                    //modifier = Modifier.border(2.dp, Color.Magenta),
+                    onClick = onIconClicked
+                ) {
+                    CityIcon(
+                        modifier = Modifier
+                            .size(42.dp)
+                            .padding(0.dp)
+                    )
                 }
             }
-        }
+        },
+        actions = { actions() }
     )
 }
 
@@ -48,7 +54,8 @@ fun TopLevelAppBar(
 @OptIn(ExperimentalMaterial3Api::class)
 fun AppBarWithBackButton(
     title: String,
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    actions: @Composable () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -63,10 +70,11 @@ fun AppBarWithBackButton(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onBackClicked ) {
+            IconButton(onClick = onBackClicked) {
                 BackIcon(contentDesc = "Go Back")
             }
-        }
+        },
+        actions = { actions() }
     )
 }
 /*

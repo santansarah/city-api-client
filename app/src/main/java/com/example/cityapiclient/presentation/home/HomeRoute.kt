@@ -1,22 +1,35 @@
 package com.example.cityapiclient.presentation.home
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
+import com.example.cityapiclient.presentation.components.AppBarWithBackButton
 import com.example.cityapiclient.presentation.components.AppSnackbarHost
 import com.example.cityapiclient.presentation.components.TopLevelAppBar
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleFoldedLayout
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
+import com.example.cityapiclient.presentation.theme.blueYellowGradient
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import kotlinx.coroutines.launch
 
@@ -122,12 +135,36 @@ fun HomeRoute(
 
                         },
                         topAppBar = {
-                            TopLevelAppBar(
-                                appLayoutInfo = appLayoutInfo,
-                                title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
-                                onIconClicked = openDrawer
-                            )
-                        }
+                            if (homeUiState.selectedApp == null) {
+                                TopLevelAppBar(
+                                    appLayoutInfo = appLayoutInfo,
+                                    title = HomeAppBarTitle(currentUser = homeUiState.currentUser),
+                                    onIconClicked = openDrawer,
+                                    actions = {
+                                        ShowAddorSave(
+                                            isSignedIn = homeUiState.isSignedIn,
+                                            isAppSelected = false,
+                                            onAddClicked = viewModel::addApp,
+                                            onSaveClicked = viewModel::saveApp
+                                        )
+                                    }
+                                )
+                            } else {
+                                AppBarWithBackButton(
+                                    title = "App Details",
+                                    onBackClicked = viewModel::onBackFromAppDetail,
+                                    actions = {
+                                        ShowAddorSave(
+                                            isSignedIn = homeUiState.isSignedIn,
+                                            isAppSelected = true,
+                                            onAddClicked = viewModel::addApp,
+                                            onSaveClicked = viewModel::saveApp
+                                        )
+                                    }
+                                )
+                            }
+                        },
+                        allowScroll = !homeUiState.isSignedIn,
                     )
                 }
             }
@@ -142,5 +179,44 @@ private fun HomeAppBarTitle(currentUser: CurrentUser): String =
     else
         "API KEYS"
 
+@Composable
+fun ShowAddorSave(
+    isSignedIn: Boolean,
+    isAppSelected: Boolean,
+    onAddClicked: () -> Unit,
+    onSaveClicked: () -> Unit
+) {
+    if (isSignedIn && !isAppSelected) {
+        IconButton(
+            modifier = Modifier,
+            onClick = onAddClicked
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add App",
+                modifier = Modifier
+                    .size(38.dp)
+                    .graphicsLayer(alpha = 0.99f)
+                    .drawWithCache {
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
+                        }
+                    },
+            )
+        }
+    }
+    if (isAppSelected) {
+        IconButton(
+            //modifier = Modifier.border(2.dp, Color.Magenta),
+            onClick = onSaveClicked
+        ) {
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = "Save App"
+            )
+        }
+    }
+}
 
 
