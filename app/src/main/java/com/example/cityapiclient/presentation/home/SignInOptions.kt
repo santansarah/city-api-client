@@ -12,6 +12,7 @@ import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.presentation.components.AppIconButton
 import com.example.cityapiclient.presentation.components.CardWithHeader
+import com.example.cityapiclient.presentation.components.CustomIconButton
 import com.example.cityapiclient.presentation.components.SubHeading
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode
@@ -58,10 +59,10 @@ fun HomeSignInOrSignUp(
 private fun SearchButton(
     onSearchClicked: () -> Unit
 ) {
-    AppIconButton(
+    CustomIconButton(
         buttonText = "City Name Search",
         onClick = onSearchClicked,
-        imageRes = Icons.Outlined.Search,
+        imageRes = R.drawable.city_search,
         modifier = Modifier
     )
 }

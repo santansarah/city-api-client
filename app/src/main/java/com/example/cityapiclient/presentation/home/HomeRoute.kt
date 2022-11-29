@@ -1,6 +1,7 @@
 package com.example.cityapiclient.presentation.home
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -17,10 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
 import com.example.cityapiclient.presentation.components.AppBarWithBackButton
@@ -223,14 +226,17 @@ fun ShowAddorSave(
 ) {
     if (isSignedIn && !isAppSelected) {
         IconButton(
-            modifier = Modifier,
+            modifier = Modifier
+                .padding(0.dp)
+                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp))
+                .border(1.dp, brush = blueYellowGradient, shape =RoundedCornerShape(16.dp)),
             onClick = onAddClicked
         ) {
             Icon(
-                imageVector = Icons.Default.Add,
+                painter = painterResource(id = R.drawable.add_app),
                 contentDescription = "Add App",
                 modifier = Modifier
-                    .size(38.dp)
+                    .size(28.dp)
                     .graphicsLayer(alpha = 0.99f)
                     .drawWithCache {
                         onDrawWithContent {

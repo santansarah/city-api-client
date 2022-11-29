@@ -53,7 +53,7 @@ fun AnimatedButton(
                 contentDescription = buttonText,
                 modifier = Modifier
                     .align(Alignment.CenterStart)
-                    .height(20.dp),
+                    .height(18.dp),
                 tint = MaterialTheme.colorScheme.outline
             )
 
@@ -80,11 +80,57 @@ fun AnimatedButton(
     }
 }
 
+
+@Composable
+fun CustomIconButton(
+    buttonText: String,
+    onClick: () -> Unit,
+    imageRes: Int,
+    modifier: Modifier = Modifier,
+) {
+
+    Button(
+        /*modifier = modifier
+            .height(48.dp),*/
+        border = BorderStroke(1.dp, blueYellowGradient),
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(
+            //containerColor = MaterialTheme.colorScheme.primary.copy(.6f)
+        )
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(6.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = imageRes),
+                contentDescription = buttonText,
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .height(20.dp),
+                tint = MaterialTheme.colorScheme.outline
+            )
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = buttonText,
+                style = MaterialTheme.typography.titleSmall,
+                textAlign = TextAlign.Center,
+                //color = MaterialTheme.colorScheme.outline
+            )
+        }
+    }
+}
+
+
 @Composable
 fun AddButton() {
     FloatingActionButton(
         modifier = Modifier
-            .padding(bottom= 16.dp)
+            .padding(bottom = 16.dp)
             .border(
                 1.dp, blueYellowGradient, RoundedCornerShape(16.dp)
             ),

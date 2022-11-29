@@ -1,5 +1,6 @@
 package com.example.cityapiclient.presentation.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
@@ -35,12 +36,12 @@ fun TopLevelAppBar(
         navigationIcon = {
             if (!appLayoutInfo.appLayoutMode.showNavRail()) {
                 IconButton(
-                    //modifier = Modifier.border(2.dp, Color.Magenta),
+                   // modifier = Modifier.border(2.dp, Color.Magenta),
                     onClick = onIconClicked
                 ) {
                     CityIcon(
                         modifier = Modifier
-                            .size(42.dp)
+                            .size(46.dp)
                             .padding(0.dp)
                     )
                 }

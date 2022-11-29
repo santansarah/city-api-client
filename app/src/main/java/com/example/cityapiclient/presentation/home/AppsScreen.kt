@@ -83,10 +83,10 @@ fun NoApps(
         }) {
             Spacer(modifier = Modifier.height(32.dp))
             val buttonModifier = Modifier.fillMaxWidth()
-            AppIconButton(
-                buttonText = "Add App",
+            CustomIconButton(
+                buttonText = "Get Your API Key",
                 onClick = onAddAppClicked,
-                imageRes = Icons.Default.Add,
+                imageRes = R.drawable.add_app,
                 modifier = buttonModifier
             )
             Spacer(modifier = Modifier.height(18.dp))
