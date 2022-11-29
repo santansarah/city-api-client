@@ -8,6 +8,7 @@ import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.data.remote.AppRepository
 import com.example.cityapiclient.data.remote.CityApiService
+import com.example.cityapiclient.data.remote.models.AppType
 import com.example.cityapiclient.domain.models.CityResults
 import com.example.cityapiclient.domain.models.UserApp
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -85,6 +86,20 @@ class HomeViewModel @Inject constructor(
     fun saveApp() {
         Log.d("homeviewmodel", "saving user app...")
         _selectedApp.value = null
+    }
+
+    fun saveAppName(appName: String) {
+        Log.d("homeviewmodel", "saving app name...")
+        _selectedApp.update {
+            it?.copy(appName = appName)
+        }
+    }
+
+    fun saveAppType(appType: AppType) {
+        Log.d("homeviewmodel", "saving app type...")
+        _selectedApp.update {
+            it?.copy(appType = appType)
+        }
     }
 
     fun onBackFromAppDetail() {

@@ -11,7 +11,7 @@ data class AppApiModel(
     val userCreateDate: String = "",
     val userAppId: Int = 0,
     val appName: String = "",
-    val appType: AppType = AppType.NOTSET,
+    val appType: AppType = AppType.Development,
     val apiKey: String = "",
     val appCreateDate: String = ""
 )
@@ -21,15 +21,14 @@ data class UserAppApiModel(
     val userAppId: Int = 0,
     val userId: Int = 0,
     val appName: String = "",
-    val appType: AppType = AppType.NOTSET,
+    val appType: AppType = AppType.Development,
     val apiKey: String = "",
     val appCreateDate: String = ""
 )
 
 @Serializable
-enum class AppType(val value: Int) {
-    NOTSET(0),
-    @SerialName("dev") DEVELOPMENT(1),
-    @SerialName("prod") PRODUCTION(2)
+enum class AppType(val value: String) {
+    Development("dev"),
+    Production("prod")
 }
 

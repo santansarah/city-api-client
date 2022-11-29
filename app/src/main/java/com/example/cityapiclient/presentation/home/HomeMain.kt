@@ -14,7 +14,7 @@ fun HomeScreenContent(
     signUp: () -> Unit,
     signIn: () -> Unit,
     signInState: SignInState,
-    onSearchClicked: () -> Unit
+    onSearchClicked: () -> Unit,
 ) {
     when (homeUiState.currentUser) {
         is CurrentUser.UnknownSignIn -> {
@@ -31,15 +31,6 @@ fun HomeScreenContent(
                 onSearchClicked = onSearchClicked
             )
         }
-        is CurrentUser.SignedInUser -> {
-            AppsScreen(
-                appLayoutInfo = appLayoutInfo,
-                currentUser = homeUiState.currentUser,
-                userApps = homeUiState.apps,
-                onAddAppClicked = {},
-                selectedApp = homeUiState.selectedApp
-            )
-        }
         is CurrentUser.SignedOutUser, is CurrentUser.NotAuthenticated -> {
             HomeSignInOrSignUp(
                 appLayoutInfo = appLayoutInfo,
@@ -54,5 +45,6 @@ fun HomeScreenContent(
                 onSearchClicked = onSearchClicked
             )
         }
+        else -> Unit
     }
 }

@@ -11,27 +11,37 @@ import androidx.compose.ui.focus.FocusManager
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTextField(
+    modifier: Modifier = Modifier,
     fieldValue: String = "",
     onChanged: (String) -> Unit,
-    placeHolderValue: String,
+    placeHolderValue: String? = null,
+    readOnly: Boolean = false,
+    label: String? = null,
+    trailingIcon: @Composable () -> Unit = {},
+    supportingText: String? = null
 ) {
     TextField(
+        readOnly = readOnly,
         value = fieldValue,
         onValueChange = onChanged,
-        label = {
-                Text(text = "Test")
-        },
         placeholder = {
-            Text(
-                text = placeHolderValue,
-                style = MaterialTheme.typography.bodyMedium,
-                //color = MaterialTheme.colorScheme.onPrimary.copy(.5f)
-            )
+            placeHolderValue?.let {
+                Text(
+                    text = placeHolderValue,
+                    //style = MaterialTheme.typography.bodyMedium,
+                    //color = MaterialTheme.colorScheme.onPrimary.copy(.5f)
+                )
+            }
         },
-        modifier = Modifier
-            .fillMaxWidth(),
-        textStyle = MaterialTheme.typography.bodyMedium,
-        colors = textFieldColors()
+        supportingText = {
+            supportingText?.let {
+                Text(text = supportingText)
+            }
+        },
+        modifier = modifier,
+        //textStyle = MaterialTheme.typography.bodyMedium,
+        colors = textFieldColors(),
+        trailingIcon = { trailingIcon() }
     )
 }
 
@@ -85,13 +95,18 @@ fun TrailingIcon(
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun textFieldColors() = TextFieldDefaults.textFieldColors(
-    containerColor = MaterialTheme.colorScheme.primaryContainer,
+fun textFieldColors() = TextFieldDefaults.textFieldColors(
+    containerColor = MaterialTheme.colorScheme.surface,
     placeholderColor = MaterialTheme.colorScheme.outline,
     unfocusedLeadingIconColor = MaterialTheme.colorScheme.outline,
     unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
     focusedIndicatorColor = MaterialTheme.colorScheme.outline,
     cursorColor = MaterialTheme.colorScheme.onPrimary,
     focusedLeadingIconColor = MaterialTheme.colorScheme.onPrimary,
-    textColor = MaterialTheme.colorScheme.onPrimary
+    textColor = MaterialTheme.colorScheme.onPrimary,
+    focusedLabelColor = MaterialTheme.colorScheme.outline,
+    unfocusedLabelColor = MaterialTheme.colorScheme.outline,
+    disabledSupportingTextColor = MaterialTheme.colorScheme.onSecondary.copy(.5f),
+    focusedSupportingTextColor = MaterialTheme.colorScheme.onSecondary.copy(.5f),
+    unfocusedSupportingTextColor = MaterialTheme.colorScheme.onSecondary.copy(.5f)
 )

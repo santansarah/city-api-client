@@ -78,14 +78,26 @@ fun HomeRoute(
                 isSplitFoldable() -> {
                     Log.d("debug", "isFoldable")
                     DoubleFoldedLayout(appLayoutInfo = appLayoutInfo, mainPanel = {
-                        HomeScreenContent(
-                            homeUiState,
-                            appLayoutInfo,
-                            { scope.launch { signInObserver.signUp() } },
-                            { scope.launch { signInObserver.signIn() } },
-                            signInState,
-                            onSearchClicked
-                        )
+
+                        if (homeUiState.isSignedIn)
+                            AppsScreen(
+                                appLayoutInfo = appLayoutInfo,
+                                currentUser = homeUiState.currentUser,
+                                userApps = homeUiState.apps,
+                                onAddAppClicked = {},
+                                selectedApp = homeUiState.selectedApp,
+                                onAppNameChanged = viewModel::saveAppName,
+                                onAppTypeChanged = viewModel::saveAppType
+                            )
+                        else
+                            HomeScreenContent(
+                                homeUiState,
+                                appLayoutInfo,
+                                { scope.launch { signInObserver.signUp() } },
+                                { scope.launch { signInObserver.signIn() } },
+                                signInState,
+                                onSearchClicked
+                            )
                     }, detailsPanel = { HomeScreenInfo() },
                         topAppBar = {
                             TopLevelAppBar(
@@ -101,14 +113,26 @@ fun HomeRoute(
                     DoubleLayoutWithScaffold(
                         appLayoutInfo = appLayoutInfo,
                         leftContent = {
-                            HomeScreenContent(
-                                homeUiState,
-                                appLayoutInfo,
-                                { scope.launch { signInObserver.signUp() } },
-                                { scope.launch { signInObserver.signIn() } },
-                                signInState,
-                                onSearchClicked
-                            )
+
+                            if (homeUiState.isSignedIn)
+                                AppsScreen(
+                                    appLayoutInfo = appLayoutInfo,
+                                    currentUser = homeUiState.currentUser,
+                                    userApps = homeUiState.apps,
+                                    onAddAppClicked = {},
+                                    selectedApp = homeUiState.selectedApp,
+                                    onAppNameChanged = viewModel::saveAppName,
+                                    onAppTypeChanged = viewModel::saveAppType
+                                )
+                            else
+                                HomeScreenContent(
+                                    homeUiState,
+                                    appLayoutInfo,
+                                    { scope.launch { signInObserver.signUp() } },
+                                    { scope.launch { signInObserver.signIn() } },
+                                    signInState,
+                                    onSearchClicked
+                                )
                         },
                         rightContent = { HomeScreenInfo() }
                     ) {
@@ -124,14 +148,25 @@ fun HomeRoute(
                         appLayoutInfo = appLayoutInfo,
                         mainContent = {
 
-                            HomeScreenContent(
-                                homeUiState,
-                                appLayoutInfo,
-                                { scope.launch { signInObserver.signUp() } },
-                                { scope.launch { signInObserver.signIn() } },
-                                signInState,
-                                onSearchClicked
-                            )
+                            if (homeUiState.isSignedIn)
+                                AppsScreen(
+                                    appLayoutInfo = appLayoutInfo,
+                                    currentUser = homeUiState.currentUser,
+                                    userApps = homeUiState.apps,
+                                    onAddAppClicked = {},
+                                    selectedApp = homeUiState.selectedApp,
+                                    onAppNameChanged = viewModel::saveAppName,
+                                    onAppTypeChanged = viewModel::saveAppType
+                                )
+                            else
+                                HomeScreenContent(
+                                    homeUiState,
+                                    appLayoutInfo,
+                                    { scope.launch { signInObserver.signUp() } },
+                                    { scope.launch { signInObserver.signIn() } },
+                                    signInState,
+                                    onSearchClicked
+                                )
 
                         },
                         topAppBar = {
@@ -164,7 +199,7 @@ fun HomeRoute(
                                 )
                             }
                         },
-                        allowScroll = !homeUiState.isSignedIn,
+                        allowScroll = !homeUiState.isSignedIn || homeUiState.apps.isEmpty(),
                     )
                 }
             }

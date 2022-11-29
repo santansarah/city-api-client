@@ -1,6 +1,5 @@
 package com.example.cityapiclient.data.local
 
-import android.util.Log
 import com.example.cityapiclient.util.ErrorCode
 
 /**
@@ -18,6 +17,11 @@ sealed class CurrentUser {
     data class NotAuthenticated(val userId: Int, val error: ErrorCode) : CurrentUser()
 
     fun isSignedIn(): Boolean = this is SignedInUser
+
+    fun getUserName(): String =
+        if (this is SignedInUser) name
+        else
+            ""
 }
 
 
