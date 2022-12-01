@@ -2,33 +2,34 @@ package com.example.cityapiclient.data.remote.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.net.Proxy
 
 @Serializable
-data class AppApiModel(
+data class UserWithAppApiModel(
     val userId: Int = 0,
     val email: String = "",
     val name: String = "",
     val userCreateDate: String = "",
     val userAppId: Int = 0,
     val appName: String = "",
-    val appType: AppType = AppType.Development,
+    val appType: AppType = AppType.DEVELOPMENT,
     val apiKey: String = "",
     val appCreateDate: String = ""
 )
 
 @Serializable
-data class UserAppApiModel(
-    val userAppId: Int = 0,
-    val userId: Int = 0,
-    val appName: String = "",
-    val appType: AppType = AppType.Development,
-    val apiKey: String = "",
-    val appCreateDate: String = ""
-)
+enum class AppType {
+    NOTSET,
+    @SerialName("dev")
+    DEVELOPMENT,
+    @SerialName("prod")
+    PRODUCTION;
 
-@Serializable
-enum class AppType(val value: String) {
-    Development("dev"),
-    Production("prod")
+    companion object {
+        fun toSelectList() = values().filterNot {
+            it == NOTSET
+        }
+    }
 }
+
 

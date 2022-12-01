@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -17,8 +18,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.presentation.theme.blueYellowGradient
+
+@Composable
+fun IconGradient() = Modifier
+    .size(28.dp)
+    .graphicsLayer(alpha = 0.99f)
+    .drawWithCache {
+        onDrawWithContent {
+            drawContent()
+            drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
+        }
+    }
 
 @Composable
 fun CityIcon(
@@ -106,4 +119,35 @@ fun LocationIcon(
                 }
             },*/
         )
+}
+
+@Composable
+fun ShareIcon() {
+    Icon(
+        imageVector = Icons.Default.Share,
+        contentDescription = "Copy",
+        tint = MaterialTheme.colorScheme.outline
+    )
+}
+
+@Composable
+fun CopyIcon() {
+    Icon(
+        painter = painterResource(id = R.drawable.copy),
+        contentDescription = "Copy",
+        tint = MaterialTheme.colorScheme.outline
+    )
+}
+
+@Composable
+fun ApiKeyIcon(
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.outline
+) {
+    Icon(
+        modifier = modifier,
+        painter = painterResource(id = R.drawable.api_key),
+        contentDescription = "API Key",
+        tint = color
+    )
 }

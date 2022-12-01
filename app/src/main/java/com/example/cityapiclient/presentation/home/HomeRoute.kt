@@ -1,38 +1,22 @@
 package com.example.cityapiclient.presentation.home
 
 import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInObserver
-import com.example.cityapiclient.presentation.components.AppBarWithBackButton
-import com.example.cityapiclient.presentation.components.AppSnackbarHost
-import com.example.cityapiclient.presentation.components.TopLevelAppBar
+import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.layouts.CompactLayoutWithScaffold
 import com.example.cityapiclient.presentation.layouts.DoubleFoldedLayout
 import com.example.cityapiclient.presentation.layouts.DoubleLayoutWithScaffold
-import com.example.cityapiclient.presentation.theme.blueYellowGradient
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import kotlinx.coroutines.launch
 
@@ -86,11 +70,12 @@ fun HomeRoute(
                             AppsScreen(
                                 appLayoutInfo = appLayoutInfo,
                                 currentUser = homeUiState.currentUser,
-                                userApps = homeUiState.apps,
+                                apps = homeUiState.apps,
                                 onAddAppClicked = {},
                                 selectedApp = homeUiState.selectedApp,
                                 onAppNameChanged = viewModel::saveAppName,
-                                onAppTypeChanged = viewModel::saveAppType
+                                onAppTypeChanged = viewModel::saveAppType,
+                                onAppClicked = viewModel::onAppClicked
                             )
                         else
                             HomeScreenContent(
@@ -121,11 +106,12 @@ fun HomeRoute(
                                 AppsScreen(
                                     appLayoutInfo = appLayoutInfo,
                                     currentUser = homeUiState.currentUser,
-                                    userApps = homeUiState.apps,
+                                    apps = homeUiState.apps,
                                     onAddAppClicked = {},
                                     selectedApp = homeUiState.selectedApp,
                                     onAppNameChanged = viewModel::saveAppName,
-                                    onAppTypeChanged = viewModel::saveAppType
+                                    onAppTypeChanged = viewModel::saveAppType,
+                                    onAppClicked = viewModel::onAppClicked
                                 )
                             else
                                 HomeScreenContent(
@@ -155,11 +141,12 @@ fun HomeRoute(
                                 AppsScreen(
                                     appLayoutInfo = appLayoutInfo,
                                     currentUser = homeUiState.currentUser,
-                                    userApps = homeUiState.apps,
+                                    apps = homeUiState.apps,
                                     onAddAppClicked = {},
                                     selectedApp = homeUiState.selectedApp,
                                     onAppNameChanged = viewModel::saveAppName,
-                                    onAppTypeChanged = viewModel::saveAppType
+                                    onAppTypeChanged = viewModel::saveAppType,
+                                    onAppClicked = viewModel::onAppClicked
                                 )
                             else
                                 HomeScreenContent(
@@ -226,35 +213,25 @@ fun ShowAddorSave(
 ) {
     if (isSignedIn && !isAppSelected) {
         IconButton(
-            modifier = Modifier
-                .padding(0.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp))
-                .border(1.dp, brush = blueYellowGradient, shape =RoundedCornerShape(16.dp)),
+            modifier = TopBarActionIcon(),
             onClick = onAddClicked
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.add_app),
                 contentDescription = "Add App",
-                modifier = Modifier
-                    .size(28.dp)
-                    .graphicsLayer(alpha = 0.99f)
-                    .drawWithCache {
-                        onDrawWithContent {
-                            drawContent()
-                            drawRect(blueYellowGradient, blendMode = BlendMode.SrcAtop)
-                        }
-                    },
+                modifier = IconGradient(),
             )
         }
     }
     if (isAppSelected) {
         IconButton(
-            //modifier = Modifier.border(2.dp, Color.Magenta),
+            modifier = TopBarActionIcon(),
             onClick = onSaveClicked
         ) {
             Icon(
                 imageVector = Icons.Default.Done,
-                contentDescription = "Save App"
+                contentDescription = "Save App",
+                modifier = IconGradient()
             )
         }
     }

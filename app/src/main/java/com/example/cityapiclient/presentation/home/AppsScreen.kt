@@ -1,19 +1,33 @@
 package com.example.cityapiclient.presentation.home
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.remote.models.AppType
-import com.example.cityapiclient.domain.models.UserApp
+import com.example.cityapiclient.domain.models.AppDetail
+import com.example.cityapiclient.domain.models.AppSummary
 import com.example.cityapiclient.presentation.components.*
+import com.example.cityapiclient.presentation.theme.*
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 
@@ -21,22 +35,26 @@ import com.example.cityapiclient.util.windowinfo.AppLayoutMode
 fun AppsScreen(
     appLayoutInfo: AppLayoutInfo,
     currentUser: CurrentUser,
-    userApps: List<UserApp>,
+    apps: List<AppSummary>,
     onAddAppClicked: () -> Unit,
-    selectedApp: UserApp?,
+    selectedApp: AppDetail?,
     onAppNameChanged: (String) -> Unit,
-    onAppTypeChanged: (AppType) -> Unit
+    onAppTypeChanged: (AppType) -> Unit,
+    onAppClicked: (Int) -> Unit
 ) {
     if (appLayoutInfo.appLayoutMode != AppLayoutMode.FOLDED_SPLIT_TABLETOP
     ) {
+        Spacer(modifier = Modifier.height(6.dp))
+
         ShowAppContent(
             appLayoutInfo = appLayoutInfo,
             currentUser = currentUser,
-            userApps = userApps,
+            apps = apps,
             onAddAppClicked = onAddAppClicked,
             selectedApp = selectedApp,
             onAppNameChanged = onAppNameChanged,
-            onAppTypeChanged = onAppTypeChanged
+            onAppTypeChanged = onAppTypeChanged,
+            onAppClicked = onAppClicked
         )
     } else {
 
@@ -47,13 +65,17 @@ fun AppsScreen(
 fun ShowAppContent(
     appLayoutInfo: AppLayoutInfo,
     currentUser: CurrentUser,
-    userApps: List<UserApp>,
+    apps: List<AppSummary>,
     onAddAppClicked: () -> Unit,
-    selectedApp: UserApp?,
+    selectedApp: AppDetail?,
     onAppNameChanged: (String) -> Unit,
-    onAppTypeChanged: (AppType) -> Unit
+    onAppTypeChanged: (AppType) -> Unit,
+    onAppClicked: (Int) -> Unit
 ) {
-    if (userApps.isEmpty() && selectedApp == null)
+    if (apps.isNotEmpty() && selectedApp == null)
+        ShowApps(apps = apps, onAppClicked = onAppClicked, selectedApp = null)
+
+    if (apps.isEmpty() && selectedApp == null)
         NoApps(
             userName = currentUser.getUserName(),
             appLayoutInfo = appLayoutInfo,
@@ -61,12 +83,91 @@ fun ShowAppContent(
         )
 
     if (selectedApp != null)
-        AddAppScreen(
+        ShowAppDetails(
             selectedApp,
             onAppNameChanged,
             onAppTypeChanged
         )
 }
+
+@Composable
+fun ShowApps(
+    modifier: Modifier = Modifier,
+    apps: List<AppSummary>,
+    onAppClicked: (Int) -> Unit,
+    selectedApp: AppDetail?
+) {
+
+    LazyColumn(modifier = modifier) {
+        itemsIndexed(items = apps) { index, app ->
+            Column(
+                Modifier
+                    .padding(top = 6.dp, bottom = 6.dp)
+                    .fillMaxSize()
+                    .clickable(
+                        onClick = {
+                            onAppClicked(app.userAppId)
+                        }
+                    ),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Card(
+                    modifier = modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .border(
+                            border = BorderStroke(
+                                width = 1.dp,
+                                orangeYellowGradient
+                            ),
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .fillMaxSize()
+                        .background(
+                            color = if (app.userAppId == selectedApp?.userAppId)
+                                MaterialTheme.colorScheme.onPrimaryContainer else
+                                MaterialTheme.colorScheme.surfaceVariant
+                        )
+
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(top = 12.dp, bottom = 12.dp, start = 5.dp, end = 5.dp),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(.85f),
+                            verticalAlignment = Alignment.CenterVertically,
+                            //horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            ApiKeyIcon(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .padding(end = 16.dp)
+                            )
+                            Column() {
+                                Text(
+                                    text = app.appName,
+                                    modifier = Modifier,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = if (app.userAppId == selectedApp?.userAppId)
+                                        MaterialTheme.colorScheme.onSecondary else
+                                        MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        }
+                        ArrowIcon(
+                            Modifier
+                                .padding(end = 4.dp)
+                                .align(Alignment.CenterEnd), "App Details"
+                        )
+
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun NoApps(
@@ -109,8 +210,8 @@ fun NoApps(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddAppScreen(
-    selectedApp: UserApp,
+fun ShowAppDetails(
+    selectedApp: AppDetail,
     onAppNameChanged: (String) -> Unit,
     onAppTypeChanged: (AppType) -> Unit
 ) {
@@ -120,7 +221,7 @@ fun AddAppScreen(
     ) {
         AppTextField(
             modifier = Modifier.fillMaxWidth(),
-            onChanged = {},
+            onChanged = onAppNameChanged,
             placeHolderValue = "Enter a name for your app...",
             //supportingText = "APP NAME",
             fieldValue = selectedApp.appName
@@ -158,16 +259,68 @@ fun AddAppScreen(
                     expanded = false
                 }
             ) {
-                AppType.values().forEach {
+                AppType.toSelectList().forEach { appType ->
                     DropdownMenuItem(
-                        text = { Text(text = it.name) },
+                        text = { Text(text = appType.name) },
                         onClick = {
-                            onAppTypeChanged(it)
+                            onAppTypeChanged(appType)
                             expanded = false
                         })
                 }
             }
         }
+
+        if (selectedApp.userAppId > 0)
+            ShowApiKey(selectedApp)
     }
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTextApi::class)
+@Composable
+private fun ShowApiKey(selectedApp: AppDetail) {
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(6.dp))
+            .padding(14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ApiKeyIcon(
+            modifier = Modifier
+                .size(32.dp)
+                .padding(end = 4.dp),
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Text(
+            modifier = Modifier.padding(0.dp),
+            text = selectedApp.apiKey,
+            style = TextStyle(
+                brush = orangeToYellowText, fontFamily = monoFamily,
+                fontSize = 14.sp
+            )
+        )
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.End
+    ) {
+        AppChip(
+            { ShareIcon() },
+            onClick = { /*TODO*/ },
+            labelText = "Share"
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        AppChip(
+            { CopyIcon() },
+            onClick = { /*TODO*/ },
+            labelText = "Copy"
+        )
+    }
 }

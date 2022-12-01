@@ -27,6 +27,14 @@ val orangeYellowGradient = Brush.verticalGradient(
     )
 )
 
+val orangeToYellowText = Brush.horizontalGradient(
+    colors = listOf(
+        Color(0xFFff8300),  //0xFFff8300
+        Color(0xFFfff500)
+    )
+)
+
+
 val yellowOrangeGradient = Brush.horizontalGradient(
     colors = listOf(
         Color(0xFFfff500),  //0xFFff8300

@@ -18,6 +18,16 @@ val fontFamily = FontFamily(
     Font(resId = R.font.oxygen_light, weight = FontWeight.Light)
 )
 
+val monoFamily = FontFamily(
+    Font(resId = R.font.oxygen_mono)
+)
+
+val codeFont = TextStyle(
+    fontFamily = monoFamily,
+    fontWeight = FontWeight.Normal,
+    fontSize = 16.sp
+)
+
 val AppTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = titleFamily,

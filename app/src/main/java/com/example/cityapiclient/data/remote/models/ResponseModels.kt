@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CityApiResponse(
-    val appApiModel: AppApiModel = AppApiModel(),
+    val userWithApp: UserWithAppApiModel = UserWithAppApiModel(),
     val cities: List<CityApiModel> = emptyList(),
     val errors: List<ResponseErrors> = emptyList()
 )
@@ -17,7 +17,7 @@ data class UserApiResponse(
 
 @Serializable
 data class UserWithAppApiResponse(
-    val userWithApp: List<AppApiModel>,
+    val apps: List<UserWithAppApiModel>,
     val errors: List<ResponseErrors> = emptyList()
 )
 

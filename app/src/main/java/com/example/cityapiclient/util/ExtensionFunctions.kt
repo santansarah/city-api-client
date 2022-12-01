@@ -5,6 +5,7 @@ import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.models.CityApiResponse
 import com.example.cityapiclient.data.remote.models.ResponseErrors
 import com.example.cityapiclient.data.remote.models.UserApiResponse
+import com.example.cityapiclient.data.remote.models.UserWithAppApiResponse
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import io.ktor.client.plugins.*
@@ -46,13 +47,18 @@ inline fun <reified T> Exception.toCityApiError(): ServiceResult.Error {
                     is UserApiResponse -> {
                         cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
                     }
+                    is UserWithAppApiResponse -> {
+                        Log.d("debug", "appResponse: $cityApiResponse")
+                        cityApiResponse.errors.firstOrNull() ?: ResponseErrors(code, message)
+                    }
                     else -> {
                         ResponseErrors(code, message)
                     }
                 }
-                ServiceResult.Error(errors.code, errors.message)
+                ServiceResult.Error(errors!!.code, errors.message)
             }
             else -> {
+                Log.d("debug", "not a ktor exception. $this")
                 ServiceResult.Error(code, message)
             }
         }

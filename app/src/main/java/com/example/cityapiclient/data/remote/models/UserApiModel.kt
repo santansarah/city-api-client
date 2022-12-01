@@ -1,5 +1,6 @@
 package com.example.cityapiclient.data.remote.models
 
+import com.example.cityapiclient.domain.models.AppSummary
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -8,5 +9,5 @@ data class UserApiModel(
     val email: String = "",
     val name: String = "",
     val userCreateDate: String = "",
-    val apps: List<UserAppApiModel> = emptyList()
+    val apps: List<UserWithAppApiModel> = emptyList()
 )
