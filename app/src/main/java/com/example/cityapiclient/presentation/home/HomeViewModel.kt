@@ -59,7 +59,7 @@ class HomeViewModel @Inject constructor(
             showUserMessage(currentUser.error.message)
 
         HomeUiState(
-            isLoading = isLoading,
+            isLoading = if (currentUser.isSignedIn()) isLoading else false,
             isSignedIn = currentUser.isSignedIn(),
             currentUser = currentUser,
             userMessage = userMessage,

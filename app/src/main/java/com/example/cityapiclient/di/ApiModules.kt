@@ -1,15 +1,11 @@
 package com.example.cityapiclient.di
 
-import com.example.cityapiclient.data.remote.CityApiService
-import com.example.cityapiclient.data.remote.KtorApi
+import com.example.cityapiclient.data.remote.apis.CityApiService
 import com.example.cityapiclient.domain.interfaces.ICityApiService
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Qualifier
 import javax.inject.Singleton
 

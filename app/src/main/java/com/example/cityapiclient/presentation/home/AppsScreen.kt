@@ -152,13 +152,21 @@ fun ShowApps(
                             ApiKeyIcon(
                                 modifier = Modifier
                                     .size(48.dp)
-                                    .padding(end = 16.dp)
+                                    .padding(end = 8.dp)
                             )
                             Column() {
                                 Text(
                                     text = app.appName,
                                     modifier = Modifier,
                                     style = MaterialTheme.typography.titleMedium,
+                                    color = if (app.userAppId == selectedApp?.userAppId)
+                                        MaterialTheme.colorScheme.onSecondary else
+                                        MaterialTheme.colorScheme.onPrimary
+                                )
+                                Text(
+                                    text = app.appType.name,
+                                    modifier = Modifier,
+                                    style = MaterialTheme.typography.bodySmall,
                                     color = if (app.userAppId == selectedApp?.userAppId)
                                         MaterialTheme.colorScheme.onSecondary else
                                         MaterialTheme.colorScheme.onPrimary
@@ -337,7 +345,7 @@ private fun ShowApiKey(
         AppChip(
             { ShareIcon() },
             onClick = {
-                val shareIntent = getShareTextIntent("City API Key: $selectedApp.apiKey")
+                val shareIntent = getShareTextIntent("City API Key: ${selectedApp.apiKey}")
                 val shareSheet = Intent.createChooser(shareIntent, null)
                 context.startActivity(shareSheet)
             },

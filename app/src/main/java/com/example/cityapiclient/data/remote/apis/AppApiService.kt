@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data.remote
+package com.example.cityapiclient.data.remote.apis
 
 import android.util.Log
 import com.example.cityapiclient.data.ServiceResult

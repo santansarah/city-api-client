@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data.remote
+package com.example.cityapiclient.data.remote.apis
 
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.models.CityApiResponse

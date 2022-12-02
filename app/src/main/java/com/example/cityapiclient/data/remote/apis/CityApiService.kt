@@ -1,18 +1,14 @@
-package com.example.cityapiclient.data.remote
+package com.example.cityapiclient.data.remote.apis
 
 import android.util.Log
-import com.example.cityapiclient.BuildConfig
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.ServiceResult.Success
 import com.example.cityapiclient.data.remote.models.CityApiResponse
-import com.example.cityapiclient.di.IoDispatcher
 import com.example.cityapiclient.domain.interfaces.ICityApiService
 import com.example.cityapiclient.util.toCityApiError
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers.IO
 import javax.inject.Inject
 
 class CityApiService @Inject constructor(

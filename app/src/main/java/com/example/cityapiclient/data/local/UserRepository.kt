@@ -4,8 +4,7 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.remote.CityApiService
-import com.example.cityapiclient.data.remote.UserApiService
+import com.example.cityapiclient.data.remote.apis.UserApiService
 import com.example.cityapiclient.util.ErrorCode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

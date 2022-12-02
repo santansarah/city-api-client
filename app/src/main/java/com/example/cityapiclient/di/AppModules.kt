@@ -1,8 +1,7 @@
 package com.example.cityapiclient.di
 
-import com.example.cityapiclient.data.remote.CityApiService
+import com.example.cityapiclient.data.remote.apis.CityApiService
 import com.example.cityapiclient.data.remote.CityRepository
-import com.example.cityapiclient.domain.interfaces.ICityApiService
 import com.example.cityapiclient.domain.interfaces.ICityRepository
 import dagger.Module
 import dagger.Provides

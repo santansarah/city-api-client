@@ -2,6 +2,7 @@ package com.example.cityapiclient.data.remote
 
 import android.util.Log
 import com.example.cityapiclient.data.ServiceResult
+import com.example.cityapiclient.data.remote.apis.CityApiService
 import com.example.cityapiclient.data.toCity
 import com.example.cityapiclient.data.toCityResultsList
 import com.example.cityapiclient.domain.interfaces.ICityRepository
