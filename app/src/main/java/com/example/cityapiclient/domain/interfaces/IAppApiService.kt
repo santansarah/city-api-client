@@ -9,4 +9,5 @@ interface IAppApiService {
     suspend fun getUserApps(userId: Int): ServiceResult<UserWithAppApiResponse>
     suspend fun createUserApp(appDetail: AppDetail): ServiceResult<UserWithAppApiResponse>
     suspend fun getAppById(appId: Int): ServiceResult<UserWithAppApiResponse>
+    suspend fun patchAppById(appId: Int, appSummary: AppSummary): ServiceResult<UserWithAppApiResponse>
 }

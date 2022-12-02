@@ -54,4 +54,17 @@ class AppRepository @Inject constructor(
             }
         }
     }
+
+    suspend fun patchAppById(appId: Int, appSummary: AppSummary): ServiceResult<AppDetail> {
+        Log.d("debug", "apiThread: ${Thread.currentThread()}")
+        return when (val ktorApiResult = appApiService.patchAppById(appId, appSummary)) {
+            is ServiceResult.Success -> {
+                ServiceResult.Success(ktorApiResult.data.apps[0].toAppDetail())
+            }
+            is ServiceResult.Error -> {
+                Log.d("debug", "api error: ${ktorApiResult.message}")
+                ktorApiResult
+            }
+        }
+    }
 }

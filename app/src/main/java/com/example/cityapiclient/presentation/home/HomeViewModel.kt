@@ -115,9 +115,21 @@ class HomeViewModel @Inject constructor(
     fun saveApp() {
         Log.d("homeviewmodel", "saving user app...")
 
-        _selectedApp.value?.let {
+        _selectedApp.value?.let { appDetail ->
             viewModelScope.launch(Dispatchers.IO) {
-                when (val repoResult = appRepository.createUserApp(_selectedApp.value!!)) {
+
+                val repoResult = if (appDetail.userAppId > 0)
+                    appRepository.patchAppById(
+                        appDetail.userAppId,
+                        AppSummary(
+                            appName = appDetail.appName,
+                            appType = appDetail.appType
+                        )
+                    )
+                else
+                    appRepository.createUserApp(appDetail)
+
+                when (repoResult) {
                     is ServiceResult.Success -> {
                         _selectedApp.value = repoResult.data
                         showUserMessage("App saved.")
@@ -148,6 +160,7 @@ class HomeViewModel @Inject constructor(
     fun onBackFromAppDetail() {
         Log.d("homeviewmodel", "back to home...")
         _selectedApp.value = null
+        _isLoading.value = true
     }
 
     private fun showUserMessage(message: String) {

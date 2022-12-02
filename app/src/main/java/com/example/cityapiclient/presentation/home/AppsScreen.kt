@@ -90,6 +90,7 @@ fun ShowAppContent(
         )
 }
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun ShowApps(
     modifier: Modifier = Modifier,
@@ -152,6 +153,14 @@ fun ShowApps(
                                     color = if (app.userAppId == selectedApp?.userAppId)
                                         MaterialTheme.colorScheme.onSecondary else
                                         MaterialTheme.colorScheme.onPrimary
+                                )
+                                Text(
+                                    text = app.apiKey,
+                                    style = TextStyle(
+                                        fontFamily = monoFamily,
+                                        fontSize = 12.sp,
+                                        brush = orangeToYellowText
+                                    )
                                 )
                             }
                         }
@@ -276,7 +285,7 @@ fun ShowAppDetails(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalTextApi::class)
+@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun ShowApiKey(selectedApp: AppDetail) {
     Spacer(modifier = Modifier.height(16.dp))

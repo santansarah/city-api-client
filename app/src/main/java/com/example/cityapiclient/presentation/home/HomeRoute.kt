@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
@@ -46,8 +47,10 @@ fun HomeRoute(
     }
 
     // Check for user messages to display on the screen
+    val focusManager = LocalFocusManager.current
     homeUiState.userMessage?.let { userMessage ->
         LaunchedEffect(homeUiState.userMessage, userMessage) {
+            focusManager.clearFocus()
             snackbarHostState.showSnackbar(userMessage)
             viewModel.userMessageShown()
         }
