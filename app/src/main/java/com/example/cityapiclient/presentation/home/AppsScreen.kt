@@ -1,5 +1,6 @@
 package com.example.cityapiclient.presentation.home
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,7 +16,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +34,7 @@ import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.theme.*
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode
+import com.example.cityapiclient.util.windowinfo.getShareTextIntent
 
 @Composable
 fun AppsScreen(
@@ -40,7 +45,8 @@ fun AppsScreen(
     selectedApp: AppDetail?,
     onAppNameChanged: (String) -> Unit,
     onAppTypeChanged: (AppType) -> Unit,
-    onAppClicked: (Int) -> Unit
+    onAppClicked: (Int) -> Unit,
+    onKeyCopied: (String) -> Unit
 ) {
     if (appLayoutInfo.appLayoutMode != AppLayoutMode.FOLDED_SPLIT_TABLETOP
     ) {
@@ -54,7 +60,8 @@ fun AppsScreen(
             selectedApp = selectedApp,
             onAppNameChanged = onAppNameChanged,
             onAppTypeChanged = onAppTypeChanged,
-            onAppClicked = onAppClicked
+            onAppClicked = onAppClicked,
+            onKeyCopied
         )
     } else {
 
@@ -70,7 +77,8 @@ fun ShowAppContent(
     selectedApp: AppDetail?,
     onAppNameChanged: (String) -> Unit,
     onAppTypeChanged: (AppType) -> Unit,
-    onAppClicked: (Int) -> Unit
+    onAppClicked: (Int) -> Unit,
+    onKeyCopied: (String) -> Unit
 ) {
     if (apps.isNotEmpty() && selectedApp == null)
         ShowApps(apps = apps, onAppClicked = onAppClicked, selectedApp = null)
@@ -86,7 +94,8 @@ fun ShowAppContent(
         ShowAppDetails(
             selectedApp,
             onAppNameChanged,
-            onAppTypeChanged
+            onAppTypeChanged,
+            onKeyCopied
         )
 }
 
@@ -222,7 +231,8 @@ fun NoApps(
 fun ShowAppDetails(
     selectedApp: AppDetail,
     onAppNameChanged: (String) -> Unit,
-    onAppTypeChanged: (AppType) -> Unit
+    onAppTypeChanged: (AppType) -> Unit,
+    onKeyCopied: (String) -> Unit
 ) {
 
     Column(
@@ -280,14 +290,17 @@ fun ShowAppDetails(
         }
 
         if (selectedApp.userAppId > 0)
-            ShowApiKey(selectedApp)
+            ShowApiKey(selectedApp, onKeyCopied)
     }
 
 }
 
 @OptIn(ExperimentalTextApi::class)
 @Composable
-private fun ShowApiKey(selectedApp: AppDetail) {
+private fun ShowApiKey(
+    selectedApp: AppDetail,
+    onKeyCopied: (String) -> Unit
+) {
     Spacer(modifier = Modifier.height(16.dp))
 
     Row(
@@ -318,17 +331,28 @@ private fun ShowApiKey(selectedApp: AppDetail) {
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
+
+        val context = LocalContext.current
+
         AppChip(
             { ShareIcon() },
-            onClick = { /*TODO*/ },
+            onClick = {
+                val shareIntent = getShareTextIntent("City API Key: $selectedApp.apiKey")
+                val shareSheet = Intent.createChooser(shareIntent, null)
+                context.startActivity(shareSheet)
+            },
             labelText = "Share"
         )
 
         Spacer(modifier = Modifier.width(8.dp))
 
+        val clipboardManager: ClipboardManager = LocalClipboardManager.current
         AppChip(
             { CopyIcon() },
-            onClick = { /*TODO*/ },
+            onClick = {
+                clipboardManager.setText(AnnotatedString(selectedApp.apiKey))
+                onKeyCopied("API Key copied.")
+            },
             labelText = "Copy"
         )
     }

@@ -78,7 +78,8 @@ fun HomeRoute(
                                 selectedApp = homeUiState.selectedApp,
                                 onAppNameChanged = viewModel::saveAppName,
                                 onAppTypeChanged = viewModel::saveAppType,
-                                onAppClicked = viewModel::onAppClicked
+                                onAppClicked = viewModel::onAppClicked,
+                                onKeyCopied = viewModel::showUserMessage
                             )
                         else
                             HomeScreenContent(
@@ -114,7 +115,8 @@ fun HomeRoute(
                                     selectedApp = homeUiState.selectedApp,
                                     onAppNameChanged = viewModel::saveAppName,
                                     onAppTypeChanged = viewModel::saveAppType,
-                                    onAppClicked = viewModel::onAppClicked
+                                    onAppClicked = viewModel::onAppClicked,
+                                    onKeyCopied = viewModel::showUserMessage
                                 )
                             else
                                 HomeScreenContent(
@@ -149,7 +151,8 @@ fun HomeRoute(
                                     selectedApp = homeUiState.selectedApp,
                                     onAppNameChanged = viewModel::saveAppName,
                                     onAppTypeChanged = viewModel::saveAppType,
-                                    onAppClicked = viewModel::onAppClicked
+                                    onAppClicked = viewModel::onAppClicked,
+                                    onKeyCopied = viewModel::showUserMessage
                                 )
                             else
                                 HomeScreenContent(

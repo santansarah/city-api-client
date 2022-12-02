@@ -163,7 +163,7 @@ class HomeViewModel @Inject constructor(
         _isLoading.value = true
     }
 
-    private fun showUserMessage(message: String) {
+    fun showUserMessage(message: String) {
         _userMessage.value = message
     }
 
