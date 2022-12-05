@@ -70,17 +70,23 @@ fun HomeRoute(
                     DoubleFoldedLayout(appLayoutInfo = appLayoutInfo, mainPanel = {
 
                         if (homeUiState.isSignedIn)
-                            AppsScreen(
-                                appLayoutInfo = appLayoutInfo,
-                                currentUser = homeUiState.currentUser,
-                                apps = homeUiState.apps,
-                                onAddAppClicked = {},
-                                selectedApp = homeUiState.selectedApp,
-                                onAppNameChanged = viewModel::saveAppName,
-                                onAppTypeChanged = viewModel::saveAppType,
-                                onAppClicked = viewModel::onAppClicked,
-                                onKeyCopied = viewModel::showUserMessage
-                            )
+                            if (homeUiState.selectedApp == null)
+                                AppsScreen(
+                                    appLayoutInfo = appLayoutInfo,
+                                    currentUser = homeUiState.currentUser,
+                                    apps = homeUiState.apps,
+                                    onAddAppClicked = {},
+                                    onAppClicked = viewModel::onAppClicked,
+                                    selectedApp = null
+                                )
+                            else
+                                ShowAppDetails(
+                                    appLayoutInfo = appLayoutInfo,
+                                    selectedApp = homeUiState.selectedApp!!,
+                                    onAppNameChanged = viewModel::saveAppName,
+                                    onAppTypeChanged = viewModel::saveAppType,
+                                    onKeyCopied = viewModel::showUserMessage
+                                )
                         else
                             HomeScreenContent(
                                 homeUiState,
@@ -112,11 +118,8 @@ fun HomeRoute(
                                     currentUser = homeUiState.currentUser,
                                     apps = homeUiState.apps,
                                     onAddAppClicked = {},
-                                    selectedApp = homeUiState.selectedApp,
-                                    onAppNameChanged = viewModel::saveAppName,
-                                    onAppTypeChanged = viewModel::saveAppType,
                                     onAppClicked = viewModel::onAppClicked,
-                                    onKeyCopied = viewModel::showUserMessage
+                                    selectedApp = homeUiState.selectedApp
                                 )
                             else
                                 HomeScreenContent(
@@ -128,7 +131,22 @@ fun HomeRoute(
                                     onSearchClicked
                                 )
                         },
-                        rightContent = { HomeScreenInfo() }
+                        rightContent = {
+                            if (!homeUiState.isSignedIn)
+                                HomeScreenInfo()
+                            else {
+                                if (homeUiState.selectedApp == null)
+                                    NoAppSelected()
+                                else
+                                    ShowAppDetails(
+                                        appLayoutInfo = appLayoutInfo,
+                                        selectedApp = homeUiState.selectedApp!!,
+                                        onAppNameChanged = viewModel::saveAppName,
+                                        onAppTypeChanged = viewModel::saveAppType,
+                                        onKeyCopied = viewModel::showUserMessage
+                                    )
+                            }
+                        }
                     ) {
                         TopLevelAppBar(
                             appLayoutInfo = appLayoutInfo,
@@ -143,17 +161,23 @@ fun HomeRoute(
                         mainContent = {
 
                             if (homeUiState.isSignedIn)
-                                AppsScreen(
-                                    appLayoutInfo = appLayoutInfo,
-                                    currentUser = homeUiState.currentUser,
-                                    apps = homeUiState.apps,
-                                    onAddAppClicked = {},
-                                    selectedApp = homeUiState.selectedApp,
-                                    onAppNameChanged = viewModel::saveAppName,
-                                    onAppTypeChanged = viewModel::saveAppType,
-                                    onAppClicked = viewModel::onAppClicked,
-                                    onKeyCopied = viewModel::showUserMessage
-                                )
+                                if (homeUiState.selectedApp == null)
+                                    AppsScreen(
+                                        appLayoutInfo = appLayoutInfo,
+                                        currentUser = homeUiState.currentUser,
+                                        apps = homeUiState.apps,
+                                        onAddAppClicked = {},
+                                        onAppClicked = viewModel::onAppClicked,
+                                        selectedApp = null
+                                    )
+                                else
+                                    ShowAppDetails(
+                                        appLayoutInfo = appLayoutInfo,
+                                        selectedApp = homeUiState.selectedApp!!,
+                                        onAppNameChanged = viewModel::saveAppName,
+                                        onAppTypeChanged = viewModel::saveAppType,
+                                        onKeyCopied = viewModel::showUserMessage
+                                    )
                             else
                                 HomeScreenContent(
                                     homeUiState,

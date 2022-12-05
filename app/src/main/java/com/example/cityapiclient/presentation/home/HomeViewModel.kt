@@ -100,6 +100,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAppClicked(appId: Int) {
+        _selectedApp.value = null
         viewModelScope.launch(Dispatchers.IO) {
             when (val repoResult = appRepository.getAppById(appId)) {
                 is ServiceResult.Success -> {

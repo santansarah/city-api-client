@@ -1,11 +1,13 @@
-# Search As You Type/Autocomplete with Compose, Kotlin Coroutines and Kotlin Flows
+# Create, Read, and Patch with Ktor Client and Jetpack Compose
 
-Add search as you type functionality to your Android Compose apps using Kotlin coroutines or Kotlin
-flows. Either way works great for autocomplete searches!
+Watch a demo of my Jetpack Compose app from start to finish, featuring phone and tablet
+adaptive layouts, Google One Tap Sign in, and Material 3 glass morphism design elements. Then I'll
+go over the final screens, which allow users to create, get, and patch apps. When an app is created,
+the API auto-generates an API key that developers can use to query city data.
 
-* Coroutines: https://github.com/santansarah/city-api-client/tree/search-type-co
-* Flows: https://github.com/santansarah/city-api-client/tree/search-type-flow
+* Android Source: https://github.com/santansarah/city-api-client/tree/ktor-crud
+* Ktor API Source: https://github.com/santansarah/ktor-city-api/tree/ktor-crud
 
 ## YouTube Video
 
-https://youtu.be/KxcttMg-JVI
+https://youtu.be/vT5q6dQ-em4

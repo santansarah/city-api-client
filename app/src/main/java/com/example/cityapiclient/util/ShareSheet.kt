@@ -1,4 +1,4 @@
-package com.example.cityapiclient.util.windowinfo
+package com.example.cityapiclient.util
 
 import android.content.Intent
 

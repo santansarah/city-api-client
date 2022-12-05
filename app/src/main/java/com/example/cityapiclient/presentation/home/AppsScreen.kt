@@ -9,13 +9,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -34,7 +33,7 @@ import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.theme.*
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
 import com.example.cityapiclient.util.windowinfo.AppLayoutMode
-import com.example.cityapiclient.util.windowinfo.getShareTextIntent
+import com.example.cityapiclient.util.getShareTextIntent
 
 @Composable
 fun AppsScreen(
@@ -42,61 +41,19 @@ fun AppsScreen(
     currentUser: CurrentUser,
     apps: List<AppSummary>,
     onAddAppClicked: () -> Unit,
-    selectedApp: AppDetail?,
-    onAppNameChanged: (String) -> Unit,
-    onAppTypeChanged: (AppType) -> Unit,
     onAppClicked: (Int) -> Unit,
-    onKeyCopied: (String) -> Unit
+    selectedApp: AppDetail?
 ) {
-    if (appLayoutInfo.appLayoutMode != AppLayoutMode.FOLDED_SPLIT_TABLETOP
-    ) {
-        Spacer(modifier = Modifier.height(6.dp))
+    if (apps.isNotEmpty())
+        ShowApps(apps = apps, onAppClicked = onAppClicked, selectedApp = selectedApp)
 
-        ShowAppContent(
-            appLayoutInfo = appLayoutInfo,
-            currentUser = currentUser,
-            apps = apps,
-            onAddAppClicked = onAddAppClicked,
-            selectedApp = selectedApp,
-            onAppNameChanged = onAppNameChanged,
-            onAppTypeChanged = onAppTypeChanged,
-            onAppClicked = onAppClicked,
-            onKeyCopied
-        )
-    } else {
-
-    }
-}
-
-@Composable
-fun ShowAppContent(
-    appLayoutInfo: AppLayoutInfo,
-    currentUser: CurrentUser,
-    apps: List<AppSummary>,
-    onAddAppClicked: () -> Unit,
-    selectedApp: AppDetail?,
-    onAppNameChanged: (String) -> Unit,
-    onAppTypeChanged: (AppType) -> Unit,
-    onAppClicked: (Int) -> Unit,
-    onKeyCopied: (String) -> Unit
-) {
-    if (apps.isNotEmpty() && selectedApp == null)
-        ShowApps(apps = apps, onAppClicked = onAppClicked, selectedApp = null)
-
-    if (apps.isEmpty() && selectedApp == null)
+    if (apps.isEmpty())
         NoApps(
             userName = currentUser.getUserName(),
             appLayoutInfo = appLayoutInfo,
             onAddAppClicked = onAddAppClicked
         )
 
-    if (selectedApp != null)
-        ShowAppDetails(
-            selectedApp,
-            onAppNameChanged,
-            onAppTypeChanged,
-            onKeyCopied
-        )
 }
 
 @OptIn(ExperimentalTextApi::class)
@@ -237,14 +194,20 @@ fun NoApps(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShowAppDetails(
+    appLayoutInfo: AppLayoutInfo,
     selectedApp: AppDetail,
     onAppNameChanged: (String) -> Unit,
     onAppTypeChanged: (AppType) -> Unit,
     onKeyCopied: (String) -> Unit
 ) {
 
+    val columnPaddingValues = if (appLayoutInfo.appLayoutMode.isSplitScreen())
+        PaddingValues(start = 28.dp, end = 28.dp)
+    else
+        PaddingValues(0.dp)
+
     Column(
-        modifier = Modifier.height(500.dp)
+        modifier = Modifier.padding(columnPaddingValues)
     ) {
         AppTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -362,6 +325,23 @@ private fun ShowApiKey(
                 onKeyCopied("API Key copied.")
             },
             labelText = "Copy"
+        )
+    }
+}
+
+@Composable
+fun NoAppSelected() {
+    Column(
+        modifier = Modifier.padding(26.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ApiKeyIcon()
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "No app selected.",
+            color = Color(0xFF758a8a),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
