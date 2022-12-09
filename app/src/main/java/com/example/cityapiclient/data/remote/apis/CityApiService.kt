@@ -15,8 +15,8 @@ class CityApiService @Inject constructor(
 ) : KtorApi(), ICityApiService {
 
     companion object {
-        const val CITIES = "$BASE_URL/cities"
-        const val CITY_BY_ZIP = "$BASE_URL/cities/zip"
+        const val CITIES = "$BASE_URL${ApiRoutes.CITIES}"
+        const val CITY_BY_ZIP = "$BASE_URL${ApiRoutes.CITY_BY_ZIP}"
     }
 
     override suspend fun getCitiesByName(prefix: String): ServiceResult<CityApiResponse> {

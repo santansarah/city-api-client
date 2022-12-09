@@ -18,9 +18,9 @@ import kotlinx.serialization.encodeToString
 class AppApiService @Inject constructor(): KtorApi(), IAppApiService {
 
     companion object {
-        const val APPS_ROOT = "$BASE_URL/apps"
-        const val APPS_CREATE = "$BASE_URL/apps/create"
-        const val APP_ROOT = "$BASE_URL/app"
+        const val APPS_ROOT = "$BASE_URL${ApiRoutes.APPS}"
+        const val APPS_CREATE = "$BASE_URL${ApiRoutes.APPS_CREATE}"
+        const val APP_ROOT = "$BASE_URL${ApiRoutes.APP}"
     }
 
     override suspend fun getUserApps(userId: Int): ServiceResult<UserWithAppApiResponse> {

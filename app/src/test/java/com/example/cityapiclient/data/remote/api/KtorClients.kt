@@ -32,6 +32,17 @@ val ktorSuccessClient = HttpClient(MockEngine) {
                     responseHeaders
                 )
 
+                /*
+                                ApiRoutes.APP -> {
+                                    if (request.method == HttpMethod.Post)
+                                        respond(
+                                            createAppDetail(1,1,"","",,""),
+                                            httpStatusCode.OK,
+                                            responseHeaders
+                                        )
+                                }
+                */
+
                 else -> error("Unhandled ${request.url.encodedPath}")
             }
         }
@@ -91,3 +102,36 @@ val ktorErrorClient = HttpClient(MockEngine) {
         })
     }
 }
+
+fun createClient(
+    json: String,
+    status: HttpStatusCode
+) = HttpClient(MockEngine) {
+    engine {
+        addHandler {
+            respond(
+                json,
+                status,
+                responseHeaders
+            )
+        }
+    }
+    expectSuccess = true
+    install(Logging) {
+        logger = object : Logger {
+            override fun log(message: String) {
+                println(message)
+            }
+        }
+        level = LogLevel.ALL
+    }
+    install(ContentNegotiation) {
+        json(Json {
+            ignoreUnknownKeys = true
+            prettyPrint = true
+            isLenient = true
+        })
+    }
+}
+
+
