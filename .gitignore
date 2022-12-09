@@ -19,3 +19,4 @@ local.properties
 /app.properties
 /app/src/main/res/values/secrets.xml
 /.idea/other.xml
+/.idea/kotlinc.xml
