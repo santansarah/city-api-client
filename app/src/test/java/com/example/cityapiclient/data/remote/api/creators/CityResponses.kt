@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data.util
+package com.example.cityapiclient.data.remote.api.creators
 
 const val CitySuccessJSON = """
     {

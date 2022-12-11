@@ -1,8 +1,6 @@
-package com.example.cityapiclient.data.remote.api
+package com.example.cityapiclient.data.remote.api.creators
 
 import com.example.cityapiclient.data.remote.apis.ApiRoutes
-import com.example.cityapiclient.data.util.CityErrorJSON
-import com.example.cityapiclient.data.util.CitySuccessJSON
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond

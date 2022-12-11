@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data.remote.api
+package com.example.cityapiclient.data.remote.api.creators
 
 import com.example.cityapiclient.data.remote.models.AppType
 
