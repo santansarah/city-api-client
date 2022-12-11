@@ -1,8 +1,11 @@
 package com.example.cityapiclient.data.remote.api
 
 import com.example.cityapiclient.data.ServiceResult
+import com.example.cityapiclient.data.remote.apis.AppApiService
 import com.example.cityapiclient.data.remote.apis.CityApiService
+import com.example.cityapiclient.data.remote.models.AppType
 import com.example.cityapiclient.data.util.AddLogExtension
+import io.ktor.http.HttpStatusCode
 import io.mockk.every
 import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -14,47 +17,48 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
-/**
- * Here I can use my real CityApiService. In this test, I'm only mocking the HttpClient, thanks
- * to Ktor's awesome MockEngine.
- */
 @ExtendWith(AddLogExtension::class)
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class CityApiUnitTest {
+internal class AppApiUnitTest {
 
-    private val cityApiService = spyk<CityApiService>()
+    private val appApiService = spyk<AppApiService>()
 
     @Nested
-    @DisplayName("CityApi Success Responses")
+    @DisplayName("AppApi Success Responses")
     internal inner class ReturnSuccess {
 
         @Test
-        @DisplayName("Get cities")
-        fun getCities_SuccessResponse() = runTest {
+        @DisplayName("Get apps")
+        fun getApps_SuccessResponse() = runTest {
 
-            every { cityApiService.client() } returns ktorSuccessClient
+            val appJson = createAppJsonSuccess(
+                5, 1, "Unit Test App", AppType.DEVELOPMENT
+            )
 
-            val results = cityApiService.getCitiesByName("troy")
+            every { appApiService.client() } returns createClient(
+                appJson, HttpStatusCode.OK
+            )
+
+            val results = appApiService.getUserApps(1)
 
             assertInstanceOf(ServiceResult.Success::class.java, results)
-            // assertThat(results, instanceOf(ServiceResult.Success::class.java))
-            Assertions.assertEquals(5, (results as ServiceResult.Success).data.cities.count())
+            Assertions.assertEquals(1, (results as ServiceResult.Success).data.apps.count())
 
         }
     }
 
-    @Nested
-    @DisplayName("CityApi Error Responses")
+    /*@Nested
+    @DisplayName("Validate Error Responses")
     inner class ReturnError {
 
         @Test
         @DisplayName("Get cities and return Error")
         fun getCities_ErrorResponse() = runTest {
 
-            every { cityApiService.client() } returns ktorErrorClient
+            every { appApiService.client() } returns ktorErrorClient
 
-            val results = cityApiService.getCitiesByName("troy")
             assertInstanceOf(ServiceResult.Error::class.java, results)
+            val results = appApiService.getCitiesByName("troy")
         }
-    }
+    }*/
 }

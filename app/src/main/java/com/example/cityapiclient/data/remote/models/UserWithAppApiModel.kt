@@ -1,7 +1,9 @@
 package com.example.cityapiclient.data.remote.models
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.SerialDescriptor
 import java.net.Proxy
 
 @Serializable
@@ -25,10 +27,17 @@ enum class AppType {
     @SerialName("prod")
     PRODUCTION;
 
+    fun getSerialName(): String {
+        val annotation =
+            this::class.java.getField(this.name).getAnnotation(SerialName::class.java)
+        return annotation?.value ?: this.name
+    }
+
     companion object {
         fun toSelectList() = values().filterNot {
             it == NOTSET
         }
+
     }
 }
 

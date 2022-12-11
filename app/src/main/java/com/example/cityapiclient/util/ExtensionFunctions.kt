@@ -8,7 +8,8 @@ import com.example.cityapiclient.data.remote.models.UserApiResponse
 import com.example.cityapiclient.data.remote.models.UserWithAppApiResponse
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
-import io.ktor.client.plugins.*
+import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.ServerResponseException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import java.util.concurrent.CancellationException

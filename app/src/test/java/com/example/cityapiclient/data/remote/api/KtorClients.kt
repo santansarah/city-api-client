@@ -1,6 +1,8 @@
-package com.example.cityapiclient.data.util
+package com.example.cityapiclient.data.remote.api
 
 import com.example.cityapiclient.data.remote.apis.ApiRoutes
+import com.example.cityapiclient.data.util.CityErrorJSON
+import com.example.cityapiclient.data.util.CitySuccessJSON
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
@@ -32,16 +34,6 @@ val ktorSuccessClient = HttpClient(MockEngine) {
                     responseHeaders
                 )
 
-                /*
-                                ApiRoutes.APP -> {
-                                    if (request.method == HttpMethod.Post)
-                                        respond(
-                                            createAppDetail(1,1,"","",,""),
-                                            httpStatusCode.OK,
-                                            responseHeaders
-                                        )
-                                }
-                */
 
                 else -> error("Unhandled ${request.url.encodedPath}")
             }
