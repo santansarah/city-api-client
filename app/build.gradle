@@ -5,10 +5,18 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlinx-serialization'
     id 'kotlin-parcelize'
+
+    // Step 2: Next, in your Module Gradle file, apply the JUnit 5 plugin.
     id 'de.mannodermaus.android-junit5'
     id 'kover'
 }
 
+// Once the plugin is enabled, you can add JUnit 5 configuration options. Here, I set the test
+// lifecycle to 'per_class'. By default, Junit 5 creates a new test class instance for each of your
+// functions. This means that if you have 5 test cases inside a class, 5 instances are created in
+// memory. By setting the lifecycle to per_class, only one test instance is created, and all of your
+// test case functions run inside it with the same memory id. You can also annotate your classes
+// on a class-by-class basis, but here, I'm enabling the lifecycle options globally.
 junitPlatform {
     configurationParameter("junit.jupiter.testinstance.lifecycle.default", "per_class")
 }
@@ -88,6 +96,9 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.1.0-alpha02'
     implementation "androidx.navigation:navigation-compose:2.5.3"
 
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
     //serialization/reflection
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.20"
 
@@ -124,14 +135,14 @@ dependencies {
     // https://logback.qos.ch/manual/configuration.html
     implementation "ch.qos.logback:logback-classic:1.2.11"
 
-
-
     // google sign in
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
     implementation 'com.google.android.gms:play-services-auth:20.4.0'
 
     // ******* TESTING *******************************************************
-    // (Required) Writing and executing Unit Tests on the JUnit Platform
+    // Step 3: Finally, it's time for module dependencies - and there's a lot of them!
+    // First, you'll need to add the jupiter Junit 5 dependencies. Here, I add support for
+    // parameterized tests, and also the vintage dependency for JUnit 4 tests.
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
     // (Optional) If you need "Parameterized Tests"
@@ -140,20 +151,29 @@ dependencies {
     testImplementation "junit:junit:4.13.2"
     testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.8.2"
 
+    // Next, add support for launching coroutines in our tests...
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+
+    // Then add the MockEngine that Ktor supplies for the Ktor Client. This is awesome and really
+    // powerful; I'll go into how it works in a minute.
+    testImplementation "io.ktor:ktor-client-mock:2.2.1"
+
+    // Finally, add the MockK dependency. This library is really easy to use, allowed me to use
+    // real code for unit tests, and saved me a ton of extra typing.
+    testImplementation "io.mockk:mockk:1.13.3"
+
+    // ******* FOR NEXT TIME / SKIP FOR NOW **********************************************
+    // Here are some Android test runner dependencies that provide experimental support for
+    // Android instrumentation tests and JUnit 5. I haven't implemented any yet, but I hope to in
+    // the next video. I'll skip this for now, because it also requires additional configuration.
     androidTestImplementation "androidx.test:runner:1.5.1"
     androidTestImplementation "de.mannodermaus.junit5:android-test-core:1.2.2"
     androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:1.2.2"
 
-    testImplementation "io.mockk:mockk:1.13.3"
-
+    // Other dependencies.
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
-
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
-    testImplementation "io.ktor:ktor-client-mock:2.2.1"
 
 
     // serialization

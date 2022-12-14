@@ -1,5 +1,10 @@
 package com.example.cityapiclient.data.remote.api.creators
 
+import com.example.cityapiclient.data.remote.models.*
+
+/**
+ * Simulates a successful [CityApiResponse].
+ */
 const val CitySuccessJSON = """
     {
         "userWithApp": {
@@ -63,6 +68,9 @@ const val CitySuccessJSON = """
     }
 """
 
+/**
+ * Simulates an Error [CityApiResponse].
+ */
 const val CityErrorJSON = """
     {
     "userWithApp": {

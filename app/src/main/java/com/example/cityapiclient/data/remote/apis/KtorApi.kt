@@ -9,6 +9,10 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
+/**
+ * Before I go over my unit tests, first, here's a quick overview of how my Ktor Client is set up.
+ * Here, I create an abstract class, and create my client with the Android Engine.
+ */
 abstract class KtorApi {
 
     companion object {

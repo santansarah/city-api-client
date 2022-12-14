@@ -11,6 +11,10 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import javax.inject.Inject
 
+/**
+ * My CityApiService inherits this abstract class, and also an Interface for the service
+ * functions.
+ */
 class CityApiService @Inject constructor(
 ) : KtorApi(), ICityApiService {
 
@@ -24,6 +28,8 @@ class CityApiService @Inject constructor(
         Log.d("debug", "httpclient: ${client()}")
 
         return try {
+            // Each method uses the real API URL, and calls my real Ktor backend. So how can we
+            // mock this? You won't believe how easy it is!
             with(client()) {
                 val cityApiResponse: CityApiResponse = get(CITIES) {
                     headers {

@@ -1,7 +1,10 @@
 package com.example.cityapiclient.data.remote.api.creators
 
-import com.example.cityapiclient.data.remote.models.AppType
+import com.example.cityapiclient.data.remote.models.*
 
+/**
+ * Simulates a successful [UserWithAppApiResponse].
+ */
 fun createAppJsonSuccess(
     userId: Int,
     userAppId: Int,
@@ -24,6 +27,9 @@ fun createAppJsonSuccess(
     "errors": []
 }"""
 
+/**
+ * Simulates an Error [UserWithAppApiResponse].
+ */
 fun createAppJsonError() = """{
     "apps": [
         {
