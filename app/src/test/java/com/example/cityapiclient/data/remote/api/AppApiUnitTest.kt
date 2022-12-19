@@ -1,13 +1,13 @@
 package com.example.cityapiclient.data.remote.api
 
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.remote.api.creators.createAppJsonError
-import com.example.cityapiclient.data.remote.api.creators.createAppJsonSuccess
-import com.example.cityapiclient.data.remote.api.creators.createClient
 import com.example.cityapiclient.data.remote.apis.AppApiService
 import com.example.cityapiclient.data.remote.models.AppType
 import com.example.cityapiclient.data.util.AddLogExtension
 import com.example.cityapiclient.domain.models.AppDetail
+import com.example.sharedtest.data.remote.apis.createAppJsonError
+import com.example.sharedtest.data.remote.apis.createAppJsonSuccess
+import com.example.sharedtest.data.remote.apis.createClient
 import io.ktor.http.HttpStatusCode
 import io.mockk.every
 import io.mockk.spyk

@@ -15,7 +15,7 @@ import javax.inject.Inject
  * My CityApiService inherits this abstract class, and also an Interface for the service
  * functions.
  */
-class CityApiService @Inject constructor(
+open class CityApiService @Inject constructor(
 ) : KtorApi(), ICityApiService {
 
     companion object {

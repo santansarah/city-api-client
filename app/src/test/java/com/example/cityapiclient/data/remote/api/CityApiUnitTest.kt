@@ -1,10 +1,10 @@
 package com.example.cityapiclient.data.remote.api
 
 import com.example.cityapiclient.data.ServiceResult
-import com.example.cityapiclient.data.remote.api.creators.ktorErrorClient
-import com.example.cityapiclient.data.remote.api.creators.ktorSuccessClient
 import com.example.cityapiclient.data.remote.apis.CityApiService
 import com.example.cityapiclient.data.util.AddLogExtension
+import com.example.sharedtest.data.remote.apis.ktorErrorClient
+import com.example.sharedtest.data.remote.apis.ktorSuccessClient
 import io.mockk.every
 import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi

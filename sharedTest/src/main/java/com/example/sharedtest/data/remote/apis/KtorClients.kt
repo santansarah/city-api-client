@@ -1,4 +1,4 @@
-package com.example.cityapiclient.data.remote.api.creators
+package com.example.sharedtest.data.remote.apis
 
 import com.example.cityapiclient.data.remote.apis.ApiRoutes
 import io.ktor.client.HttpClient
