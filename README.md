@@ -13,6 +13,8 @@ use the app to get API keys for their development and production projects. Featu
 * Search as you type
 * and more
 
+Demo: https://youtu.be/vT5q6dQ-em4?t=43
+
 ## Project Setup
 
 To run this app, complete the following steps:
@@ -36,7 +38,7 @@ I've developed key features in separate branches, and each branch has a correspo
 video. Here's a link to each, in order.
 
 > Note: The Ktor API also uses corresponding branches. You can find the correct branch in the
-> GitHub README.
+> GitHub README of each branch.
 
 ### 1. Jetpack Compose: Adaptive Layout Templates, Datastore Preferences with Hilt, Dynamic Onboarding Screens
 
