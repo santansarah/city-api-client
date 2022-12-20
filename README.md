@@ -3,7 +3,7 @@
 This app is a Jetpack Compose front-end for my Ktor City API. Once developers sign up, they can
 use the app to get API keys for their development and production projects. Features include:
 
-* Adaptive Layouts for phones, tablets, foldables, and desktops.
+* Adaptive Layouts for phones, tablets, foldables, and desktops
 * Material 3
 * Google One Tap
 * Hilt
@@ -19,7 +19,7 @@ Demo: https://youtu.be/vT5q6dQ-em4?t=43
 
 To run this app, complete the following steps:
 
-1. Set up the [Ktor API](https://github.com/santansarah/ktor-city-api/tree/ktor-crud)
+1. Set up the [Ktor API](https://github.com/santansarah/ktor-city-api)
 2. Switch to `Project` view in Android Studio
 3. Add a new file called `app.properties` in your project root
 4. Add the following properties, along with your info. The `WEB_CLIENT_ID` is used for Google
