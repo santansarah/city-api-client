@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.example.cityapiclient.data.local.OnboardingScreenRepo
 import com.example.cityapiclient.di.DataModule
 import dagger.Module
 import dagger.Provides
@@ -26,6 +27,12 @@ class TestDataModule {
         return PreferenceDataStoreFactory.create(
                 produceFile = { testContext.preferencesDataStoreFile("test_datastore") }
             )
+    }
+
+    @Singleton
+    @Provides
+    fun provideOnboardingScreenRepo(): OnboardingScreenRepo {
+        return OnboardingScreenRepo
     }
 
 }

@@ -25,6 +25,9 @@ abstract class KtorApi {
     fun client(): HttpClient {
         return INSTANCE ?: synchronized(this) {
             val newInstance = HttpClient(Android) {
+                engine {
+                    connectTimeout = 3000
+                }
                 expectSuccess = true
                 install(Logging) {
                     logger = object : Logger {

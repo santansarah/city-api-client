@@ -29,6 +29,7 @@ import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.remote.models.AppType
 import com.example.cityapiclient.domain.models.AppDetail
 import com.example.cityapiclient.domain.models.AppSummary
+import com.example.cityapiclient.domain.models.AppSummaryList
 import com.example.cityapiclient.presentation.components.*
 import com.example.cityapiclient.presentation.theme.*
 import com.example.cityapiclient.util.windowinfo.AppLayoutInfo
@@ -39,15 +40,15 @@ import com.example.cityapiclient.util.getShareTextIntent
 fun AppsScreen(
     appLayoutInfo: AppLayoutInfo,
     currentUser: CurrentUser,
-    apps: List<AppSummary>,
+    appSummaryList: AppSummaryList,
     onAddAppClicked: () -> Unit,
     onAppClicked: (Int) -> Unit,
     selectedApp: AppDetail?
 ) {
-    if (apps.isNotEmpty())
-        ShowApps(apps = apps, onAppClicked = onAppClicked, selectedApp = selectedApp)
+    if (!appSummaryList.isLoading && appSummaryList.apps.isNotEmpty())
+        ShowApps(apps = appSummaryList.apps, onAppClicked = onAppClicked, selectedApp = selectedApp)
 
-    if (apps.isEmpty())
+    if (!appSummaryList.isLoading && appSummaryList.apps.isEmpty())
         NoApps(
             userName = currentUser.getUserName(),
             appLayoutInfo = appLayoutInfo,

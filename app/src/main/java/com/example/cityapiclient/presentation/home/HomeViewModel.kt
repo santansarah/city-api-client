@@ -10,7 +10,9 @@ import com.example.cityapiclient.data.remote.AppRepository
 import com.example.cityapiclient.data.remote.models.AppType
 import com.example.cityapiclient.domain.models.AppDetail
 import com.example.cityapiclient.domain.models.AppSummary
+import com.example.cityapiclient.domain.models.AppSummaryList
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -23,47 +25,46 @@ data class HomeUiState(
     val isLoading: Boolean = true,
     val isSignedIn: Boolean = false,
     val userMessage: String? = null,
-    val apps: List<AppSummary> = emptyList(),
+    val appSummaryList: AppSummaryList = AppSummaryList(),
     val selectedApp: AppDetail? = null
 )
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appRepository: AppRepository,
-    userRepository: UserRepository
+    userRepository: UserRepository,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
-    private val _currentUserFlow = userRepository.currentUserFlow
-    private val _apps: MutableStateFlow<List<AppSummary>> = MutableStateFlow(emptyList())
+    private val _currentUserFlow = userRepository.currentUserFlow.onEach { currentUser ->
+        when (currentUser) {
+            is CurrentUser.SignedInUser -> getUserApps(currentUser.userId)
+            is CurrentUser.NotAuthenticated -> {
+                _apps.value = AppSummaryList()
+                showUserMessage(currentUser.error.message)
+            }
+            else -> {
+                _apps.value = AppSummaryList()
+            }
+        }
+    }
+    private val _apps: MutableStateFlow<AppSummaryList> = MutableStateFlow(AppSummaryList())
     private val _selectedApp: MutableStateFlow<AppDetail?> = MutableStateFlow(null)
     private val _userMessage: MutableStateFlow<String?> = MutableStateFlow(null)
-    private val _isLoading = MutableStateFlow(true)
-
-    private var userId: Int = 0
 
     val homeUiState = combine(
         _currentUserFlow,
         _apps,
         _selectedApp,
-        _userMessage,
-        _isLoading
-    ) { currentUser, apps, selectedApp, userMessage, isLoading ->
-
-        if (currentUser is CurrentUser.SignedInUser) {
-            userId = currentUser.userId
-            if (selectedApp == null)
-                getUserApps(userId)
-        }
-
-        if (currentUser is CurrentUser.NotAuthenticated)
-            showUserMessage(currentUser.error.message)
+        _userMessage
+    ) { currentUser, apps, selectedApp, userMessage ->
 
         HomeUiState(
-            isLoading = if (currentUser.isSignedIn()) isLoading else false,
+            isLoading = false,
             isSignedIn = currentUser.isSignedIn(),
             currentUser = currentUser,
             userMessage = userMessage,
-            apps = apps,
+            appSummaryList = apps,
             selectedApp = selectedApp
         )
     }.stateIn(
@@ -74,15 +75,21 @@ class HomeViewModel @Inject constructor(
 
     private fun getUserApps(userId: Int) {
         Log.d("homeviewmodel", "calling get apps...")
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             when (val repoResult = appRepository.getUserApps(userId)) {
                 is ServiceResult.Success -> {
-                    _apps.value = repoResult.data
-                    _isLoading.value = false
+                    _apps.value = AppSummaryList(
+                        isLoading = false,
+                        apps = repoResult.data
+                    )
                 }
+
                 is ServiceResult.Error -> {
                     showUserMessage(repoResult.message)
-                    _apps.value = emptyList()
+                    _apps.value = AppSummaryList(
+                        isLoading = false,
+                        apps = emptyList()
+                    )
                 }
             }
         }
@@ -101,11 +108,12 @@ class HomeViewModel @Inject constructor(
 
     fun onAppClicked(appId: Int) {
         _selectedApp.value = null
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             when (val repoResult = appRepository.getAppById(appId)) {
                 is ServiceResult.Success -> {
                     _selectedApp.value = repoResult.data
                 }
+
                 is ServiceResult.Error -> {
                     showUserMessage(repoResult.message)
                 }
@@ -117,7 +125,7 @@ class HomeViewModel @Inject constructor(
         Log.d("homeviewmodel", "saving user app...")
 
         _selectedApp.value?.let { appDetail ->
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(ioDispatcher) {
 
                 val repoResult = if (appDetail.userAppId > 0)
                     appRepository.patchAppById(
@@ -135,6 +143,7 @@ class HomeViewModel @Inject constructor(
                         _selectedApp.value = repoResult.data
                         showUserMessage("App saved.")
                     }
+
                     is ServiceResult.Error -> {
                         showUserMessage(repoResult.message)
                     }
@@ -161,7 +170,12 @@ class HomeViewModel @Inject constructor(
     fun onBackFromAppDetail() {
         Log.d("homeviewmodel", "back to home...")
         _selectedApp.value = null
-        _isLoading.value = true
+        //_isLoading.value = true
+        if (homeUiState.value.currentUser is CurrentUser.SignedInUser)
+            getUserApps(
+                (homeUiState.value.currentUser
+                        as CurrentUser.SignedInUser).userId
+            )
     }
 
     fun showUserMessage(message: String) {

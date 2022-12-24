@@ -6,7 +6,7 @@ const val UserResponseSuccess = """
         "userId": 1,
         "email": "unittest@mail.com",
         "name": "Unit Test",
-        "userCreateDate": "12/19/22 11:18:00 AM",
+        "userCreateDate": "2022-10-24 01:35:25",
         "apps": []
     },
     "errors": []

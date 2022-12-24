@@ -74,7 +74,7 @@ fun HomeRoute(
                                 AppsScreen(
                                     appLayoutInfo = appLayoutInfo,
                                     currentUser = homeUiState.currentUser,
-                                    apps = homeUiState.apps,
+                                    appSummaryList = homeUiState.appSummaryList,
                                     onAddAppClicked = {},
                                     onAppClicked = viewModel::onAppClicked,
                                     selectedApp = null
@@ -116,7 +116,7 @@ fun HomeRoute(
                                 AppsScreen(
                                     appLayoutInfo = appLayoutInfo,
                                     currentUser = homeUiState.currentUser,
-                                    apps = homeUiState.apps,
+                                    appSummaryList = homeUiState.appSummaryList,
                                     onAddAppClicked = {},
                                     onAppClicked = viewModel::onAppClicked,
                                     selectedApp = homeUiState.selectedApp
@@ -165,7 +165,7 @@ fun HomeRoute(
                                     AppsScreen(
                                         appLayoutInfo = appLayoutInfo,
                                         currentUser = homeUiState.currentUser,
-                                        apps = homeUiState.apps,
+                                        appSummaryList = homeUiState.appSummaryList,
                                         onAddAppClicked = {},
                                         onAppClicked = viewModel::onAppClicked,
                                         selectedApp = null
@@ -219,7 +219,7 @@ fun HomeRoute(
                                 )
                             }
                         },
-                        allowScroll = !homeUiState.isSignedIn || homeUiState.apps.isEmpty(),
+                        allowScroll = !homeUiState.isSignedIn || homeUiState.appSummaryList.apps.isEmpty(),
                     )
                 }
             }

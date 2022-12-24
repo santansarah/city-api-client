@@ -18,13 +18,14 @@ class AppRepository @Inject constructor(
     }
 
     suspend fun getUserApps(userId: Int): ServiceResult<List<AppSummary>> {
-        Log.d("debug", "apiThread: ${Thread.currentThread()}")
+       // Log.d("debug", "apiThread: ${Thread.currentThread()}")
         return when (val ktorApiResult = appApiService.getUserApps(userId)) {
             is ServiceResult.Success -> {
                 ServiceResult.Success(ktorApiResult.data.apps.toAppSummaryList())
             }
+
             is ServiceResult.Error -> {
-                Log.d("debug", "api error: ${ktorApiResult.message}")
+                // Log.d("debug", "api error: ${ktorApiResult.message}")
                 ktorApiResult
             }
         }

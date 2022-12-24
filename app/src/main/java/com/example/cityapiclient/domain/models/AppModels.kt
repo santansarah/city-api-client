@@ -3,6 +3,11 @@ package com.example.cityapiclient.domain.models
 import com.example.cityapiclient.data.remote.models.AppType
 import kotlinx.serialization.Serializable
 
+data class AppSummaryList(
+    val isLoading: Boolean = true,
+    val apps: List<AppSummary> = emptyList()
+)
+
 @Serializable
 data class AppSummary(
     val userAppId: Int = 0,

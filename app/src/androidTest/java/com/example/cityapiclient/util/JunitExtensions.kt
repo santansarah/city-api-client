@@ -4,10 +4,34 @@ import android.util.Log
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockkStatic
-import org.junit.jupiter.api.extension.BeforeAllCallback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import org.junit.jupiter.api.extension.ExtensionContext.Store.CloseableResource
+
+@ExperimentalCoroutinesApi
+class CoroutinesTestExtension(
+    private val testDispatcher: TestDispatcher = StandardTestDispatcher(),
+    val testScope: TestScope = TestScope(testDispatcher),
+) : BeforeEachCallback, AfterEachCallback {
+
+    /**
+     * Set TestCoroutine dispatcher as main
+     */
+    override fun beforeEach(context: ExtensionContext?) {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    override fun afterEach(context: ExtensionContext?) {
+        Dispatchers.resetMain()
+    }
+}
 
 /**
  * Before I run the CityApiUnit test, I'd like to go over one more feature of JUnit 5 and Mockk.

@@ -185,8 +185,15 @@ dependencies {
     // ...with Kotlin.
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
 
+    // Koin test
+    implementation "io.insert-koin:koin-core:3.2.0"
+    androidTestImplementation "io.insert-koin:koin-test:3.2.0"
+    androidTestImplementation "io.insert-koin:koin-test-junit5:3.2.0"
+
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
     androidTestImplementation "io.mockk:mockk-android:1.13.3"
+
+    androidTestImplementation 'app.cash.turbine:turbine:0.12.1'
 
 
     testImplementation project(path: ':sharedTest')

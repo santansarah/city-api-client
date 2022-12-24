@@ -6,8 +6,10 @@ import androidx.datastore.preferences.core.*
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.apis.UserApiService
 import com.example.cityapiclient.util.ErrorCode
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import javax.inject.Inject
 
@@ -20,7 +22,8 @@ data class UserPreferences(
 
 class UserRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
-    private val userApiService: UserApiService
+    private val userApiService: UserApiService,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val TAG: String = "UserPreferencesManager"
 
@@ -71,8 +74,9 @@ class UserRepository @Inject constructor(
             else {
                 if (it.isSignedOut)
                     CurrentUser.SignedOutUser
-                else
+                else {
                     getUser(it.userId)
+                }
             }
         }.flowOn(Dispatchers.IO)
 
@@ -145,6 +149,7 @@ class UserRepository @Inject constructor(
                     )
                 }
             }
+
             is ServiceResult.Error -> {
                 Log.d("debug", "getuser: ${getUserResult.message}")
                 CurrentUser.NotAuthenticated(

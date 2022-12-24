@@ -1,20 +1,17 @@
-package com.example.cityapiclient
+package com.example.cityapiclient.data.local
 
-import android.content.Context
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.test.core.app.ApplicationProvider
-import com.example.cityapiclient.data.local.CurrentUser
-import com.example.cityapiclient.data.local.UserRepository
+import android.app.job.JobScheduler
 import com.example.cityapiclient.data.remote.apis.UserApiService
 import com.example.sharedtest.data.remote.apis.UserResponseSuccess
 import com.example.sharedtest.data.remote.apis.createClient
 import io.ktor.http.HttpStatusCode
 import io.mockk.every
-import io.mockk.impl.annotations.SpyK
 import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.TestCoroutineScheduler
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -26,13 +23,12 @@ import org.junit.jupiter.api.TestInstance
 //@ExtendWith(MockKExtension::class)
 class UserRepositoryTest {
 
-    private val testContext: Context = ApplicationProvider.getApplicationContext()
-    private val testDataStore = PreferenceDataStoreFactory.create(
-        produceFile = { testContext.preferencesDataStoreFile("test_datastore") }
-    )
+    private val job = TestCoroutineScheduler()
+    private val ioDispatcher = UnconfinedTestDispatcher(job)
+    private val scope = TestScope(ioDispatcher)
 
     private val userApiService = spyk<UserApiService>()
-    private val userRepo = UserRepository(testDataStore, userApiService)
+    private val userRepo = UserRepository(getDatastore(scope), userApiService)
 
     @BeforeEach
     fun clearDatastore() = runTest {
@@ -41,7 +37,6 @@ class UserRepositoryTest {
 
     @Test
     fun isOnboardingComplete_False() = runTest {
-        println("Instance: $testDataStore")
         userRepo.setLastOnboardingScreen(1)
 
         val userPreferences = userRepo.userPreferencesFlow.first()
@@ -51,7 +46,6 @@ class UserRepositoryTest {
 
     @Test
     fun isOnboardingComplete_True() = runTest {
-        println("Instance: $testDataStore")
         userRepo.setLastOnboardingScreen(2)
 
         val userPreferences = userRepo.userPreferencesFlow.first()

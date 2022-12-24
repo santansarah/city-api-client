@@ -27,6 +27,32 @@ fun createAppJsonSuccess(
     "errors": []
 }"""
 
+const val getAppsByUserJsonSuccess = """{
+    "apps": [
+        {
+            "userId": 1,
+            "email": "unittester@mail.com",
+            "userCreateDate": "2022-10-24 01:35:25",
+            "userAppId": 4,
+            "appName": "Patched App Demo",
+            "appType": "dev",
+            "apiKey": "plmFACghLNFeC5z",
+            "appCreateDate": "2022-11-30 04:32:27"
+        },
+        {
+            "userId": 1,
+            "email": "unittester@mail.com",
+            "userCreateDate": "2022-10-24 01:35:25",
+            "userAppId": 5,
+            "appName": "My Production App",
+            "appType": "prod",
+            "apiKey": "KcsteYTLBf44wN9",
+            "appCreateDate": "2022-12-01 02:36:15"
+        }
+    ],
+    "errors": []
+}"""
+
 /**
  * Simulates an Error [UserWithAppApiResponse].
  */
