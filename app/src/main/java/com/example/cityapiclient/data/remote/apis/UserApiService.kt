@@ -47,6 +47,8 @@ class UserApiService @Inject constructor(): KtorApi(), IUserApiService {
 
     override suspend fun getUser(id: Int): ServiceResult<UserApiResponse> {
 
+        Log.d("debug", "apiThread: ${Thread.currentThread()}")
+
         return try {
             with (client()) {
                 val userApiResponse: UserApiResponse = client().get(USER_BY_ID) {

@@ -35,17 +35,15 @@ android {
         buildConfigField("String", "KTOR_IP_ADDR", appProperties['KTOR_IP_ADDR'])
 
         applicationId "com.example.cityapiclient"
-        minSdk 23
+        minSdk 26
         targetSdk 33
         versionCode 1
         versionName "1.0"
 
-        // 1) Make sure to use the AndroidJUnitRunner, or a subclass of it. This requires a dependency on androidx.test:runner, too!
+        // add the AndroidJUnitRunner, then connect JUnit 5 to the runner
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // 2) Connect JUnit 5 to the runner
         testInstrumentationRunnerArgument "runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
-        //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -86,6 +84,9 @@ android {
     }
 
     testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
         packagingOptions {
             jniLibs {
                 // https://github.com/mockk/mockk/issues/297#issuecomment-901924678
@@ -148,56 +149,37 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4"
     implementation 'com.google.android.gms:play-services-auth:20.4.0'
 
-    // ******* TESTING *******************************************************
-    // Step 3: Finally, it's time for module dependencies - and there's a lot of them!
-    // First, you'll need to add the jupiter Junit 5 dependencies. Here, I add support for
-    // parameterized tests, and also the vintage dependency for JUnit 4 tests.
+    // ******* UNIT TESTING ******************************************************
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
-    // (Optional) If you need "Parameterized Tests"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:5.8.2"
-    // (Optional) If you also have JUnit 4-based tests
-    testImplementation "junit:junit:4.13.2"
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.8.2"
 
     // Next, add support for launching coroutines in our tests...
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
-
-    // Then add the MockEngine that Ktor supplies for the Ktor Client. This is awesome and really
-    // powerful; I'll go into how it works in a minute.
     testImplementation "io.ktor:ktor-client-mock:2.2.1"
-
-    // Finally, add the MockK dependency. This library is really easy to use, allowed me to use
-    // real code for unit tests, and saved me a ton of extra typing.
     testImplementation "io.mockk:mockk:1.13.3"
 
-    // ******* FOR NEXT TIME / SKIP FOR NOW **********************************************
-    // 4) Jupiter API & Test Runner, if you don't have it already
+    // ******* ANDROID TESTING ***************************************************
+    // Jupiter API & Test Runner
     androidTestImplementation "androidx.test:runner:1.5.1"
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:5.8.2"
 
-    // 5) The instrumentation test companion libraries
+    // The instrumentation test companion libraries
     androidTestImplementation "de.mannodermaus.junit5:android-test-core:1.3.0"
     androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:1.3.0"
-
-    // For instrumented tests.
-    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44'
-    // ...with Kotlin.
-    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
-
-    // Koin test
-    implementation "io.insert-koin:koin-core:3.2.0"
-    androidTestImplementation "io.insert-koin:koin-test:3.2.0"
-    androidTestImplementation "io.insert-koin:koin-test-junit5:3.2.0"
 
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
     androidTestImplementation "io.mockk:mockk-android:1.13.3"
 
     androidTestImplementation 'app.cash.turbine:turbine:0.12.1'
 
-
     testImplementation project(path: ':sharedTest')
     androidTestImplementation project(path: ':sharedTest')
+
+
+    // Hilt - not using at the moment
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44'
+    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
+
     // *****************************************************
 
 }

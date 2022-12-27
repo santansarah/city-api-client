@@ -29,6 +29,11 @@ data class HomeUiState(
     val selectedApp: AppDetail? = null
 )
 
+/**
+ * In my viewModelScope.launch calls to my Ktor API, I use [Dispatchers.IO]. For Android tests, I
+ * want this to run on the UnconfinedTestDispatcher instead. So the first thing I needed to do was
+ * inject a dispatcher in my HomeViewModel.
+ */
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val appRepository: AppRepository,

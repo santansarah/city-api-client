@@ -7,6 +7,7 @@ import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.apis.UserApiService
 import com.example.cityapiclient.util.ErrorCode
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
@@ -78,7 +79,7 @@ class UserRepository @Inject constructor(
                     getUser(it.userId)
                 }
             }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(ioDispatcher)
 
 
     /**
@@ -137,8 +138,9 @@ class UserRepository @Inject constructor(
             is ServiceResult.Error -> insertResult
         }
 
-    suspend fun getUser(userId: Int): CurrentUser {
-        return when (val getUserResult = userApiService.getUser(userId)) {
+    suspend fun getUser(userId: Int): CurrentUser = withContext(ioDispatcher) {
+        Log.d("debug", "apiThread getUser: ${Thread.currentThread()}")
+        return@withContext when (val getUserResult = userApiService.getUser(userId)) {
             is ServiceResult.Success -> {
                 isSignedOut(false)
                 with(getUserResult.data.user) {
