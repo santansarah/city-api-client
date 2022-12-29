@@ -27,7 +27,6 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @OptIn(ExperimentalCoroutinesApi::class)
-//@ExtendWith(MockKExtension::class)
 class UserRepositoryTestUnconfined {
 
     /**
