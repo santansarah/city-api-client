@@ -7,6 +7,7 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
@@ -60,7 +61,7 @@ private fun SearchButton(
     onSearchClicked: () -> Unit
 ) {
     CustomIconButton(
-        buttonText = "City Name Search",
+        buttonText = stringResource(R.string.city_name_search),
         onClick = onSearchClicked,
         imageRes = R.drawable.city_search,
         modifier = Modifier

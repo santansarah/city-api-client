@@ -12,3 +12,21 @@ const val UserResponseSuccess = """
     "errors": []
 }
 """
+
+const val BadUser = """
+    {
+    "user": {
+        "userId": 0,
+        "email": "",
+        "name": "",
+        "userCreateDate": "",
+        "apps": []
+    },
+    "errors": [
+        {
+            "code": "SIGNIN_ERROR",
+            "message": "We're having trouble reaching our backend server. Sign in to try again."
+        }
+    ]
+}
+"""

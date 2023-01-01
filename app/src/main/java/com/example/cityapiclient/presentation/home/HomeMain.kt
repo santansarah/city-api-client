@@ -1,6 +1,8 @@
 package com.example.cityapiclient.presentation.home
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.domain.SignInState
 import com.example.cityapiclient.presentation.components.GoogleButton
@@ -24,7 +26,7 @@ fun HomeScreenContent(
                 googleButton = {
                     GoogleButton(
                         onClick = signUp,
-                        buttonText = "Sign up with Google",
+                        buttonText = stringResource(R.string.sign_up_with_google),
                         isProcessing = signInState.isSigningIn
                     )
                 },
