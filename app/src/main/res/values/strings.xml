@@ -28,5 +28,6 @@
     <string name="account_sign_up">Sign up to access your account details.</string>
     <string name="no_apps">Welcome, %1$s. Create an app to get an API key.</string>
     <string name="sign_up_with_google">Sign up with Google</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
     <string name="city_name_search">City Name Search</string>
 </resources>

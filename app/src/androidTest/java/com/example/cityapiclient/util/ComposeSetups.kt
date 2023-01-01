@@ -16,10 +16,10 @@ import com.example.cityapiclient.util.windowinfo.getWindowSizeClasses
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 fun ComposeContentTestRule.launchHomeScreen(
     homeViewModel: HomeViewModel,
-    userRepo: UserRepository
+    userRepo: UserRepository,
+    snackbarHostState: SnackbarHostState = SnackbarHostState()
 ) {
     setContent {
-        val snackbarHostState = SnackbarHostState()
         val signInObserver = SignInObserver(LocalContext.current, userRepo)
         val windowSize = getWindowSizeClasses(LocalContext.current as ComponentActivity)
 
