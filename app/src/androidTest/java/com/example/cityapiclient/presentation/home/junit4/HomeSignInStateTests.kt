@@ -1,12 +1,17 @@
 package com.example.cityapiclient.presentation.home.junit4
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import app.cash.turbine.test
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.local.CurrentUser
@@ -41,6 +46,7 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.io.FileOutputStream
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -85,16 +91,15 @@ class HomeSignInStateTests {
     }
 
     @Test
-    fun newSignInState() = runTest(ioDispatcher) {
+    fun newSignInState() {
         composeTestRule.launchHomeScreen(homeViewModel, userRepo)
 
-        homeViewModel.homeUiState.test {
-            val initialState = awaitItem()
-            assertEquals(false, initialState.isLoading)
-            val signUpLabel = composeTestRule.activity.getString(R.string.sign_up_with_google)
-            composeTestRule.onNodeWithText(signUpLabel).assertExists()
-            cancelAndConsumeRemainingEvents()
+        composeTestRule.waitUntil {
+            !homeViewModel.homeUiState.value.isLoading
         }
+
+        val signUpLabel = composeTestRule.activity.getString(R.string.sign_up_with_google)
+        composeTestRule.onNodeWithText(signUpLabel).assertExists()
 
     }
 
@@ -180,9 +185,21 @@ class HomeSignInStateTests {
             val firstAppName = "Patched App Demo"
             composeTestRule.onNodeWithText(firstAppName).assertExists()
 
+            val bitmap = composeTestRule.onRoot().captureToImage().asAndroidBitmap()
+            saveScreenshot("homeScreen"
+                    + System.currentTimeMillis().toString(), bitmap)
+
             cancelAndConsumeRemainingEvents()
         }
 
+    }
+
+    private fun saveScreenshot(filename: String, bmp: Bitmap) {
+        val path = composeTestRule.activity.filesDir.canonicalPath
+        FileOutputStream("$path/$filename.png").use { out ->
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+        }
+        println("Saved screenshot to $path/$filename.png")
     }
 
 }

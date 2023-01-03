@@ -1,5 +1,6 @@
 package com.example.cityapiclient.presentation
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +45,7 @@ data class AppUiState(
     val startDestination: String
 )
 
+@SuppressLint("FlowOperatorInvokedInComposition")
 @OptIn(ExperimentalLifecycleComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AppRoot(

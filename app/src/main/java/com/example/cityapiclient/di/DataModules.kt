@@ -35,11 +35,7 @@ object DataModule {
         )
     }
 
-    @Singleton
-    @Provides
-    fun provideOnboardingScreenRepo(): OnboardingScreenRepo {
-        return OnboardingScreenRepo
-    }
+
 }
 
 

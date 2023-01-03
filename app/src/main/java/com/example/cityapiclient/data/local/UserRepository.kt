@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.apis.UserApiService
+import com.example.cityapiclient.di.IoDispatcher
 import com.example.cityapiclient.util.ErrorCode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +25,7 @@ data class UserPreferences(
 class UserRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     private val userApiService: UserApiService,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val TAG: String = "UserPreferencesManager"
 

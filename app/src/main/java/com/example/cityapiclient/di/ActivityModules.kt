@@ -24,9 +24,6 @@ object ActivityModules {
         @ActivityContext activity: Context,
         userRepository: UserRepository
     ): SignInObserver {
-
-
-
         return SignInObserver(activity, userRepository)
     }
 

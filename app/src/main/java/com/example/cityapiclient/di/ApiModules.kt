@@ -19,7 +19,3 @@ abstract class ApiModules {
         cityApiService: CityApiService
     ): ICityApiService
 }
-
-@Retention(AnnotationRetention.BINARY)
-@Qualifier
-annotation class IoDispatcher

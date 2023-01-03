@@ -35,13 +35,13 @@ android {
         buildConfigField("String", "KTOR_IP_ADDR", appProperties['KTOR_IP_ADDR'])
 
         applicationId "com.example.cityapiclient"
-        minSdk 26
+        minSdk 29
         targetSdk 33
         versionCode 1
         versionName "1.0"
 
         // add the AndroidJUnitRunner, then connect JUnit 5 to the runner
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.example.cityapiclient.CustomTestRunner"
         testInstrumentationRunnerArgument "runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
         vectorDrawables {
@@ -62,9 +62,8 @@ android {
 
     }
     compileOptions {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
@@ -101,18 +100,20 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.activity:activity-compose:1.6.1'
-    implementation "androidx.compose.ui:ui:$compose_version"
-    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.activity:activity-compose:1.5.1'
+    implementation platform('androidx.compose:compose-bom:2022.10.00')
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.ui:ui-tooling-preview"
     implementation 'androidx.compose.material3:material3:1.1.0-alpha03'
     implementation "androidx.navigation:navigation-compose:2.5.3"
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-tooling"
+    debugImplementation "androidx.compose.ui:ui-test-manifest"
 
     //serialization/reflection
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.7.22"
@@ -123,7 +124,7 @@ dependencies {
 
     // hilt
     implementation 'com.google.dagger:hilt-android:2.44'
-    kapt 'com.google.dagger:hilt-compiler:2.43.2'
+    kapt 'com.google.dagger:hilt-compiler:2.44'
     implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
 
     // datastore
@@ -186,13 +187,12 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.4.0-alpha03"
     debugImplementation "androidx.compose.ui:ui-test-manifest"
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
 
     androidTestImplementation 'de.mannodermaus.junit5:android-test-compose:0.1.0-SNAPSHOT'
 
     // Hilt - not using at the moment
     androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44'
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
-
-    // *****************************************************
 
 }

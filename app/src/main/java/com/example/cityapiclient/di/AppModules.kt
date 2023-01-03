@@ -1,5 +1,6 @@
 package com.example.cityapiclient.di
 
+import com.example.cityapiclient.data.local.OnboardingScreenRepo
 import com.example.cityapiclient.data.remote.apis.CityApiService
 import com.example.cityapiclient.data.remote.CityRepository
 import com.example.cityapiclient.domain.interfaces.ICityRepository
@@ -10,6 +11,7 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -24,13 +26,31 @@ object AppModules {
 
     @Singleton
     @Provides
-    fun provideIoDispatcher() = Dispatchers.IO
+    fun provideOnboardingScreenRepo(): OnboardingScreenRepo {
+        return OnboardingScreenRepo
+    }
 
     @Singleton
     @Provides
     fun provideSharing() = SharingStarted.WhileSubscribed(5000)
 
 }
+
+@InstallIn(SingletonComponent::class)
+@Module
+object DispatchersModule {
+
+    @Singleton
+    @Provides
+    @IoDispatcher
+    fun provideIoDispatcher() = Dispatchers.IO
+
+}
+
+
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+annotation class IoDispatcher
 
 
 

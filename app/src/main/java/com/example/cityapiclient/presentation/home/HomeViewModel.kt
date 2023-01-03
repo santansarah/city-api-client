@@ -8,6 +8,7 @@ import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.data.remote.AppRepository
 import com.example.cityapiclient.data.remote.models.AppType
+import com.example.cityapiclient.di.IoDispatcher
 import com.example.cityapiclient.domain.models.AppDetail
 import com.example.cityapiclient.domain.models.AppSummary
 import com.example.cityapiclient.domain.models.AppSummaryList
@@ -38,7 +39,7 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(
     private val appRepository: AppRepository,
     userRepository: UserRepository,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
     private val _currentUserFlow = userRepository.currentUserFlow.onEach { currentUser ->
