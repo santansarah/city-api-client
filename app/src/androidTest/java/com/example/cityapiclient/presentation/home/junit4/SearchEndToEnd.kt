@@ -3,6 +3,7 @@ package com.example.cityapiclient.presentation.home.junit4
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import com.example.cityapiclient.MainActivity
 import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.data.remote.apis.AppApiService
@@ -23,6 +24,9 @@ import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 import com.example.cityapiclient.R
+import com.example.cityapiclient.data.remote.apis.CityApiService
+import com.example.cityapiclient.util.waitUntilTimeout
+import com.example.sharedtest.data.remote.apis.ktorSuccessClient
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
@@ -40,21 +44,8 @@ class SearchEndToEnd {
     lateinit var userApiService: UserApiService
     @Inject
     lateinit var appApiService: AppApiService
-
-    /*companion object {
-        private lateinit var customScheduler: TestCoroutineScheduler
-        private lateinit var ioDispatcher: TestDispatcher
-        private lateinit var scope: TestScope
-
-        @JvmStatic
-        @BeforeClass
-        fun setUpServices() {
-
-            customScheduler = TestCoroutineScheduler()
-            ioDispatcher = StandardTestDispatcher(customScheduler)
-            scope = TestScope(ioDispatcher)
-        }
-    }*/
+    @Inject
+    lateinit var cityApiService: CityApiService
 
     @Before
     fun setUpTests() = runTest {
@@ -70,6 +61,8 @@ class SearchEndToEnd {
         every { appApiService.client() } returns createClient(
             getAppsByUserJsonSuccess, HttpStatusCode.OK
         )
+
+        every { cityApiService.client() } returns ktorSuccessClient
     }
 
     @After
@@ -81,14 +74,15 @@ class SearchEndToEnd {
     fun goToHomeThenSearch() = runTest {
 
         userRepo.setLastOnboardingScreen(2)
-        // userRepo.setUserId(1)
 
         val searchText = composeTestRule.activity.getString(R.string.city_name_search)
         composeTestRule.onNodeWithText(searchText).performClick()
 
-        composeTestRule.waitUntil(10000) {
-            true == false
-        }
+        composeTestRule.onNodeWithText("Enter City Name...").performTextInput("troy")
+
+        composeTestRule.waitUntilTimeout(1200)
+
+        composeTestRule.onNodeWithText("Troy, MI 48083").assertExists()
 
     }
 }

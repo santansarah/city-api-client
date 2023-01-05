@@ -21,3 +21,4 @@ local.properties
 /.idea/other.xml
 /.idea/kotlinc.xml
 /.idea/codeStyles/
+/app/src/androidTest/java/com/example/cityapiclient/util/HiltTest.kt

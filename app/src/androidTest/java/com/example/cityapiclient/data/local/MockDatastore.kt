@@ -7,6 +7,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.job
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 
 /**
  * First, I get the test context from [ApplicationProvider]. We need this context to create the
@@ -21,9 +25,39 @@ private val testContext: Context = ApplicationProvider.getApplicationContext()
  * Dispatchers.IO, the threads could switch back and forth from Dispatchers.IO to your test threads,
  * which can lead to inconsistent test results.
  */
-fun getDatastore(scope: CoroutineScope): DataStore<Preferences> {
+@OptIn(ExperimentalCoroutinesApi::class)
+fun getDatastore(scope: TestScope): DataStore<Preferences> {
     return PreferenceDataStoreFactory.create(
         scope = scope,
         produceFile = { testContext.preferencesDataStoreFile("test_datastore") }
     )
 }
+
+
+/*
+@OptIn(ExperimentalCoroutinesApi::class)
+object MockDatastore {
+    private var INSTANCE: DataStore<Preferences>? = null
+
+    private lateinit var datastoreScope: TestScope
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Synchronized
+    operator fun invoke(scope: CoroutineScope): DataStore<Preferences> {
+        return INSTANCE ?: run {
+            datastoreScope = TestScope(StandardTestDispatcher(customScheduler))
+            PreferenceDataStoreFactory.create(
+                scope = datastoreScope,
+                produceFile = { testContext.preferencesDataStoreFile("test_datastore") }
+            ).also {
+                INSTANCE = it
+            }
+        }
+    }
+
+    fun closeScope() {
+        INSTANCE = null
+        datastoreScope.coroutineContext.job.cancel()
+    }
+}
+*/
