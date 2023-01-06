@@ -25,8 +25,13 @@ import org.junit.Test
 import javax.inject.Inject
 import com.example.cityapiclient.R
 import com.example.cityapiclient.data.remote.apis.CityApiService
+import com.example.cityapiclient.di.IoDispatcher
 import com.example.cityapiclient.util.waitUntilTimeout
 import com.example.sharedtest.data.remote.apis.ktorSuccessClient
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.TestScope
+import org.junit.BeforeClass
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
@@ -40,20 +45,27 @@ class SearchEndToEnd {
 
     @Inject
     lateinit var userRepo: UserRepository
+
     @Inject
     lateinit var userApiService: UserApiService
+
     @Inject
     lateinit var appApiService: AppApiService
+
     @Inject
     lateinit var cityApiService: CityApiService
+
+    @Inject
+    @IoDispatcher
+    lateinit var ioDispatcher: CoroutineDispatcher
+
+    @Inject
+    lateinit var scope: TestScope
+
 
     @Before
     fun setUpTests() = runTest {
         hiltRule.inject()
-        //Dispatchers.setMain(ioDispatcher)
-
-        clearAllMocks()
-        userRepo.clear()
 
         every { userApiService.client() } returns createClient(
             UserResponseSuccess, HttpStatusCode.OK
@@ -61,19 +73,29 @@ class SearchEndToEnd {
         every { appApiService.client() } returns createClient(
             getAppsByUserJsonSuccess, HttpStatusCode.OK
         )
-
         every { cityApiService.client() } returns ktorSuccessClient
     }
 
     @After
     fun clear() {
-        //Dispatchers.resetMain()
+        scope.runTest {
+            userRepo.clear()
+        }
+        scope.cancel()
     }
 
     @Test
-    fun goToHomeThenSearch() = runTest {
+    fun testInstance() {
+        println(userRepo.toString())
+    }
 
-        userRepo.setLastOnboardingScreen(2)
+    @Test
+    fun goToHomeThenSearch()  {
+        println(userRepo.toString())
+
+        runTest(ioDispatcher) {
+            userRepo.setLastOnboardingScreen(2)
+        }
 
         val searchText = composeTestRule.activity.getString(R.string.city_name_search)
         composeTestRule.onNodeWithText(searchText).performClick()

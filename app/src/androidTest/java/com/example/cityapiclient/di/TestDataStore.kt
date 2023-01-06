@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.test.core.app.ApplicationProvider
+import com.example.cityapiclient.data.local.MockDatastore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent

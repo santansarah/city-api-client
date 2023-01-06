@@ -9,44 +9,40 @@ import io.mockk.every
 import io.mockk.spyk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTest {
 
-    /**
-     * To pass the test scope to my test Datastore, I create a custom scheduler,
-     * a [StandardTestDispatcher], and finally a test scope that uses both. Why did I use a
-     * [StandardTestDispatcher] here? The [StandardTestDispatcher] is closer match to production
-     * scheduling than [UnconfinedTestDispatcher]. [UnconfinedTestDispatcher] is eager and more
-     * immediate, and isn't great at emulating real concurrency.
-     */
-    private val customScheduler = TestCoroutineScheduler()
-    private val ioDispatcher = StandardTestDispatcher(customScheduler)
-    private val scope = TestScope(ioDispatcher)
+    companion object {
+        private val ioDispatcher = StandardTestDispatcher()
+        private val scope = TestScope(ioDispatcher + Job())
 
-    /**
-     * Here, I create a MockK spy for my userApiService, then create my user repository, passing in
-     * my test Datastore and mocked API service as dependencies.
-     */
-    private val userApiService = spyk<UserApiService>()
-    private val userRepo = UserRepository(getDatastore(scope), userApiService)
+        private val userApiService = spyk<UserApiService>()
+        private val userRepo = UserRepository(getDatastore(scope),
+            userApiService, ioDispatcher)
+
+        @AfterAll
+        @JvmStatic
+        fun reset() {
+            scope.runTest {
+                userRepo.clear()
+            }
+            scope.cancel()
+        }
+    }
 
     /**
      * To make sure that all of my tests use the same scheduler, it's important that I pass in my
@@ -55,17 +51,21 @@ class UserRepositoryTest {
      */
     @BeforeEach
     fun clearDatastore() = runTest(ioDispatcher) {
-         // In my [BeforeEach] function, I reset the Datastore so I'm starting fresh every
-         // time, and I also clear any mocks that were defined for a specific test.
+        Dispatchers.setMain(ioDispatcher)
         userRepo.clear()
         clearAllMocks()
+    }
+
+    @AfterEach
+    fun clear() {
+        Dispatchers.resetMain()
     }
 
     /**
      * For my tests, I just go through the core functionality of my UserRepository.
      */
     @Test
-    fun isOnboardingComplete_False() = runTest(ioDispatcher) {
+    fun isOnboardingComplete_False() = runTest {
 
         // Here I manually set the last Onboarding screen that was viewed.
         userRepo.setLastOnboardingScreen(1)
@@ -79,7 +79,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    fun isOnboardingComplete_True() = runTest(ioDispatcher) {
+    fun isOnboardingComplete_True() = runTest {
 
         // It took me a minute to really understand how Dispatchers, Schedulers, and Scopes
         // work together behind the scenes for each test. If you're unsure about the current scope
@@ -103,7 +103,7 @@ class UserRepositoryTest {
      * on my currentUserFlow, and check the class instance.
      */
     @Test
-    fun getUnknownSignIn() = runTest(ioDispatcher) {
+    fun getUnknownSignIn() = runTest {
         val currentUserFlow = userRepo.currentUserFlow.first()
         println("UserId: $currentUserFlow")
         Assertions.assertInstanceOf(CurrentUser.UnknownSignIn::class.java, currentUserFlow)
@@ -116,7 +116,7 @@ class UserRepositoryTest {
      * sharedTest Module, so I can use these mocks in both my Android and Unit tests.
      */
     @Test
-    fun getSignedInUser() = runTest(ioDispatcher) {
+    fun getSignedInUser() = runTest {
 
         every { userApiService.client() } returns createClient(
             UserResponseSuccess, HttpStatusCode.OK

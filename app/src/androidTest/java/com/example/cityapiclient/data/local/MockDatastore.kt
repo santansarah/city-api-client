@@ -11,6 +11,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.job
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 /**
  * First, I get the test context from [ApplicationProvider]. We need this context to create the
@@ -34,7 +35,6 @@ fun getDatastore(scope: TestScope): DataStore<Preferences> {
 }
 
 
-/*
 @OptIn(ExperimentalCoroutinesApi::class)
 object MockDatastore {
     private var INSTANCE: DataStore<Preferences>? = null
@@ -43,9 +43,9 @@ object MockDatastore {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Synchronized
-    operator fun invoke(scope: CoroutineScope): DataStore<Preferences> {
+    operator fun invoke(): DataStore<Preferences> {
         return INSTANCE ?: run {
-            datastoreScope = TestScope(StandardTestDispatcher(customScheduler))
+            datastoreScope = TestScope(UnconfinedTestDispatcher())
             PreferenceDataStoreFactory.create(
                 scope = datastoreScope,
                 produceFile = { testContext.preferencesDataStoreFile("test_datastore") }
@@ -60,4 +60,3 @@ object MockDatastore {
         datastoreScope.coroutineContext.job.cancel()
     }
 }
-*/

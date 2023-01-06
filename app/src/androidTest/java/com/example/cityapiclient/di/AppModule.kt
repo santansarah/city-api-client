@@ -1,26 +1,22 @@
 package com.example.cityapiclient.di
 
-import android.content.Context
-import androidx.test.core.app.ApplicationProvider
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.example.cityapiclient.data.local.OnboardingScreenRepo
+import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.data.remote.CityRepository
 import com.example.cityapiclient.data.remote.apis.CityApiService
-import com.example.cityapiclient.di.AppModules
+import com.example.cityapiclient.data.remote.apis.UserApiService
 import com.example.cityapiclient.domain.interfaces.ICityRepository
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
-import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -29,6 +25,16 @@ import javax.inject.Singleton
     replaces = [AppModules::class]
 )
 object TestAppModule {
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(
+        dataStore: DataStore<Preferences>,
+        userApiService: UserApiService,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher
+    ): UserRepository {
+        return UserRepository(dataStore, userApiService, ioDispatcher)
+    }
 
     @Singleton
     @Provides
@@ -51,7 +57,6 @@ object TestAppModule {
     replaces = [DispatchersModule::class]
 )
 class TestScopes {
-
     @Singleton
     @Provides
     fun provideScheduler(): TestCoroutineScheduler = TestCoroutineScheduler()

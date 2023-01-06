@@ -19,6 +19,8 @@ import io.mockk.every
 import io.mockk.spyk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
@@ -33,27 +35,35 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
 
-    /**
-     * For my HomeViewModel test, I use the same [StandardTestDispatcher] setup.
-     */
-    private val customScheduler = TestCoroutineScheduler()
-    private val ioDispatcher = StandardTestDispatcher(customScheduler)
-    private val scope = TestScope(ioDispatcher)
+    companion object {
 
-    /**
-     * Then, I create my ViewModel dependencies.
-     */
-    private val appApiService = spyk<AppApiService>()
-    private val appRepository = AppRepository(appApiService)
+        private val customScheduler = TestCoroutineScheduler()
+        private val ioDispatcher = UnconfinedTestDispatcher(customScheduler)
+        private val scope = TestScope(ioDispatcher + Job())
 
-    private val userApiService = spyk<UserApiService>()
-    private val userRepo = UserRepository(getDatastore(scope), userApiService, ioDispatcher)
+        /**
+         * Then, I create my ViewModel dependencies.
+         */
+        private val appApiService = spyk<AppApiService>()
+        private val appRepository = AppRepository(appApiService)
 
-    private lateinit var homeViewModel: HomeViewModel
+        private val userApiService = spyk<UserApiService>()
+        private val userRepo = UserRepository(getDatastore(scope), userApiService, ioDispatcher)
+
+        private lateinit var homeViewModel: HomeViewModel
+
+        @AfterAll
+        @JvmStatic
+        fun reset() {
+            scope.runTest {
+                userRepo.clear()
+            }
+            scope.cancel()
+        }
+    }
 
     /**
      * Before every test, I clear any mocks, clear the Datastore, set up my Ktor Mock Client
