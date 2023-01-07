@@ -35,34 +35,31 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
 
-    companion object {
+    private val customScheduler = TestCoroutineScheduler()
+    private val ioDispatcher = UnconfinedTestDispatcher(customScheduler)
+    private val scope = TestScope(ioDispatcher + Job())
 
-        private val customScheduler = TestCoroutineScheduler()
-        private val ioDispatcher = UnconfinedTestDispatcher(customScheduler)
-        private val scope = TestScope(ioDispatcher + Job())
+    /**
+     * Then, I create my ViewModel dependencies.
+     */
+    private val appApiService = spyk<AppApiService>()
+    private val appRepository = AppRepository(appApiService)
 
-        /**
-         * Then, I create my ViewModel dependencies.
-         */
-        private val appApiService = spyk<AppApiService>()
-        private val appRepository = AppRepository(appApiService)
+    private val userApiService = spyk<UserApiService>()
+    private val userRepo = UserRepository(getDatastore(scope), userApiService, ioDispatcher)
 
-        private val userApiService = spyk<UserApiService>()
-        private val userRepo = UserRepository(getDatastore(scope), userApiService, ioDispatcher)
+    private lateinit var homeViewModel: HomeViewModel
 
-        private lateinit var homeViewModel: HomeViewModel
-
-        @AfterAll
-        @JvmStatic
-        fun reset() {
-            scope.runTest {
-                userRepo.clear()
-            }
-            scope.cancel()
+    @AfterAll
+    fun reset() {
+        scope.runTest {
+            userRepo.clear()
         }
+        scope.cancel()
     }
 
     /**
@@ -150,7 +147,7 @@ class HomeViewModelTest {
 
             assertInstanceOf(
                 CurrentUser.UnknownSignIn::class.java,
-                expectMostRecentItem().currentUser
+                awaitItem().currentUser
             )
 
             assertEquals(

@@ -22,26 +22,27 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserRepositoryTest {
 
-    companion object {
-        private val ioDispatcher = StandardTestDispatcher()
-        private val scope = TestScope(ioDispatcher + Job())
+    private val ioDispatcher = StandardTestDispatcher()
+    private val scope = TestScope(ioDispatcher + Job())
 
-        private val userApiService = spyk<UserApiService>()
-        private val userRepo = UserRepository(getDatastore(scope),
-            userApiService, ioDispatcher)
+    private val userApiService = spyk<UserApiService>()
+    private val userRepo = UserRepository(
+        getDatastore(scope),
+        userApiService, ioDispatcher
+    )
 
-        @AfterAll
-        @JvmStatic
-        fun reset() {
-            scope.runTest {
-                userRepo.clear()
-            }
-            scope.cancel()
+    @AfterAll
+    fun reset() {
+        scope.runTest {
+            userRepo.clear()
         }
+        scope.cancel()
     }
 
     /**

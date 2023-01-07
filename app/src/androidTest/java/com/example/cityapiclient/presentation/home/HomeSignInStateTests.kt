@@ -31,11 +31,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterAll
@@ -47,6 +49,7 @@ import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.io.FileOutputStream
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeSignInStateTests {
 
@@ -54,30 +57,26 @@ class HomeSignInStateTests {
     @RegisterExtension
     val composeAndroidExtension = createAndroidComposeExtension(ComponentActivity::class.java)
 
-    companion object {
+    private val customScheduler = TestCoroutineScheduler()
+    private val ioDispatcher = UnconfinedTestDispatcher(customScheduler)
+    private val scope = TestScope(ioDispatcher + Job())
 
-        private val customScheduler= TestCoroutineScheduler()
-        private val ioDispatcher = UnconfinedTestDispatcher(customScheduler)
-        private val scope = TestScope(ioDispatcher + Job())
+    private val appApiService = spyk<AppApiService>()
+    private val appRepository = AppRepository(appApiService)
 
-        private val appApiService = spyk<AppApiService>()
-        private val appRepository = AppRepository(appApiService)
+    private val userApiService = spyk<UserApiService>()
+    private val userRepo = UserRepository(getDatastore(scope), userApiService, ioDispatcher)
 
-        private val userApiService = spyk<UserApiService>()
-        private val userRepo = UserRepository(getDatastore(scope), userApiService, ioDispatcher)
+    private lateinit var homeViewModel: HomeViewModel
 
-        private lateinit var homeViewModel: HomeViewModel
+    private val testContext: Context = ApplicationProvider.getApplicationContext()
 
-        private val testContext: Context = ApplicationProvider.getApplicationContext()
-
-        @AfterAll
-        @JvmStatic
-        fun reset() {
-            scope.runTest {
-                userRepo.clear()
-            }
-            scope.cancel()
+    @AfterAll
+    fun reset() {
+        scope.runTest {
+            userRepo.clear()
         }
+        scope.cancel()
     }
 
     @BeforeEach
@@ -140,7 +139,7 @@ class HomeSignInStateTests {
 
 
     @Test
-    fun signedInUserWithApps() = runTest {
+    fun signedInUserWithApps() = runTest(ioDispatcher) {
 
         userRepo.setUserId(1)
 
