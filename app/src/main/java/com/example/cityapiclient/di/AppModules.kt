@@ -52,5 +52,9 @@ object DispatchersModule {
 @Qualifier
 annotation class IoDispatcher
 
+@Retention(AnnotationRetention.RUNTIME)
+@Qualifier
+annotation class ViewModelScope
+
 
 

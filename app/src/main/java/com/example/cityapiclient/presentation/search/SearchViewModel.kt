@@ -3,11 +3,16 @@ package com.example.cityapiclient.presentation.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cityapiclient.data.ServiceResult
 import com.example.cityapiclient.data.remote.CityRepository
+import com.example.cityapiclient.di.IoDispatcher
+import com.example.cityapiclient.di.ViewModelScope
 import com.example.cityapiclient.domain.models.City
 import com.example.cityapiclient.domain.models.CityResults
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -24,7 +29,9 @@ data class SearchUiState(
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val cityRepository: CityRepository
+    private val cityRepository: CityRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    @ViewModelScope private val scope: CoroutineScope
 ) : ViewModel() {
 
     private val _searchText = MutableStateFlow("")
@@ -45,7 +52,7 @@ class SearchViewModel @Inject constructor(
                 selectedCity
             )
     }.stateIn(
-        scope = viewModelScope,
+        scope = scope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = SearchUiState()
     )
@@ -57,11 +64,11 @@ class SearchViewModel @Inject constructor(
             .filter { cityPrefix -> (cityPrefix.isNotEmpty()
                     && cityPrefix.length > 1) } // don't call if 1 or empty
             .distinctUntilChanged() // to avoid duplicate network calls
-            .flowOn(Dispatchers.IO) // Changes the context where this flow is executed to Dispatchers.IO
+            .flowOn(ioDispatcher) // Changes the context where this flow is executed to Dispatchers.IO
             .onEach { cityPrefix -> // just gets the prefix: 'ph', 'pho', 'phoe'
                 getCityNames(cityPrefix)
             }
-            .launchIn(viewModelScope)
+            .launchIn(scope)
     }
 
     fun onCityNameSearch(prefix: String) {
@@ -69,7 +76,8 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getCityNames(prefix: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
+            Log.d("testscope", this.coroutineContext.toString())
             when (val repoResult = cityRepository.getCitiesByName(prefix)) {
                 is ServiceResult.Success -> {
                     _cities.value = repoResult.data
@@ -87,7 +95,7 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onCitySelected(city: CityResults) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             when (val repoResult = cityRepository.getCitiesByZip(city.zip)) {
                 is ServiceResult.Success -> {
                     _selectedCity.value = repoResult.data

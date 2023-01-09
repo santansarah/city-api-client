@@ -9,11 +9,13 @@ import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.data.remote.AppRepository
 import com.example.cityapiclient.data.remote.models.AppType
 import com.example.cityapiclient.di.IoDispatcher
+import com.example.cityapiclient.di.ViewModelScope
 import com.example.cityapiclient.domain.models.AppDetail
 import com.example.cityapiclient.domain.models.AppSummary
 import com.example.cityapiclient.domain.models.AppSummaryList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -39,7 +41,8 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(
     private val appRepository: AppRepository,
     userRepository: UserRepository,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    @ViewModelScope private val scope: CoroutineScope
 ) : ViewModel() {
 
     private val _currentUserFlow = userRepository.currentUserFlow.onEach { currentUser ->
@@ -74,7 +77,7 @@ class HomeViewModel @Inject constructor(
             selectedApp = selectedApp
         )
     }.stateIn(
-        scope = viewModelScope,
+        scope = scope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = HomeUiState()
     )

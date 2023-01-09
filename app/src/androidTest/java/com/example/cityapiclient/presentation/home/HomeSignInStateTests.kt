@@ -25,6 +25,7 @@ import com.example.sharedtest.data.remote.apis.getAppsByUserJsonSuccess
 import de.mannodermaus.junit5.compose.createAndroidComposeExtension
 import de.mannodermaus.junit5.compose.createComposeExtension
 import io.ktor.http.HttpStatusCode
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.spyk
 import kotlinx.coroutines.Dispatchers
@@ -80,9 +81,13 @@ class HomeSignInStateTests {
     }
 
     @BeforeEach
-    fun setUp() = runTest(ioDispatcher) {
+    fun setUp() = runTest {
         userRepo.clear()
-        homeViewModel = HomeViewModel(appRepository, userRepo, ioDispatcher)
+        homeViewModel = HomeViewModel(
+            appRepository,
+            userRepo,
+            ioDispatcher,
+            TestScope(ioDispatcher))
     }
 
     @Test
@@ -107,7 +112,7 @@ class HomeSignInStateTests {
         userRepo.setUserId(1)
 
         // Let's pretend that we can't get to the Ktor API.
-        every { userApiService.client() } returns createClient(
+        coEvery { userApiService.client() } returns createClient(
             BadUser, HttpStatusCode.BadRequest
         )
 
@@ -137,16 +142,15 @@ class HomeSignInStateTests {
 
     }
 
-
     @Test
-    fun signedInUserWithApps() = runTest(ioDispatcher) {
+    fun signedInUserWithApps() = runTest {
 
         userRepo.setUserId(1)
 
-        every { userApiService.client() } returns createClient(
+        coEvery { userApiService.client() } returns createClient(
             UserResponseSuccess, HttpStatusCode.OK
         )
-        every { appApiService.client() } returns createClient(
+        coEvery { appApiService.client() } returns createClient(
             getAppsByUserJsonSuccess, HttpStatusCode.OK
         )
 

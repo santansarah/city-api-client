@@ -25,9 +25,9 @@
     <string name="onboarding_search_countyPrefix">Get county names by prefix</string>
     <string name="sign_up" translatable="false">Sign up to create and manage your API keys, or try out our API sandbox.</string>
     <string name="signed_out" translatable="false">You\'re currently signed out. Sign back in to access your API keys.</string>
-    <string name="account_sign_up">Sign up to access your account details.</string>
-    <string name="no_apps">Welcome, %1$s. Create an app to get an API key.</string>
-    <string name="sign_up_with_google">Sign up with Google</string>
-    <string name="sign_in_with_google">Sign in with Google</string>
-    <string name="city_name_search">City Name Search</string>
+    <string name="account_sign_up" translatable="false">Sign up to access your account details.</string>
+    <string name="no_apps" translatable="false">Welcome, %1$s. Create an app to get an API key.</string>
+    <string name="sign_up_with_google" translatable="false">Sign up with Google</string>
+    <string name="sign_in_with_google" translatable="false">Sign in with Google</string>
+    <string name="city_name_search" translatable="false">City Name Search</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.cityapiclient.presentation.home.junit4
 
+import android.util.Log
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -28,9 +29,17 @@ import com.example.cityapiclient.data.remote.apis.CityApiService
 import com.example.cityapiclient.di.IoDispatcher
 import com.example.cityapiclient.util.waitUntilTimeout
 import com.example.sharedtest.data.remote.apis.ktorSuccessClient
+import io.mockk.coEvery
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.setMain
 import org.junit.BeforeClass
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -67,13 +76,13 @@ class SearchEndToEnd {
     fun setUpTests() = runTest {
         hiltRule.inject()
 
-        every { userApiService.client() } returns createClient(
+        coEvery { userApiService.client() } returns createClient(
             UserResponseSuccess, HttpStatusCode.OK
         )
-        every { appApiService.client() } returns createClient(
+        coEvery { appApiService.client() } returns createClient(
             getAppsByUserJsonSuccess, HttpStatusCode.OK
         )
-        every { cityApiService.client() } returns ktorSuccessClient
+        coEvery { cityApiService.client() } returns ktorSuccessClient
     }
 
     @After
@@ -90,19 +99,19 @@ class SearchEndToEnd {
     }
 
     @Test
-    fun goToHomeThenSearch()  {
-        println(userRepo.toString())
+    fun goToHomeThenSearch() = runTest(ioDispatcher) {
 
-        runTest(ioDispatcher) {
-            userRepo.setLastOnboardingScreen(2)
-        }
+        Log.d("testscope", this.coroutineContext.toString())
+
+        userRepo.setLastOnboardingScreen(2)
 
         val searchText = composeTestRule.activity.getString(R.string.city_name_search)
         composeTestRule.onNodeWithText(searchText).performClick()
 
-        composeTestRule.onNodeWithText("Enter City Name...").performTextInput("troy")
+        composeTestRule.onNodeWithText("Enter City Name...").performTextInput("tr")
+        advanceTimeBy(301)
 
-        composeTestRule.waitUntilTimeout(1200)
+        composeTestRule.waitUntilTimeout(301)
 
         composeTestRule.onNodeWithText("Troy, MI 48083").assertExists()
 

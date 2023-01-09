@@ -8,7 +8,24 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import javax.inject.Named
+
+@InstallIn(ViewModelComponent::class)
+@Module
+object ViewModelModule {
+
+    @Provides
+    @ViewModelScope
+    fun provideViewModelScope(): CoroutineScope
+            = CoroutineScope(Job() + Dispatchers.Main.immediate)
+
+}
 
 @InstallIn(ActivityComponent::class)
 @Module

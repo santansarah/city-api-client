@@ -191,7 +191,7 @@ dependencies {
 
     androidTestImplementation 'de.mannodermaus.junit5:android-test-compose:0.1.0-SNAPSHOT'
 
-    // Hilt - not using at the moment
+    // Hilt
     androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44'
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44'
 

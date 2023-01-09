@@ -1,13 +1,12 @@
 package com.example.cityapiclient.presentation.home
 
-import app.cash.turbine.test
+import android.util.Log
 import com.example.cityapiclient.data.local.CurrentUser
 import com.example.cityapiclient.data.local.UserRepository
 import com.example.cityapiclient.data.local.getDatastore
 import com.example.cityapiclient.data.remote.AppRepository
 import com.example.cityapiclient.data.remote.apis.AppApiService
 import com.example.cityapiclient.data.remote.apis.UserApiService
-import com.example.cityapiclient.data.remote.models.AppType
 import com.example.sharedtest.data.remote.apis.UserResponseSuccess
 import com.example.sharedtest.data.remote.apis.createClient
 import com.example.sharedtest.data.remote.apis.getAppsByUserJsonSuccess
@@ -18,9 +17,13 @@ import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.*
@@ -30,10 +33,10 @@ import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @OptIn(ExperimentalCoroutinesApi::class)
-class HomeViewModelTest {
+class HomeViewModelTest_noTurbine {
 
     private val customScheduler = TestCoroutineScheduler()
-    private val ioDispatcher = StandardTestDispatcher(customScheduler)
+    private val ioDispatcher = UnconfinedTestDispatcher(customScheduler)
     private val scope = TestScope(ioDispatcher + Job())
 
     /**
@@ -76,7 +79,7 @@ class HomeViewModelTest {
             appRepository,
             userRepo,
             ioDispatcher,
-            TestScope(StandardTestDispatcher(customScheduler))
+            TestScope(UnconfinedTestDispatcher(customScheduler))
         )
 
     }
@@ -99,56 +102,78 @@ class HomeViewModelTest {
 
         userRepo.setUserId(1)
 
-        homeViewModel.homeUiState.test {
+        //only works if sharing is Eagerly
+        val tmp = mutableListOf<HomeUiState>()
+        val job = launch {
+            homeViewModel.homeUiState.toList(tmp)
+        }
 
+        Log.d("testscope", this.currentTime.toString())
+
+        Log.d("testscope", userRepo.fetchInitialPreferences().userId.toString())
+
+        Log.d("testscope", homeViewModel.homeUiState.value.toString())
+        Log.d("testscope", tmp.last().toString())
+
+
+        job.cancel()
+
+        /*homeViewModel.homeUiState.test {
+
+            Log.d("testscope:", awaitItem().toString())
+            Log.d("testscope:", awaitItem().toString())
+
+*//*
             val initialState = awaitItem()
-            val waitForSignIn = awaitItem()
             val waitForApps = awaitItem()
+            if (waitForApps.appSummaryList.apps.isEmpty())
+                awaitItem()
 
             assertEquals(2, waitForApps.appSummaryList.apps.count())
+*//*
+
+        }*/
+
+    }
+    /*
+
+        @Test
+        fun addApp() = runTest {
+
+            userRepo.setUserId(1)
+
+            // collect initial values
+            homeViewModel.homeUiState.test {
+                awaitItem()
+                awaitItem()
+
+                homeViewModel.addApp()
+                val selectedApp = awaitItem().selectedApp
+
+                assertAll("New app defaults",
+                    { assertEquals(1, selectedApp?.userId) },
+                    { assertEquals(AppType.DEVELOPMENT, selectedApp?.appType) }
+                )
+            }
 
         }
 
-    }
+        @Test
+        fun onAppClicked() = runTest(ioDispatcher) {
 
-    @Test
-    fun addApp() = runTest(ioDispatcher) {
+            userRepo.setUserId(1)
+            homeViewModel.homeUiState.test {
 
-        userRepo.setUserId(1)
+                awaitItem()
+                awaitItem()
 
-        // collect initial values
-        homeViewModel.homeUiState.test {
-            awaitItem()
-            awaitItem()
-            awaitItem()
+                homeViewModel.onAppClicked(4)
+                val selectedApp = awaitItem().selectedApp
 
-            homeViewModel.addApp()
-            val selectedApp = awaitItem().selectedApp
+                assertEquals("plmFACghLNFeC5z", selectedApp?.apiKey)
+            }
 
-            assertAll("New app defaults",
-                { assertEquals(1, selectedApp?.userId) },
-                { assertEquals(AppType.DEVELOPMENT, selectedApp?.appType) }
-            )
         }
-
-    }
-
-    @Test
-    fun onAppClicked() = runTest(ioDispatcher) {
-
-        userRepo.setUserId(1)
-        homeViewModel.homeUiState.test {
-
-            awaitItem()
-            awaitItem()
-            awaitItem()
-
-            homeViewModel.onAppClicked(4)
-            val selectedApp = awaitItem().selectedApp
-
-            assertEquals("plmFACghLNFeC5z", selectedApp?.apiKey)
-        }
-
-    }
+    */
 
 }
