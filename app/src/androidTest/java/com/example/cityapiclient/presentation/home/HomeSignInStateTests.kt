@@ -86,8 +86,8 @@ class HomeSignInStateTests {
         homeViewModel = HomeViewModel(
             appRepository,
             userRepo,
-            ioDispatcher,
-            TestScope(ioDispatcher))
+            ioDispatcher
+        )
     }
 
     @Test
@@ -107,7 +107,7 @@ class HomeSignInStateTests {
     }
 
     @Test
-    fun notAuthenticatedWithSnackbar() = runTest {
+    fun notAuthenticatedWithSnackbar() = runTest(ioDispatcher) {
 
         userRepo.setUserId(1)
 
@@ -143,7 +143,7 @@ class HomeSignInStateTests {
     }
 
     @Test
-    fun signedInUserWithApps() = runTest {
+    fun signedInUserWithApps() = runTest(ioDispatcher) {
 
         userRepo.setUserId(1)
 

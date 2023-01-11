@@ -41,8 +41,7 @@ data class HomeUiState(
 class HomeViewModel @Inject constructor(
     private val appRepository: AppRepository,
     userRepository: UserRepository,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    @ViewModelScope private val scope: CoroutineScope
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
 
     private val _currentUserFlow = userRepository.currentUserFlow.onEach { currentUser ->
@@ -77,7 +76,7 @@ class HomeViewModel @Inject constructor(
             selectedApp = selectedApp
         )
     }.stateIn(
-        scope = scope,
+        scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = HomeUiState()
     )

@@ -30,8 +30,7 @@ data class SearchUiState(
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val cityRepository: CityRepository,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    @ViewModelScope private val scope: CoroutineScope
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _searchText = MutableStateFlow("")
@@ -52,7 +51,7 @@ class SearchViewModel @Inject constructor(
                 selectedCity
             )
     }.stateIn(
-        scope = scope,
+        scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
         initialValue = SearchUiState()
     )
@@ -68,7 +67,7 @@ class SearchViewModel @Inject constructor(
             .onEach { cityPrefix -> // just gets the prefix: 'ph', 'pho', 'phoe'
                 getCityNames(cityPrefix)
             }
-            .launchIn(scope)
+            .launchIn(viewModelScope)
     }
 
     fun onCityNameSearch(prefix: String) {
@@ -77,7 +76,7 @@ class SearchViewModel @Inject constructor(
 
     private fun getCityNames(prefix: String) {
         viewModelScope.launch(ioDispatcher) {
-            Log.d("testscope", this.coroutineContext.toString())
+            Log.d("testscope", "getCityNames: ${this.coroutineContext}")
             when (val repoResult = cityRepository.getCitiesByName(prefix)) {
                 is ServiceResult.Success -> {
                     _cities.value = repoResult.data

@@ -55,13 +55,8 @@ class HomeViewModelTest {
         scope.cancel()
     }
 
-    /**
-     * Before every test, I clear any mocks, clear the Datastore, set up my Ktor Mock Client
-     * responses, and instantiate the ViewModel every time, so it starts out with a fresh state.
-     */
     @BeforeEach
     fun setUpAndClear() {
-        //Dispatchers.setMain(StandardTestDispatcher())
         println("BeforeEach")
         clearAllMocks()
 
@@ -75,8 +70,7 @@ class HomeViewModelTest {
         homeViewModel = HomeViewModel(
             appRepository,
             userRepo,
-            ioDispatcher,
-            TestScope(StandardTestDispatcher(customScheduler))
+            ioDispatcher
         )
 
     }

@@ -78,8 +78,7 @@ class HomeViewModelTest_noTurbine {
         homeViewModel = HomeViewModel(
             appRepository,
             userRepo,
-            ioDispatcher,
-            TestScope(UnconfinedTestDispatcher(customScheduler))
+            ioDispatcher
         )
 
     }
