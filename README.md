@@ -1,16 +1,15 @@
-# Test Coroutines, Datastore Preferences, and Flows with JUnit 5, Turbine, and Shared Test Modules
+# Jetpack Compose Tests with JUnit 5, JUnit 4, and Hilt
 
-This branch uses Android Instrumented tests, JUnit 5, and Turbine to test my Datastore Preferences
-and ViewModel flow. It also includes a sharedTest Module that shares various constants and JSON
-strings between unit tests and Android instrumentation tests.
+This branch includes isolated Compose tests and Compose end-to-end tests. Learn how to
+add Compose assertions, take screenshots, validate snackbars, perform clicks, and
+automatically input text. The end-to-end test uses Hilt for dependency injection. I use
+MockK to mock my Ktor API Client.
 
-* Shared Test Module Template: https://github.com/santansarah/sharedtest-junit5-turbine
-* Android Source: https://github.com/santansarah/city-api-client/tree/android-testing
-* Ktor API Source: https://github.com/santansarah/ktor-city-api/tree/ktor-crud
+* Android Source: https://github.com/santansarah/city-api-client/tree/end-to-end-tests
 
 ## YouTube Video
 
-https://youtu.be/n4cUnf86vDs
+https://youtu.be/SD9BZwBWX0Q
 
 # About this app
 
@@ -97,3 +96,15 @@ video. Here's a link to each, in order.
 
 * Android Source: https://github.com/santansarah/city-api-client/tree/app-testing
 * https://youtu.be/vLku6TaluwY
+
+### 8. Test Coroutines, Datastore Preferences, and Flows with JUnit 5, Turbine, and Shared Test Modules
+
+This branch uses Android Instrumented tests, JUnit 5, and Turbine to test my Datastore Preferences
+and ViewModel flow. It also includes a sharedTest Module that shares various constants and JSON
+strings between unit tests and Android instrumentation tests.
+
+* Shared Test Module Template: https://github.com/santansarah/sharedtest-junit5-turbine
+* Android Source: https://github.com/santansarah/city-api-client/tree/android-testing
+* Ktor API Source: https://github.com/santansarah/ktor-city-api/tree/ktor-crud
+* https://youtu.be/n4cUnf86vDs
+
