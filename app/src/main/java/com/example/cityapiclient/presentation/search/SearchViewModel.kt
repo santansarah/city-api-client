@@ -54,8 +54,7 @@ class SearchViewModel @Inject constructor(
     init {
         _searchText
             .debounce(300) // gets the latest; no need for delays!
-            .filter { cityPrefix -> (cityPrefix.isNotEmpty()
-                    && cityPrefix.length > 1) } // don't call if 1 or empty
+            .filter { cityPrefix -> (cityPrefix.length > 1) } // make sure there's enough initial text to search for
             .distinctUntilChanged() // to avoid duplicate network calls
             .flowOn(Dispatchers.IO) // Changes the context where this flow is executed to Dispatchers.IO
             .onEach { cityPrefix -> // just gets the prefix: 'ph', 'pho', 'phoe'
